@@ -1,5 +1,5 @@
 <meta charset="utf-8" />
-<title>Gifted | @yield('title')</title>
+<title>ICU | @yield('title')</title>
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <meta name="description" content="@yield('metaDescription')" />
 <meta name="author" content="@yield('metaAuthor')" />
@@ -8,8 +8,8 @@
 @stack('metaTag')
 
 <!-- ================== BEGIN BASE CSS STYLE ================== -->
-<link href="/assets/css/vendor.min.css" rel="stylesheet" />
-<link href="/assets/css/app.min.css" rel="stylesheet" />
+<link href="{{asset('assets/css/vendor.min.css')}}" rel="stylesheet" />
+<link href="{{asset('assets/css/app.min.css')}}" rel="stylesheet" /> <!-- original style for bootstrap 4.1.3 --> <!-- <link href="/assets/css/app.min.css" rel="stylesheet" />
 <!-- ================== END BASE CSS STYLE ================== -->
 
 @stack('css')
