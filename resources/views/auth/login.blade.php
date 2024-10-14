@@ -18,7 +18,7 @@
                             <h4 class="card-text text-center text-primary">Monitoring Application</h4>
                         </div>
                     </div>
-                    <form action="/login" method="POST" name="login_form">
+                    <form action="{{route('login')}}" method="POST" name="login_form">
                         @csrf
                         <h1 class="text-center">Sign In</h1>
 
