@@ -11,7 +11,7 @@
                 <div class="login-content">
                     <div class="card border-theme shadow-sm mb-3">
                         <div class="card-body">
-                        <img src="/images/fmc_logo.jpeg" alt="" class="card-img-top" height="180"/>
+                        <img src="{{asset('images/fmc_logo.jpeg')}}" alt="" class="card-img-top" height="180"/>
                         </div>
                         <div class="card-body">
                             <h1 class="card-title text-center text-primary fw-bolder">ICU </h1>

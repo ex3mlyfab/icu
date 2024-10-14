@@ -21,7 +21,7 @@
         </div>
 
         <a href="/dashboard" class="brand-logo">
-            <img src="/images/fmc_logo.jpeg" class="invert-dark" alt="" height="20">
+            <img src="{{asset('images/fmc_logo.jpeg')}}" class="invert-dark" alt="" height="20">
         </a>
     </div>
     <!-- END brand -->

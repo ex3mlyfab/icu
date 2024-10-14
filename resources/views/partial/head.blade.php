@@ -9,7 +9,9 @@
 
 <!-- ================== BEGIN BASE CSS STYLE ================== -->
 <link href="{{asset('assets/css/vendor.min.css')}}" rel="stylesheet" />
-<link href="{{asset('assets/css/app.min.css')}}" rel="stylesheet" /> <!-- original style for bootstrap 4.1.3 --> <!-- <link href="/assets/css/app.min.css" rel="stylesheet" />
-<!-- ================== END BASE CSS STYLE ================== -->
+<link href="{{asset('assets/css/app.min.css')}}" rel="stylesheet" /> 
+
+<!-- original style for bootstrap 4.1.3 --> <!-- <link href="/assets/css/app.min.css" rel="stylesheet" /> -->
+<!-- =================== END BASE CSS STYLE ================== -->
 
 @stack('css')
