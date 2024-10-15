@@ -20,10 +20,18 @@ return [
       'url' => '/dashboard',
       'icon' => 'fa fa-home',
       'text' => 'Home'
-    ],[
-      'url' => '/create-patient',
+    ],
+    [
       'icon' => 'fa fa-user-circle',
-      'text' => 'Create Patient'
+      'text' => 'Add Patient',
+      'children' => [[
+        'url' => '/create-patient-from-emr',
+        'text' => 'Add Patient From EMR'
+      ],
+      [
+        'url' => '/create-patient',
+        'text' => 'New Patient Registration'
+      ]
     ]
   ]
-];
+]];

@@ -3,11 +3,11 @@
 @section('title', 'Home')
 
 @push('css')
-    <link href="{{ asset('assets/plugins/bootstrap-datepicker/dist/css/bootstrap-datepicker.min.css') }}" rel="stylesheet">
+    <link href="{{asset('assets/plugins/bootstrap-datepicker/dist/css/bootstrap-datepicker.min.css')}}" rel="stylesheet">
 @endpush
 
 @push('js')
-    <script src=" {{ asset('assets/plugins/bootstrap-datepicker/dist/js/bootstrap-datepicker.min.js') }}"></script>
+    <script src=" {{ asset('assets/plugins/bootstrap-datepicker/dist/js/bootstrap-datepicker.min.js')}}"></script>
     <script>
         $('#datepicker').datepicker({
             autoclose: true
@@ -29,17 +29,37 @@
     <div class="card p-3 mt-4">
         <div class="card-body">
             <!-- BEGIN row -->
-
-            @if ($errors->any())
-
-                @foreach ($errors->all() as $error)
-                    <div class="alert alert-danger alert-dismissible fade show" role="alert">
-                        {{ $error }}
-                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            <div class="row justify-content-center">
+                <div class="card bg-teal bg-opacity-25 mb-4">
+                    <div class="card-header bg-none fw-bold justify-content-center">
+                        Search Patient from Portal
                     </div>
-                @endforeach
+                    <div class="row card-body">
+                        <div class="col-xl-10">
+                            <div class="form-group w-full">
 
-            @endif
+                                <input type="text" class="form-control" id="input_patient_id"
+                                    placeholder="enter patient hospital no." onkeypress='return event.charCode >= 48 && event.charCode <= 57' >
+                            </div>
+                        </div>
+                        <div class="col-xl-2 d-flex justify-content-center align-items-center">
+                            <button type="button" class="btn btn-primary"  id="search_patient_id">Search <i class="fa fa-search"></i></button>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+           @if ($errors->any())
+
+           @foreach ($errors->all() as $error)
+               <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                   {{ $error }}
+                   <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+               </div>
+
+           @endforeach
+
+           @endif
             <div class="row">
                 <div class="card d-none" id="search_result_details">
 
@@ -55,8 +75,7 @@
                                 <div class="form-group mb-3">
                                     <label class="form-label" for="first_name">First Name</label>
                                     <input type="text" class="form-control" id="first_name"
-                                        placeholder="Enter First Name" name="first_name" value="{{ old('first_name') }}"
-                                        required>
+                                        placeholder="Enter First Name" name="first_name" value="{{ old('first_name') }}" required>
                                 </div>
                             </div>
                             <div class="col-md-4">
@@ -69,34 +88,32 @@
                             <div class="col-md-4">
                                 <div class="form-group mb-3">
                                     <label class="form-label" for="last_name">Last Name</label>
-                                    <input type="text" class="form-control" id="last_name" placeholder="Enter Last Name"
-                                        name="last_name" value="{{ old('last_name') }}">
+                                    <input type="text" class="form-control" id="last_name" placeholder="Enter Last Name" name="last_name"
+                                        value="{{ old('last_name') }}">
                                 </div>
                             </div>
                             <div class="col-md-4">
                                 <div class="form-group mb-3">
-                                    <label class="form-label" for="address">Address</label>
-                                    <input type="text" class="form-control" id="address"
-                                        placeholder="Enter Hospital Number"
-                                        onkeypress='return event.charCode >= 48 && event.charCode <= 57'
-                                        value="{{ old('address') }}" name="address" required>
+                                    <label class="form-label" for="hospital_no">Hospital Id</label>
+                                    <input type="text" class="form-control" id="hospital_no"
+                                        placeholder="Enter Hospital Number" onkeypress='return event.charCode >= 48 && event.charCode <= 57' value="{{ old('hospital_no') }}" name="hospital_no" required>
                                 </div>
                             </div>
                             <div class="col-md-4">
                                 <div class="form-group mb-3">
-                                    <label class="form-label d-block" for="hospital_no">Gender</label>
-                                    <div class="form-check form-check-inline">
+                                <label class="form-label d-block" for="hospital_no">Gender</label>
+                                <div class="form-check form-check-inline">
 
-                                        <input class="form-check-input" name="gender" type="radio" value="male"
-                                            id="gender_female">
-                                        <label class="form-check-label" for="gender_female">Female</label>
-                                    </div>
-                                    <div class="form-check form-check-inline">
-                                        <input class="form-check-input" name="gender" type="radio" value="male"
-                                            id="gender_male">
-                                        <label class="form-check-label" for="gender_male">Male</label>
+                                    <input class="form-check-input" name="gender" type="radio" value="male"
+                                        id="gender_female" >
+                                    <label class="form-check-label" for="gender_female">Female</label>
+                                </div>
+                                <div class="form-check form-check-inline">
+                                    <input class="form-check-input" name="gender" type="radio" value="male"
+                                        id="gender_male">
+                                    <label class="form-check-label" for="gender_male">Male</label>
 
-                                    </div>
+                                </div>
                                 </div>
                             </div>
                             <div class="col-md-4">
@@ -142,69 +159,6 @@
                                     </div>
                                 @enderror
                             </div>
-                            <div class="col-md-4">
-                                <div class="form-group mb-3">
-                                    <label class="form-label" for="tribe">Ethnic Group</label>
-                                    <input type="text" class="form-control" id="tribe"
-                                        placeholder="Enter Patient Ethnic Group" value="{{ old('tribe') }}"
-                                        name="tribe" required>
-                                </div>
-                            </div>
-                            <div class="col-md-4">
-                                <div class="form-group mb-3">
-                                    <label class="form-label" for="occupation">occupation</label>
-                                    <input type="text" class="form-control" id="occupation"
-                                        placeholder="Enter Occupation" value="{{ old('occupation') }}" name="occupation">
-                                </div>
-                            </div>
-                            <div class="col-md-4">
-                                <div class="form-group mb-3">
-                                    <label class="form-label" for="hometown">Home Town</label>
-                                    <input type="text" class="form-control" id="hometown"
-                                        placeholder="Enter hometown" value="{{ old('hometown') }}" name="hometown">
-                                </div>
-                            </div>
-                            <div class="col-md-4">
-                                <div class="form-group mb-3">
-                                    <label class="form-label" for="state_of_origin">State of Origin</label>
-                                    <input type="text" class="form-control" id="state_of_origin"
-                                        placeholder="Enter stat_of_origin" value="{{ old('state_of_origin') }}"
-                                        name="state_of_origin">
-                                </div>
-                            </div>
-                            <div class="col-md-4">
-                                <div class="form-group mb-3">
-                                    <label class="form-label" for="next_of_kin">Next of Kin</label>
-                                    <input type="text" class="form-control" id="next_of_kin"
-                                        placeholder="Enter next_of_kin" value="{{ old('next_of_kin') }}"
-                                        name="next_of_kin">
-                                </div>
-                            </div>
-                            <div class="col-md-4">
-                                <div class="form-group mb-3">
-                                    <label class="form-label" for="next_of_kin_address">Next of Kin Address</label>
-                                    <input type="text" class="form-control" id="next_of_kin_address"
-                                        placeholder="Enter next_of_kin_address" value="{{ old('next_of_kin_address') }}"
-                                        name="next_of_kin_address">
-                                </div>
-                            </div>
-                            <div class="col-md-4">
-                                <div class="form-group mb-3">
-                                    <label class="form-label" for="next_of_kin_telephone">Next of Kin Telephone</label>
-                                    <input type="text" class="form-control" id="next_of_kin_telephone"
-                                        placeholder="Enter next_of_kin_telephone"
-                                        value="{{ old('next_of_kin_telephone') }}" name="next_of_kin_telephone">
-                                </div>
-                            </div>
-                            <div class="col-md-4">
-                                <div class="form-group mb-3">
-                                    <label class="form-label" for="next_of_kin_relationship">Next of Kin
-                                        Relationship</label>
-                                    <input type="text" class="form-control" id="next_of_kin_relationship"
-                                        placeholder="Enter next_of_kin_relationship"
-                                        value="{{ old('next_of_kin_relationship') }}" name="next_of_kin_relationship">
-                                </div>
-                            </div>
 
                         </div>
                     </div>
@@ -248,26 +202,9 @@
                                 <div class="form-group mb-3">
                                     <label class="form-label" for="admitted_from">Admitted From</label>
                                     <input type="text" class="form-control" id="admitted_from" name="admitted_from"
-                                        placeholder="Enter clinic/ward patient came from"
-                                        value="{{ old('admitted_from') }}">
+                                        placeholder="Enter clinic/ward patient came from" value="{{ old('admitted_from') }}">
                                 </div>
                             </div>
-                            <div class="col-md-4">
-                                <label for="religion" class="form-label">Select Bed</label>
-                                <select class="form-select" id="religion" name="religion" required>
-                                    <option selected disabled value="">Choose...</option>
-                                    <option value="islam">Islam</option>
-                                    <option value="christian">Christianity</option>
-                                    <option value="traditional">Traditional Religion</option>
-                                </select>
-                                @error('religion')
-                                    <div class="invalid-feedback">
-                                        Please select a valid Religion
-                                    </div>
-                                @enderror
-
-                            </div>
-
                         </div>
 
                     </div>

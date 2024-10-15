@@ -18,7 +18,9 @@
 			</div>
 			<!-- END #content -->
 		@else
+
     	@yield('content')
+       
 		@endif
 
 		@includeWhen(!empty($appFooter), 'partial.footer')

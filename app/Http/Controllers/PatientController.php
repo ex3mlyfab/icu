@@ -14,6 +14,11 @@ class PatientController extends Controller
     //
     public function index()
     {
+        return view('pages.create_patient_from_emr');
+    }
+
+    public function create()
+    {
         return view('pages.create_patient');
     }
 
@@ -37,13 +42,13 @@ class PatientController extends Controller
                 'date_of_birth' => $data['date_of_birth'],
                 'address' => $data['address'],
                 'telephone' => $data['telephone'],
-                
+
             ]);
             $patient->patientCares()->create($data);
 
         }
         });
-        
+
 
         //if there is a previous record in db
 

@@ -4,7 +4,7 @@
 
 @section('content')
     <!-- BEGIN login -->
-   
+
             <div class="login">
 
                 <!-- BEGIN login-content -->

@@ -29,7 +29,8 @@ Route::middleware('auth')->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 
     //patient- related routes
-    Route::get('/create-patient', [PatientController::class, 'index'])->name('create-patient');    
+    Route::get('/create-patient-from-emr', [PatientController::class, 'index'])->name('create-patient-from-emr');
+    Route::get('/create-patient', [PatientController::class, 'create'])->name('create-patient');
     Route::post('/store-patient', [PatientController::class, 'store'])->name('patient.store');
     Route::post('/get-table-data', [PatientController::class, 'get_table_data'])->name('patient.data');
 });
