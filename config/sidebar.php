@@ -32,6 +32,11 @@ return [
         'url' => '/create-patient',
         'text' => 'New Patient Registration'
       ]
-    ]
-  ]
+      ]
+      ],
+      [
+        'url' => '/beds',
+        'icon' => 'fa fa-bed',
+        'text' => 'Bed Information'
+      ]
 ]];

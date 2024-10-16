@@ -42,6 +42,7 @@ class CreatePatientRequest extends FormRequest
             'religion' => 'required',
             'condition' => 'required',
             'diagnosis' => 'required',
+            'admission_date' => 'required',
             'icu_consultant'=> 'nullable',
             'nurse_incharge' => 'required',
             'admitted_from' => 'required',

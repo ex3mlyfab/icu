@@ -12,6 +12,9 @@
         $('#datepicker').datepicker({
             autoclose: true
         });
+         $('#admission_date').datepicker({
+            autoclose:true
+        });
         // $('#input_patient_id').on('keyup', function() {
         //     if ($(this).val().length > 0  $(this).val().length <= 6) {
         //         $('#search_patient_id').prop('disabled', false);
@@ -23,9 +26,17 @@
 @endpush
 
 @section('content')
-    <h1 class="page-header">
-        Add New Patient
-    </h1>
+     <div class="row">
+        <div class="col-xl-12">
+            <div class="card shadow mb-1">
+                <div class="card-body d-flex justify-content-between align-items-center">
+                    <h1>Add New Patient Information</h1>
+                    <a href="{{route('dashboard')}}" class="btn btn-primary">DashBoard</a>
+                </div>
+
+            </div>
+        </div>
+    </div>
     <div class="card p-3 mt-4">
         <div class="card-body">
             <!-- BEGIN row -->
@@ -204,6 +215,35 @@
                                     <input type="text" class="form-control" id="admitted_from" name="admitted_from"
                                         placeholder="Enter clinic/ward patient came from" value="{{ old('admitted_from') }}">
                                 </div>
+                            </div>
+                             <div class="col-md-4">
+                                <div class="form-group mb-3">
+                                    <label class="form-label" for="admission_date">Date of Admission</label>
+                                    <div class="input-group">
+                                        <input type="text" class="form-control" id="admission_date"
+                                            placeholder="enter date of Admission" name="admission_date">
+                                        <label class="input-group-text" for="admission_date">
+                                            <i class="fa fa-calendar"></i>
+                                        </label>
+                                    </div>
+
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <label for="bed_mode_id" class="form-label">Select Bed</label>
+                                <select class="form-select" id="bed_mode_id" name="bed_mode_id" required>
+                                    <option selected disabled value="">Choose...</option>
+                                    @foreach ($available_bed as $item)
+                                        <option value="{{$item->id}}"> {{$item->section. '= '.$item->name}}
+                                    @endforeach
+
+                                </select>
+                                @error('bed_mode_id')
+                                    <div class="invalid-feedback">
+                                        Please select a valid BedCode
+                                    </div>
+                                @enderror
+
                             </div>
                         </div>
 

@@ -24,7 +24,6 @@ return new class extends Migration
             $table->string('hometown')->nullable();
             $table->string('state_of_origin')->nullable();
             $table->string('tribe')->nullable();
-            $table->string('address')->nullable();
             $table->string('telephone')->nullable();
             $table->string('occupation')->nullable();
             $table->string('next_of_kin')->nullable();

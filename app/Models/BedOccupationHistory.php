@@ -11,7 +11,7 @@ class BedOccupationHistory extends Model
     use HasFactory;
      protected $guarded = ['id'];
 
-    public function bed():BelongsTo
+    public function bedModel():BelongsTo
     {
         return $this->belongsTo(BedModel::class);
     }
