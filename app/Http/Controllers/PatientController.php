@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Enums\GenderEnum;
 use App\Http\Requests\CreatePatientRequest;
 use App\Models\BedModel;
 use App\Models\Patient;
@@ -23,7 +24,14 @@ class PatientController extends Controller
          'available_bed' => $available_bed
     ]);
     }
-
+    public function dashboard(){
+        $bed_count= BedModel::where('is_deleted',0)->count();
+        $occupied = BedModel::where('is_active', 1)->count();
+        return view('pages.index',[
+            'bed_count' => $bed_count,
+            'occupied' => $occupied
+        ]);
+    }
     public function create()
     {
         $available_bed = BedModel::where('is_deleted', 0)
@@ -36,6 +44,9 @@ class PatientController extends Controller
     public function store(CreatePatientRequest $request)
     {
         $data = $request->all();
+        if(!isset($data['hospital_no'])){
+            $data['hospital_no'] = $this->generate_hospital_no();
+        }
 
         DB::transaction(function () use ($data) {
             //check if patient has previous record in db
@@ -70,11 +81,17 @@ class PatientController extends Controller
                 'icu_consultant' => $data['icu_consultant'],
                 'admitted_from' => $data['admitted_from'],
                 'nurse_incharge' => $data['nurse_incharge'],
-                'notes' => $data['notes'],
+                'notes' => $data['condition'],
                 'bed_model_id' => $data['bed_model_id'],
                 'created_by' => Auth::id()
             ]);
-
+           $bedModel = BedModel::find($data['bed_model_id']);
+           $bedModel->update(['is_active' => 1]);
+           $bedModel->bedOccupationHistory()->create([
+               'start_date' => $data['admission_date'],
+               'patient_care_id' => $patient->id,
+               'is_occupied' => 1,
+           ]);
 
         });
 
@@ -92,7 +109,7 @@ class PatientController extends Controller
 
     public function get_table_data( Request $request )
     {
-        $patients = Patient::with('patientCareLatest')
+        $patients = Patient::with('patientCares')
             ->select('patients.*')
             ->orderBy('created_at', 'desc');
 
@@ -103,22 +120,29 @@ class PatientController extends Controller
                 }
 
             })
+            ->editColumn('gendervalue', function ($patient) {
+
+                return $patient->gender->name;
+            })
+            ->editColumn('fullname', function ($patient) {
+                return $patient->fullname;
+            })
             ->editColumn('diagnosis', function ($patient) {
-                return $patient->patientCareLatest->diagnosis ?? 'N/A';
+                return $patient->patientCares->last()->diagnosis ?? 'N/A';
             })
             ->editColumn('date_admitted', function ($patient) {
-                return $patient->patientCareLatest->admission_date ?? 'N/A';
+                return $patient->patientCares->last()->admission_date->format('d/m/Y') ?? 'N/A';
             })
             ->addColumn('action', function ($patient) {
                 return '<div class="btn-group">'.
-                '<button type="button" class="btn btn-primary >'.'Actions'.'</button>'.
-                '<button type="button" class="btn btn-primary >'.'Process Discharge'.'</button>'.
+                '<button type="button" class="btn btn-outline-primary ">'.'Actions'.'</button>'.
+                '<button type="button" class="btn btn-outline-primary ">'.'Process Discharge'.'</button>'.
                 '</div>';
             })
             ->setRowId(function ($patient) {
                 return "row_".$patient->id;
             })
-            ->rawColumns(['diagnosis', 'date_admitted', 'action'])
+            ->rawColumns(['gendervalue','diagnosis', 'date_admitted', 'action'])
             ->make(true);
     }
 

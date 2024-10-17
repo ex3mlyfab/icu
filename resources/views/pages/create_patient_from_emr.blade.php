@@ -10,7 +10,8 @@
     <script src=" {{ asset('assets/plugins/bootstrap-datepicker/dist/js/bootstrap-datepicker.min.js')}}"></script>
     <script>
         $('#datepicker').datepicker({
-            autoclose: true
+            autoclose: true,
+            orientation: "bottom"
         });
          $('#admission_date').datepicker({
             autoclose:true
@@ -155,7 +156,13 @@
                                 @enderror
 
                             </div>
-
+                             <div class="col-md-4">
+                                <div class="form-group mb-3">
+                                    <label class="form-label" for="telephone">Telephone</label>
+                                    <input type="text" class="form-control" id="telephone"
+                                        placeholder="Enter telephone" value="{{ old('telephone') }}" name="telephone">
+                                </div>
+                            </div>
                             <div class="col-md-4">
                                 <label for="marital_status" class="form-label">Select Marital Status</label>
                                 <select class="form-select" id="marital_status" name="marital_status" required>
@@ -231,7 +238,7 @@
                             </div>
                             <div class="col-md-4">
                                 <label for="bed_mode_id" class="form-label">Select Bed</label>
-                                <select class="form-select" id="bed_mode_id" name="bed_mode_id" required>
+                                <select class="form-select" id="bed_mode_id" name="bed_model_id" required>
                                     <option selected disabled value="">Choose...</option>
                                     @foreach ($available_bed as $item)
                                         <option value="{{$item->id}}"> {{$item->section. '= '.$item->name}}

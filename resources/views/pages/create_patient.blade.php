@@ -10,7 +10,8 @@
     <script src=" {{ asset('assets/plugins/bootstrap-datepicker/dist/js/bootstrap-datepicker.min.js') }}"></script>
     <script>
         $('#datepicker').datepicker({
-            autoclose: true
+            autoclose: true,
+            orientation: "bottom"
         });
         $('#admission_date').datepicker({
             autoclose:true
@@ -98,12 +99,12 @@
                                     <label class="form-label d-block" for="hospital_no">Gender</label>
                                     <div class="form-check form-check-inline">
 
-                                        <input class="form-check-input" name="gender" type="radio" value="male"
+                                        <input class="form-check-input" name="gender" type="radio" value="1"
                                             id="gender_female">
                                         <label class="form-check-label" for="gender_female">Female</label>
                                     </div>
                                     <div class="form-check form-check-inline">
-                                        <input class="form-check-input" name="gender" type="radio" value="male"
+                                        <input class="form-check-input" name="gender" type="radio" value="2"
                                             id="gender_male">
                                         <label class="form-check-label" for="gender_male">Male</label>
 
@@ -143,9 +144,10 @@
                                 <label for="marital_status" class="form-label">Select Marital Status</label>
                                 <select class="form-select" id="marital_status" name="marital_status" required>
                                     <option selected disabled value="">Choose...</option>
-                                    <option value="single">single</option>
-                                    <option value="married">married</option>
-                                    <option value="widow">widow </option>
+                                    <option value="1">Single</option>
+                                    <option value="2">Married</option>
+                                    <option value="3">Widow </option>
+                                    <option value="4">Divorced</option>
                                 </select>
                                 @error('marital_status')
                                     <div class="invalid-feedback">
@@ -181,6 +183,13 @@
                                     <input type="text" class="form-control" id="state_of_origin"
                                         placeholder="Enter stat_of_origin" value="{{ old('state_of_origin') }}"
                                         name="state_of_origin">
+                                </div>
+                            </div>
+                             <div class="col-md-4">
+                                <div class="form-group mb-3">
+                                    <label class="form-label" for="telephone">Telephone</label>
+                                    <input type="text" class="form-control" id="telephone"
+                                        placeholder="Enter telephone" value="{{ old('telephone') }}" name="telephone">
                                 </div>
                             </div>
                             <div class="col-md-4">
@@ -278,7 +287,7 @@
                             </div>
                            <div class="col-md-4">
                                 <label for="bed_mode_id" class="form-label">Select Bed</label>
-                                <select class="form-select" id="bed_mode_id" name="bed_mode_id" required>
+                                <select class="form-select" id="bed_mode_id" name="bed_model_id" required>
                                     <option selected disabled value="">Choose...</option>
                                     @foreach ($available_bed as $item)
                                         <option value="{{$item->id}}"> {{$item->section. '- '.$item->name}}

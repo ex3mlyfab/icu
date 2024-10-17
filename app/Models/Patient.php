@@ -2,6 +2,8 @@
 
 namespace App\Models;
 
+use App\Enums\GenderEnum;
+use App\Enums\MaritalStatusEnum;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -11,15 +13,21 @@ class Patient extends Model
 {
     use HasFactory;
      protected $guarded = ['id'];
+     protected $casts = [
+         'date_of_birth' => 'date',
+         'gender' =>GenderEnum::class,
+         'marital_status' =>MaritalStatusEnum::class
+
+     ];
 
      public function patientCares(): HasMany
      {
-        return $this->hasMany(PatientCare::class);
+        return $this->hasMany(PatientCare::class)->orderBy('created_at', 'desc');
      }
 
      public function patientCareLatest()
-     {
-        return $this->patientCares()->latest();
+    {
+        return $this->patientCares()->latest()->first();
     }
     public function getFullnameAttribute()
     {

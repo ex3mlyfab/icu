@@ -16,7 +16,7 @@ return new class extends Migration
         Schema::create('bed_occupation_histories', function (Blueprint $table) {
             $table->id();
             $table->foreignIdFor(BedModel::class, 'bed_model_id')->constrained();
-            $table->foreignIdFor(Patient::class, 'patient_care_id')->constrained();
+            $table->foreignIdFor(Patient::class, 'patient_id')->constrained();
             $table->date('start_date');
             $table->date('end_date')->nullable();
             $table->boolean('is_occupied')->default(0);

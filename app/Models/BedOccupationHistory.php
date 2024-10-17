@@ -11,6 +11,11 @@ class BedOccupationHistory extends Model
     use HasFactory;
      protected $guarded = ['id'];
 
+     protected $casts = [
+         'start_date' => 'datetime',
+         'end_date' => 'datetime',
+     ];
+
     public function bedModel():BelongsTo
     {
         return $this->belongsTo(BedModel::class);

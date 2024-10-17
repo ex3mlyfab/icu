@@ -11,6 +11,10 @@ class PatientCare extends Model
 
     protected $guarded = ['id'];
 
+    protected $casts = [
+       'admission_date' => 'datetime',
+       'discharge_date' => 'datetime',
+    ];
     
 
 }

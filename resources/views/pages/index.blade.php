@@ -45,7 +45,7 @@ $(document).ready(function() {
             {data: 'hospital_no', name: 'Hospital No'},
             {data: 'date_admitted', name: 'Date Admitted'},
             {data: 'diagnosis', name: 'diagnosis'},
-            {data: 'gender', name: 'gender'},
+            {data: 'gendervalue', name: 'gender'},
             {data: 'action', name: 'action'},
         ],
 		dom: "<'row mb-3'<'col-md-4 mb-3 mb-md-0'l><'col-md-8 text-right'<'d-flex justify-content-end'f<'ms-2'B>>>>t<'row align-items-center mt-3'<'mr-auto col-md-6'i><'mb-0 col-md-6'p>>",
@@ -84,7 +84,7 @@ $(document).ready(function() {
 
                     <div class="d-flex">
                         <div class="flex-grow-1">
-                            <h3 class="mb-1">184,593</h3>
+                            <h3 class="mb-1">{{$bed_count}}</h3>
 
                         </div>
                         <div
@@ -112,7 +112,7 @@ $(document).ready(function() {
 
                     <div class="d-flex">
                         <div class="flex-grow-1">
-                            <h3 class="mb-1">184,593</h3>
+                            <h3 class="mb-1">{{$occupied}}</h3>
 
                         </div>
                         <div
@@ -149,7 +149,7 @@ $(document).ready(function() {
             </div>
 
         </div>
- 
+
     </div>
 
 
