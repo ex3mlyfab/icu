@@ -4,6 +4,7 @@
 <meta name="description" content="@yield('metaDescription')" />
 <meta name="author" content="@yield('metaAuthor')" />
 <meta name="keywords" content="@yield('metaKeywords')" />
+<link rel="shortcut icon" href="{{asset('images/fmc_logo.ico')}}" type="image/x-icon">
 
 @stack('metaTag')
 

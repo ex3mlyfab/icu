@@ -26,7 +26,7 @@ class PatientCare extends Model
     }
     public function bedModel(): BelongsTo
     {
-        return $this->belongsTo(BedMOdel::class);
+        return $this->belongsTo(BedModel::class);
     }
     public function bedOccupationHistory(): HasOne
     {
