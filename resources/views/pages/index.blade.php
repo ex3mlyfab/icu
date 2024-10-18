@@ -40,13 +40,14 @@ $(document).ready(function() {
                 console.log(request.responseText);
             }
         }),
+        searching: false,
         columns: [
             {data: 'fullname', name: 'name'},
             {data: 'hospital_no', name: 'Hospital No'},
             {data: 'date_admitted', name: 'Date Admitted'},
             {data: 'diagnosis', name: 'diagnosis'},
             {data: 'gendervalue', name: 'gender'},
-            {data: 'action', name: 'action'},
+            {data: 'action', name: 'action', className: 'text-center'},
         ],
 		dom: "<'row mb-3'<'col-md-4 mb-3 mb-md-0'l><'col-md-8 text-right'<'d-flex justify-content-end'f<'ms-2'B>>>>t<'row align-items-center mt-3'<'mr-auto col-md-6'i><'mb-0 col-md-6'p>>",
 		lengthMenu: [ 10, 20, 30, 40, 50 ],

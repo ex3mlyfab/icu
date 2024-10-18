@@ -9315,5 +9315,6 @@
     "/assets/plugins/jszip/sponsors.md": "/assets/plugins/jszip/sponsors.md",
     "/assets/plugins/jszip/tsconfig.json": "/assets/plugins/jszip/tsconfig.json",
     "/assets/plugins/jszip/vendor/FileSaver.js": "/assets/plugins/jszip/vendor/FileSaver.js",
-    "/assets/js/demo/table-plugins.demo.js": "/assets/js/demo/table-plugins.demo.js"
+    "/assets/js/demo/table-plugins.demo.js": "/assets/js/demo/table-plugins.demo.js",
+    "/assets/js/demo/dashboard.demo.js": "/assets/js/demo/dashboard.demo.js"
 }

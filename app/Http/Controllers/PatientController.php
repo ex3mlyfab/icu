@@ -135,7 +135,7 @@ class PatientController extends Controller
             })
             ->addColumn('action', function ($patient) {
                 return '<div class="btn-group">'.
-                '<button type="button" class="btn btn-outline-primary ">'.'Actions'.'</button>'.
+                '<a href="'.route('patient.treatment', $patient->id).'"  class="btn btn-outline-primary ">'.'Actions'.'</button>'.
                 '<button type="button" class="btn btn-outline-primary ">'.'Process Discharge'.'</button>'.
                 '</div>';
             })
@@ -150,6 +150,11 @@ class PatientController extends Controller
     {
         $patient_count = Patient::count();
         return str_pad($patient_count + 1, 6, '0', STR_PAD_LEFT);
+    }
+
+    public function show(Patient $patient)
+    {
+        return view('pages.show_patient', compact('patient'));
     }
 
 }

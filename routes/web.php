@@ -41,7 +41,8 @@ Route::middleware('auth')->group(function () {
     Route::patch('/update/{bedModel}/update', [BedModelController::class, 'update'])->name('bed.update');
     Route::delete('/delete/{bedModel}', [BedModelController::class. 'delete'])->name('bed.delete');
 
-    //
+    //treatment routes
+    Route::get('/show-patient/{patient}/treatment', [PatientController::class, 'show'])->name('patient.treatment');
 });
 
 require __DIR__.'/auth.php';

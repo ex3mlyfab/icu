@@ -18,15 +18,17 @@ return new class extends Migration
             $table->smallInteger('blood_pressure_systolic');
             $table->smallInteger('blood_pressure_diastolic');
             $table->smallInteger('temperature');
-            $table->smallInteger('respiratory_rate');
+            $table->smallInteger('respiratory_rate')->nullable();
 
-            $table->smallInteger('weight');
-            $table->smallInteger('map');
-            $table->smallInteger('cvp');
-            $table->smallInteger('rhythm');
-            $table->smallInteger('peripheral_pulses');
-            $table->smallInteger('capillary_refill_time');
-            $table->dateTime('time_of_cardio_assessment');
+            $table->smallInteger('weight')->nullable();
+            $table->smallInteger('map')->nullable();
+            $table->smallInteger('cvp')->nullable();
+            $table->smallInteger('rhythm')->nullable();
+            $table->smallInteger('peripheral_pulses')->nullable();
+            $table->smallInteger('capillary_refill_time')->nullable();
+            $table->dateTime('time_of_cardio_assessment')->nullable();
+            $table->time('hour_taken');
+             $table->dateTime('time_of_respiratory_assessment');
             $table->foreignId('created_by')->constrained('users');
             $table->timestamps();
         });

@@ -110,3 +110,4 @@ mix.copy('node_modules/jszip/', 'public/assets/plugins/jszip/');
 //demos
 
 mix.copy('resources/js/demo/table-plugins.demo.js', 'public/assets/js/demo/table-plugins.demo.js');
+mix.copy('resources/js/demo/dashboard.demo.js', 'public/assets/js/demo/dashboard.demo.js');
