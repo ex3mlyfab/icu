@@ -134,7 +134,8 @@ $(document).ready(function() {
 
         <div class="card">
             <div class="card-body">
-                <table id="datatableDefault" class="table w-full">
+                <div class="table-responsive">
+                <table id="datatableDefault" class="table text-nowrap w-100">
                     <thead>
                         <tr>
                             <th>Name</th>
@@ -147,6 +148,7 @@ $(document).ready(function() {
                     </thead>
 
                 </table>
+                </div>
             </div>
 
         </div>

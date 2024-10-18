@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 
@@ -14,17 +15,16 @@ class BedModel extends Model
 
      public function bedOccupationHistory(): HasMany
      {
-        return $this->hasMany(BedOccupationHistory::class)->orderBy('created_at', 'desc');
+        return $this->hasMany(BedOccupationHistory::class);
      }
 
-     public function bedOccupationHistoryLatest()
+     public function latestBedOccupationHistory(): HasOne
      {
-        return $this->bedOccupationHistory()->latest();
+        return $this->hasOne(BedOccupationHistory::class)->latestOfMany();
      }
-
-    public function getOccupancyAttribute()
-    {
-        return $this->bedOccupationHistoryLatest->is_occupied ?? 0;
-    }
-
+     public function patientCare():BelongsTo
+     {
+        return $this->belongsTo(PatientCare::class);
+     }
+    
 }

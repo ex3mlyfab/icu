@@ -89,26 +89,23 @@
                                 <div class="form-group mb-3">
                                     <label class="form-label" for="address">Address</label>
                                     <input type="text" class="form-control" id="address"
-                                        placeholder="Enter Hospital Number"
-                                        onkeypress='return event.charCode >= 48 && event.charCode <= 57'
+                                        placeholder="Enter Address"
                                         value="{{ old('address') }}" name="address" required>
                                 </div>
                             </div>
                             <div class="col-md-4">
                                 <div class="form-group mb-3">
                                     <label class="form-label d-block" for="hospital_no">Gender</label>
+                                    @foreach (\App\Enums\GenderEnum::cases() as $key=> $item)
                                     <div class="form-check form-check-inline">
 
-                                        <input class="form-check-input" name="gender" type="radio" value="1"
-                                            id="gender_female">
-                                        <label class="form-check-label" for="gender_female">Female</label>
+                                        <input class="form-check-input" name="gender" type="radio" value="{{$item->value}}" 
+                                            id="gender_{{$key}}" @selected(old('gender')== $item->value)>
+                                        <label class="form-check-label" for="gender_{{$key}}">{{$item->name}}</label>
                                     </div>
-                                    <div class="form-check form-check-inline">
-                                        <input class="form-check-input" name="gender" type="radio" value="2"
-                                            id="gender_male">
-                                        <label class="form-check-label" for="gender_male">Male</label>
-
-                                    </div>
+                                        
+                                    @endforeach
+                                    
                                 </div>
                             </div>
                             <div class="col-md-4">
@@ -116,7 +113,7 @@
                                     <label class="form-label" for="date_of_birth">Date of Birth</label>
                                     <div class="input-group">
                                         <input type="text" class="form-control" id="datepicker"
-                                            placeholder="enter date of Birth" name="date_of_birth">
+                                            placeholder="enter date of Birth" name="date_of_birth" value="{{ old('date_of_birth') }}">
                                         <label class="input-group-text" for="datepicker">
                                             <i class="fa fa-calendar"></i>
                                         </label>
@@ -144,10 +141,10 @@
                                 <label for="marital_status" class="form-label">Select Marital Status</label>
                                 <select class="form-select" id="marital_status" name="marital_status" required>
                                     <option selected disabled value="">Choose...</option>
-                                    <option value="1">Single</option>
-                                    <option value="2">Married</option>
-                                    <option value="3">Widow </option>
-                                    <option value="4">Divorced</option>
+                                    @foreach (\App\Enums\MaritalStatusEnum::cases() as $marital_status)
+                                    <option value="{{$marital_status->value}}" @selected(old('marital_status')== $marital_status->value)>{{$marital_status->name}}</option>
+                                        
+                                    @endforeach
                                 </select>
                                 @error('marital_status')
                                     <div class="invalid-feedback">
@@ -241,7 +238,7 @@
                             </div>
                             <div class="col-md-4">
                                 <label for="condition" class="form-label">Condition</label>
-                                <textarea class="form-control" id="condition" name="condition" placeholder="explain a bit of Condition" required></textarea>
+                                <textarea class="form-control" id="condition" name="condition" placeholder="explain a bit of Condition" value="{{ old('condition') }}" required></textarea>
                                 @error('condition')
                                     <div class="invalid-feedback">
                                         Please enter a conditon for the patient.
@@ -277,7 +274,7 @@
                                     <label class="form-label" for="admission_date">Date of Admission</label>
                                     <div class="input-group">
                                         <input type="text" class="form-control" id="admission_date"
-                                            placeholder="enter date of Admission" name="admission_date">
+                                            placeholder="enter date of Admission" name="admission_date" value="{{ old('admission_date') }}">
                                         <label class="input-group-text" for="admission_date">
                                             <i class="fa fa-calendar"></i>
                                         </label>

@@ -21,8 +21,8 @@ class BedOccupationHistory extends Model
         return $this->belongsTo(BedModel::class);
     }
 
-    public function patient():BelongsTo
+    public function patientCare():BelongsTo
     {
-        return $this->belongsTo(Patient::class);
+        return $this->belongsTo(PatientCare::class);
     }
 }

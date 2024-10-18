@@ -29,7 +29,7 @@ class BedModelController extends Controller
                 return $bed->is_deleted ? '<span class="badge bg-danger p-2">InActive</span>' : '<span class="badge bg-primary p-2">Active</span>';
             })
              ->editColumn('occupancy', function ($bed) {
-                return $bed->is_active ? '<div class="badge bg-dangerbp-2">Occupied</span>' : '<span class="badge bg-secondary p-2">Unoccupied</span>';
+                return $bed->is_active ? '<div class="badge bg-danger p-2">Occupied</span>' : '<span class="badge bg-secondary p-2">Unoccupied</span>';
             })
              ->addColumn('action', function ($bed) {
                 return '<div class="btn-group">'.

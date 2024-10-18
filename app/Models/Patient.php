@@ -22,13 +22,13 @@ class Patient extends Model
 
      public function patientCares(): HasMany
      {
-        return $this->hasMany(PatientCare::class)->orderBy('created_at', 'desc');
+        return $this->hasMany(PatientCare::class);
      }
 
-     public function patientCareLatest()
-    {
-        return $this->patientCares()->latest()->first();
-    }
+     public function latestPatientCare(): HasOne
+     {
+        return $this->hasOne(PatientCare::class)->latestOfMany();
+     }
     public function getFullnameAttribute()
     {
         return ucwords( $this->first_name . ' ' . $this->middle_name . ' ' . $this->last_name);

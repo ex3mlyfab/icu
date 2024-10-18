@@ -28,8 +28,9 @@
                     <div class="row">
                         <div class="col-md-3">
                             <div class="d-flex flex-column">
-                                <h4 class="fw-bold mb-0">{{ $patient->fullname }}</h4>
-                                <h5 class="text-muted my-0 text-teal-emphasis">
+                                <h4 class="mb-0"> Name: <span class=
+                                    "fw-bold text-gray-emphasis">{{ $patient->fullname }}</span></h4>
+                                <h5 class="text-muted my-0 text-teal-emphasis">Age:  &nbsp;
                                     {{ (int) $patient->date_of_birth->diffInYears() }} Years
                                     {{ $patient->date_of_birth->diffInMonths() % 12 }} Months</h5>
                                 <h5 class="text-muted my-0 text-gray-emphasis">{{ $patient->gender->name }}</h5>
@@ -37,18 +38,22 @@
                             </div>
                         </div>
                         <div class="col-md-3 border-start border-2 border-primary bg-gray-200 rounded">
-                            <h5 class="text-muted my-0 text-gray-emphasis"><span class="fw-bold">Bed-No:</span> </h5>
-                            <h5 class="text-muted my-0 text-gray-emphasis"><span class="fw-bold">Admission-Date:</span>
+                            <h5 class="text-muted my-0 text-gray-emphasis">Bed-No: &nbsp;<span class="fw-bold">{{ $patient->latestPatientCare->bedModel->name}} </span></h5>
+                            <h5 class="text-muted my-0 text-gray-emphasis">Admission-Date: &nbsp;<span class="fw-bold">{{$patient->latestPatientCare->admission_date->format('d/M/Y')}}</span>
                             </h5>
-                            <h5 class="text-muted my-0 text-gray-emphasis"><span class="fw-bold">Diagnosis:</span></h5>
-                            <h5 class="text-muted my-0 text-gray-emphasis"><span class="fw-bold">Admitted-From:</span></h5>
+                            <h5 class="text-muted my-0 text-gray-emphasis">Diagnosis:  &nbsp;<span class="fw-bold">{{ $patient->latestPatientCare->diagnosis}}</span></h5>
+                            <h5 class="text-muted my-0 text-gray-emphasis"><span class="fw-bold">Admitted-From:  &nbsp;</span>{{$patient->latestPatientCare->admitted_from}}</h5>
                         </div>
                         <div class="col-md-3 border-start border-2 border-primary">
-                            <h5 class="text-muted my-0 text-gray-emphasis"><span class="fw-bold">Bed-No:</span> </h5>
-                            <h5 class="text-muted my-0 text-gray-emphasis"><span class="fw-bold">Admission-Date:</span>
+                            <h5 class="text-muted my-0 text-gray-emphasis"><span class="fw-bold">condition: &nbsp;</span> {{$patient->latestPatientCare->notes}}</h5>
+                            <h5 class="text-muted my-0 text-gray-emphasis"><span class="fw-bold">Consultant: &nbsp;</span>
+                                {{$patient->latestPatientCare->icu_consultant}}
                             </h5>
-                            <h5 class="text-muted my-0 text-gray-emphasis"><span class="fw-bold">Diagnosis:</span></h5>
-                            <h5 class="text-muted my-0 text-gray-emphasis"><span class="fw-bold">Admitted-From:</span></h5>
+                            <h5 class="text-muted my-0 text-gray-emphasis"><span class="fw-bold">Nurse Incharge:  &nbsp;</span>{{$patient->latestPatientCare->nurse_incharge}}</h5>
+                            <h5 class="text-muted my-0 text-gray-emphasis"><span class="fw-bold">Next of Kin: &nbsp;</span>{{ $patient->next_of_kin}}</h5>
+                        </div>
+                        <div class="col-md-3 border-start border-2 border-primary">
+                           <a href="{{route('dashboard')}}" class="btn btn-outline-primary">DashBoard</a>
                         </div>
                     </div>
                 </div>

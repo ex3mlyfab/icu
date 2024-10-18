@@ -25,6 +25,7 @@ $(document).ready(function() {
     var table = $('#datatableDefault').DataTable({
         processing: true,
         serverSide: true,
+        searching: false,
         ajax: ({
             url: "{{ route('bed.datatable') }}",
             method: "POST",
@@ -44,7 +45,7 @@ $(document).ready(function() {
             {data: 'description', name: 'description'},
             {data: 'occupancy', name: 'occupancy'},
             {data: 'status', name: 'status'},
-            {data: 'action', name: 'action'},
+            {data: 'action', name: 'action',  className: 'text-center'},
         ],
 		dom: "<'row mb-3'<'col-md-4 mb-3 mb-md-0'l><'col-md-8 text-right'<'d-flex justify-content-end'f<'ms-2'B>>>>t<'row align-items-center mt-3'<'mr-auto col-md-6'i><'mb-0 col-md-6'p>>",
 		lengthMenu: [ 10, 20, 30, 40, 50 ],

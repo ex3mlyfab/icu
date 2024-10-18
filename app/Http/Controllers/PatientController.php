@@ -44,11 +44,12 @@ class PatientController extends Controller
     public function store(CreatePatientRequest $request)
     {
         $data = $request->all();
+        
+
+        DB::transaction(function () use ($data) {
         if(!isset($data['hospital_no'])){
             $data['hospital_no'] = $this->generate_hospital_no();
         }
-
-        DB::transaction(function () use ($data) {
             //check if patient has previous record in db
         $patient = Patient::where('hospital_no', $data['hospital_no'])->first();
         if (!$patient) {
@@ -89,7 +90,7 @@ class PatientController extends Controller
            $bedModel->update(['is_active' => 1]);
            $bedModel->bedOccupationHistory()->create([
                'start_date' => $data['admission_date'],
-               'patient_care_id' => $patient->id,
+               'patient_care_id' => $patient->latestPatientCare->id,
                'is_occupied' => 1,
            ]);
 
@@ -109,7 +110,7 @@ class PatientController extends Controller
 
     public function get_table_data( Request $request )
     {
-        $patients = Patient::with('patientCares')
+        $patients = Patient::with('latestPatientCare')
             ->select('patients.*')
             ->orderBy('created_at', 'desc');
 
@@ -128,15 +129,15 @@ class PatientController extends Controller
                 return $patient->fullname;
             })
             ->editColumn('diagnosis', function ($patient) {
-                return $patient->patientCares->last()->diagnosis ?? 'N/A';
+                return $patient->latestPatientCare->diagnosis ?? 'N/A';
             })
             ->editColumn('date_admitted', function ($patient) {
-                return $patient->patientCares->last()->admission_date->format('d/m/Y') ?? 'N/A';
+                return $patient->latestPatientCare->admission_date->format('d/m/Y') ?? 'N/A';
             })
             ->addColumn('action', function ($patient) {
                 return '<div class="btn-group">'.
-                '<a href="'.route('patient.treatment', $patient->id).'"  class="btn btn-outline-primary ">'.'Actions'.'</button>'.
-                '<button type="button" class="btn btn-outline-primary ">'.'Process Discharge'.'</button>'.
+                '<a href="'.route('patient.treatment', $patient->id).'" class="btn btn-outline-primary">'.'Record'.'</a>'.
+                '<a type="button" class="btn btn-outline-primary">'.'Process Discharge'.'</a>'.
                 '</div>';
             })
             ->setRowId(function ($patient) {
