@@ -7,10 +7,12 @@ use App\Http\Requests\CreatePatientRequest;
 use App\Models\BedModel;
 use App\Models\Patient;
 use Illuminate\Http\Request;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Yajra\DataTables\Facades\DataTables;
 
+use function Symfony\Component\Clock\now;
 
 class PatientController extends Controller
 {
@@ -44,7 +46,7 @@ class PatientController extends Controller
     public function store(CreatePatientRequest $request)
     {
         $data = $request->all();
-        
+
 
         DB::transaction(function () use ($data) {
         if(!isset($data['hospital_no'])){
@@ -155,7 +157,21 @@ class PatientController extends Controller
 
     public function show(Patient $patient)
     {
-        return view('pages.show_patient', compact('patient'));
+        $dates = $this->generate_dates_between($patient->latestPatientCare->admission_date, Carbon::parse(now()));
+        return view('pages.show_patient', compact('patient', 'dates'));
     }
 
+    function generate_dates_between(Carbon $start_date, Carbon $end_date): array
+     {
+    $dates = [];
+
+    $current_date = $start_date;
+
+    while ($current_date <= $end_date) {
+        $dates[] = $current_date->copy();
+        $current_date->addDay();
+    }
+
+    return $dates;
+}
 }

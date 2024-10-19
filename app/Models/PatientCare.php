@@ -38,10 +38,7 @@ class PatientCare extends Model
         return $this->hasMany(BloodGas::class);
     }
 
-    // public function bedModel(): HasOneThrough
-    // {
-    //     return $this->hasOneThrough(BedModel::class, BedOccupationHistory::class,'patient_care_id', 'bed_occupation_history_id', 'id', 'id');
-    // }
+
 
     public function bowelOutputs(): HasMany
     {

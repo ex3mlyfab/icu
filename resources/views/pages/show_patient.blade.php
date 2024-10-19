@@ -28,9 +28,11 @@
                     <div class="row">
                         <div class="col-md-3">
                             <div class="d-flex flex-column">
-                                <h4 class="mb-0"> Name: <span class=
-                                    "fw-bold text-gray-emphasis">{{ $patient->fullname }}</span></h4>
-                                <h5 class="text-muted my-0 text-teal-emphasis">Age:  &nbsp;
+                                <h4 class="mb-0"> Name: <span
+                                        class=
+                                    "fw-bold text-gray-emphasis">{{ $patient->fullname }}</span>
+                                </h4>
+                                <h5 class="text-muted my-0 text-teal-emphasis">Age: &nbsp;
                                     {{ (int) $patient->date_of_birth->diffInYears() }} Years
                                     {{ $patient->date_of_birth->diffInMonths() % 12 }} Months</h5>
                                 <h5 class="text-muted my-0 text-gray-emphasis">{{ $patient->gender->name }}</h5>
@@ -38,22 +40,41 @@
                             </div>
                         </div>
                         <div class="col-md-3 border-start border-2 border-primary bg-gray-200 rounded">
-                            <h5 class="text-muted my-0 text-gray-emphasis">Bed-No: &nbsp;<span class="fw-bold">{{ $patient->latestPatientCare->bedModel->name}} </span></h5>
-                            <h5 class="text-muted my-0 text-gray-emphasis">Admission-Date: &nbsp;<span class="fw-bold">{{$patient->latestPatientCare->admission_date->format('d/M/Y')}}</span>
+                            <h5 class="text-muted my-0 text-gray-emphasis">Bed-No: &nbsp;<span
+                                    class="fw-bold">{{ $patient->latestPatientCare->bedModel->name }} </span></h5>
+                            <h5 class="text-muted my-0 text-gray-emphasis">Admission-Date: &nbsp;<span
+                                    class="fw-bold">{{ $patient->latestPatientCare->admission_date->format('d/M/Y') }}</span>
                             </h5>
-                            <h5 class="text-muted my-0 text-gray-emphasis">Diagnosis:  &nbsp;<span class="fw-bold">{{ $patient->latestPatientCare->diagnosis}}</span></h5>
-                            <h5 class="text-muted my-0 text-gray-emphasis"><span class="fw-bold">Admitted-From:  &nbsp;</span>{{$patient->latestPatientCare->admitted_from}}</h5>
+                            <h5 class="text-muted my-0 text-gray-emphasis">Diagnosis: &nbsp;<span
+                                    class="fw-bold">{{ $patient->latestPatientCare->diagnosis }}</span></h5>
+                            <h5 class="text-muted my-0 text-gray-emphasis"><span class="fw-bold">Admitted-From:
+                                    &nbsp;</span>{{ $patient->latestPatientCare->admitted_from }}</h5>
                         </div>
                         <div class="col-md-3 border-start border-2 border-primary">
-                            <h5 class="text-muted my-0 text-gray-emphasis"><span class="fw-bold">condition: &nbsp;</span> {{$patient->latestPatientCare->notes}}</h5>
+                            <h5 class="text-muted my-0 text-gray-emphasis"><span class="fw-bold">condition: &nbsp;</span>
+                                {{ $patient->latestPatientCare->notes }}</h5>
                             <h5 class="text-muted my-0 text-gray-emphasis"><span class="fw-bold">Consultant: &nbsp;</span>
-                                {{$patient->latestPatientCare->icu_consultant}}
+                                {{ $patient->latestPatientCare->icu_consultant }}
                             </h5>
-                            <h5 class="text-muted my-0 text-gray-emphasis"><span class="fw-bold">Nurse Incharge:  &nbsp;</span>{{$patient->latestPatientCare->nurse_incharge}}</h5>
-                            <h5 class="text-muted my-0 text-gray-emphasis"><span class="fw-bold">Next of Kin: &nbsp;</span>{{ $patient->next_of_kin}}</h5>
+                            <h5 class="text-muted my-0 text-gray-emphasis"><span class="fw-bold">Nurse Incharge:
+                                    &nbsp;</span>{{ $patient->latestPatientCare->nurse_incharge }}</h5>
+                            <h5 class="text-muted my-0 text-gray-emphasis"><span class="fw-bold">Next of Kin:
+                                    &nbsp;</span>{{ $patient->next_of_kin }}</h5>
                         </div>
                         <div class="col-md-3 border-start border-2 border-primary">
-                           <a href="{{route('dashboard')}}" class="btn btn-outline-primary">DashBoard</a>
+                            <a href="{{ route('dashboard') }}" class="btn btn-outline-primary">DashBoard</a>
+                            <div class="form-group row my-1 rounded bg-green-200 px-2 align-items-center">
+                                <label for="active-day" class="form-label fw-bold">Active Day</label>
+
+                                <select class="form-select form-select-lg mb-3" id="active-day">
+                                    @foreach ($dates as $key => $date)
+                                        <option value="{{ $date->format('Y-m-d') }}" @selected($date == today())>
+                                            {{ $date->format('d-m-y') }} - Day {{ $key + 1 }}</option>
+                                    @endforeach
+                                </select>
+
+                            </div>
+
                         </div>
                     </div>
                 </div>
@@ -62,17 +83,40 @@
         <div class="row gy-2">
             <div class="col-lg-6">
                 <div class="card h-100 mt-2">
-                    <!-- BEGIN card-body -->
-                    <div class="card-body">
-                        <div class="d-flex mb-3 gap-1">
-                            <div class="flex-grow-1">
-                                <h5 class="mb-1">Cardiovascular Assessment</h5>
+                    <div class="card-header bg-danger-200 d-flex align-items-center">
+                        <div class="flex-grow-1">
+                            <h5 class="mb-1">Cardiovascular Assessment</h5>
+                        </div>
+                        <div class="d-flex gap-2 align-items-center">
 
-                            </div>
                             <i class="fa fa-plus" data-bs-toggle="modal" data-bs-target="#modalXl"></i>
                             <a href="javascript:;" class="text-secondary"><i class="fa fa-redo"></i></a>
                         </div>
-                        <div id="chart"></div>
+                    </div>
+                    <div class="card-header">
+                        <ul class="nav nav-tabs card-header-tabs">
+                            <li class="nav-item">
+                                <a href="#home-cardio" class="nav-link active" data-bs-toggle="tab">Chart</a>
+                            </li>
+                            <li class="nav-item">
+                                <a href="#table-cardio" class="nav-link" data-bs-toggle="tab">Tabular Form</a>
+                            </li>
+                        </ul>
+                    </div>
+
+                    <!-- BEGIN card-body -->
+                    <div class="card-body">
+                        <div class="tab-content pt-3">
+                            <div class="tab-pane fade show active" id="home-cardio">
+
+                                <div id="chart"></div>
+                            </div>
+                            <div class="tab-pane fade" id="table-cardio">
+                                <h1>table content goes here</h1>
+                            </div>
+                        </div>
+
+
                     </div>
                     <!-- END card-body -->
                 </div>
