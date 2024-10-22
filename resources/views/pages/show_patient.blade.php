@@ -12,15 +12,131 @@
     <script src="{{ asset('assets/js/demo/dashboard.demo.js') }}"></script>
     <script>
         $('#timepicker-default').timepicker({
-            defaultTime: '{{ now()->format('H:i:s') }}'
+            defaultTime: 'current',
+            showMeridian: false,
+            minuteStep: 1
         });
         $('#timepicker-respiratoy').timepicker({
-            defaultTime: '{{ now()->format('H:i:s') }}'
+            defaultTime: 'current',
+            showMeridian: false,
+            minuteStep: 1
+        });
+
+
+        let activeDay = $('#active-day').val();
+
+
+        // Store the GET function in a variable
+        var getCardioData = function() {
+
+            $.ajax({
+                type: 'GET', // or 'POST' if required
+                url: `{{ URL::to('/') }}/show-patient/{{ $patient->latestPatientCare->id }}/cardio-assessment/${activeDay}`,
+                dataType: 'json', // Specify the expected data format (e.g., JSON)
+                success: function(data) {
+
+
+                    // $('#chart-3').html(data.data);
+                    let myData = data.data;
+                    console.log(myData);
+                    var table = $('<table class="table table-bordered"></table>');
+                    var headerIndicator = $('<thead></thead>');
+                    // Create a table header row
+                    var headerRow = $('<tr></tr>');
+                    headerRow.append('<th>label</th>');
+                    for (var i = 0; i < myData.label.length; i++) {
+
+                        headerRow.append('<th>' + myData.label[i] + '</th>');
+                    }
+                    headerIndicator.append(headerRow);
+                    table.append(headerIndicator);
+
+                    // Create table body rows
+                    for (var key in myData) {
+                        if (key !== "label") {
+                            var row = $('<tr></tr>');
+                            row.append('<th>' + key + '</th>');
+                            for (var i = 0; i < myData[key].length; i++) {
+                                row.append('<td>' + myData[key][i] + '</td>');
+                            }
+                            table.append(row);
+                        }
+                    }
+                    $("#table-cardio").html(table);
+                    // console.log(data.data);
+                    $('cardio-table tbody').empty();
+
+                    // for (var i = 0; i < data.length; i++) {
+                    //     $('cardio-table tbody').append(
+                    //         '<tr>' +
+                    //         '<td>' + data[i].date + '</td>' +
+                    //         '<td>' + data[i].time + '</td>' +
+                    //         '<td>' + data[i].pulse + '</td>' +
+
+                },
+                error: function(error) {
+                    // Handle errors
+                    console.error(error);
+                    // You can display an error message to the user here
+                }
+            });
+        };
+        getCardioData();
+        $('#cardio-save-spinner').hide();
+        $('#cardio-form').submit(function(event) {
+            event.preventDefault(); // Prevent default form submission
+
+            var formData = $(this).serialize(); // Serialize form data
+            $('#cardio-save').prop('disabled', true);
+            $('#cardio-save-spinner').show();
+
+            $.ajax({
+            type: 'POST',
+            url: '{{ route('cardio.store') }}', // Replace with your server-side script URL
+            data: formData,
+            success: function(response)
+            {
+
+                console.log(response);
+                $('#toast-1 .toast-body').html(response.message);
+                $('#toast-1').toast('show');
+                $('#modalXl').modal('hide');
+
+                $('#cardio-form')[0].reset();
+                $('#cardio-save').prop('disabled', false);
+                $('#cardio-save-spinner').hide();
+                getCardioData();
+            },
+            error: function(error) {
+                // Handle errors
+                console.error(error);
+                // You can display an error message to the user here
+            }
+        });
+     });
+
+        $('#active-day').on('change', function() {
+            activeDay = $('#active-day').val();
+            getCardioData();
         });
     </script>
 @endpush
 
 @section('content')
+    <div class="toast-container">
+        <div class="toast fade hide mb-3" data-autohide="false" id="toast-1">
+            <div class="toast-header">
+                <i class="far fa-bell text-muted me-2"></i>
+                <strong class="me-auto">Success!</strong>
+
+                <button type="button" class="btn-close" data-bs-dismiss="toast"></button>
+            </div>
+            <div class="toast-body">
+
+            </div>
+        </div>
+    </div>
+
     <div class="mx-2 mx-md-5 mt-2">
         <div class="card border-theme border-3  sticky-top">
             <div class="card-body row gx-0 align-items-center shadow-lg">
@@ -35,8 +151,8 @@
                                 <h5 class="text-muted my-0 text-teal-emphasis">Age: &nbsp;
                                     {{ (int) $patient->date_of_birth->diffInYears() }} Years
                                     {{ $patient->date_of_birth->diffInMonths() % 12 }} Months</h5>
-                                <h5 class="text-muted my-0 text-gray-emphasis">{{ $patient->gender->name }}</h5>
-                                <h5 class="text-muted my-0">{{ $patient->marital_status->name }}</h5>
+                                <h5 class="text-muted my-0 text-gray-emphasis">Sex: &nbsp;{{ $patient->gender->name }}</h5>
+                                <h5 class="text-muted my-0">Marital Status: &nbsp;{{ $patient->marital_status->name }}</h5>
                             </div>
                         </div>
                         <div class="col-md-3 border-start border-2 border-primary bg-gray-200 rounded">
@@ -51,7 +167,7 @@
                                     &nbsp;</span>{{ $patient->latestPatientCare->admitted_from }}</h5>
                         </div>
                         <div class="col-md-3 border-start border-2 border-primary">
-                            <h5 class="text-muted my-0 text-gray-emphasis"><span class="fw-bold">condition: &nbsp;</span>
+                            <h5 class="text-muted my-0 text-gray-emphasis"><span class="fw-bold">Condition: &nbsp;</span>
                                 {{ $patient->latestPatientCare->notes }}</h5>
                             <h5 class="text-muted my-0 text-gray-emphasis"><span class="fw-bold">Consultant: &nbsp;</span>
                                 {{ $patient->latestPatientCare->icu_consultant }}
@@ -83,7 +199,7 @@
         <div class="row gy-2">
             <div class="col-lg-6">
                 <div class="card h-100 mt-2">
-                    <div class="card-header bg-danger-200 d-flex align-items-center">
+                    <div class="card-header bg-yellow-200 d-flex align-items-center">
                         <div class="flex-grow-1">
                             <h5 class="mb-1">Cardiovascular Assessment</h5>
                         </div>
@@ -91,15 +207,18 @@
 
                             <i class="fa fa-plus" data-bs-toggle="modal" data-bs-target="#modalXl"></i>
                             <a href="javascript:;" class="text-secondary"><i class="fa fa-redo"></i></a>
+                            <a href="#" data-toggle="card-expand"
+                                class="text-white text-opacity-50 text-decoration-none"><i
+                                    class="fa fa-fw fa-expand"></i></a>
                         </div>
                     </div>
                     <div class="card-header">
                         <ul class="nav nav-tabs card-header-tabs">
                             <li class="nav-item">
-                                <a href="#home-cardio" class="nav-link active" data-bs-toggle="tab">Chart</a>
+                                <a href="#home-cardio" class="nav-link active" data-bs-toggle="tab">Tabular</a>
                             </li>
                             <li class="nav-item">
-                                <a href="#table-cardio" class="nav-link" data-bs-toggle="tab">Tabular Form</a>
+                                <a href="#table-cardio" class="nav-link" data-bs-toggle="tab">Chart</a>
                             </li>
                         </ul>
                     </div>
@@ -108,11 +227,14 @@
                     <div class="card-body">
                         <div class="tab-content pt-3">
                             <div class="tab-pane fade show active" id="home-cardio">
+                                <div class="table-responsive" id="table-cardio">
 
-                                <div id="chart"></div>
+                                </div>
+
+
                             </div>
                             <div class="tab-pane fade" id="table-cardio">
-                                <h1>table content goes here</h1>
+                                <div id="chart"></div>
                             </div>
                         </div>
 
@@ -133,7 +255,9 @@
                             <i class="fa fa-plus" data-bs-toggle="modal" data-bs-target="#modal-resp"></i>
                             <a href="javascript:;" class="text-secondary"><i class="fa fa-redo"></i></a>
                         </div>
-                        <div id="chart-2"></div>
+                        <div id="chart-3" class="text-gray-900">
+
+                        </div>
                     </div>
                     <!-- END card-body -->
                 </div>
@@ -144,13 +268,13 @@
                     <div class="card-body">
                         <div class="d-flex mb-3 gap-1">
                             <div class="flex-grow-1">
-                                <h5 class="mb-1">Blood Gassest</h5>
+                                <h5 class="mb-1">Blood Gasses</h5>
 
                             </div>
                             <i class="fa fa-plus" data-bs-toggle="modal" data-bs-target="#modal-resp"></i>
                             <a href="javascript:;" class="text-secondary"><i class="fa fa-redo"></i></a>
                         </div>
-                        <div id="chart-2"></div>
+
                     </div>
                     <!-- END card-body -->
                 </div>
@@ -245,118 +369,7 @@
         </div>
 
     </div>
-    {{-- Modal for cardiovascular assessment --}}
-    <div class="modal fade" id="modalXl" data-bs-backdrop="static">
-        <div class="modal-dialog modal-xl">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title">Add New Cardiovasular assessment</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                </div>
-                <div class="modal-body">
-                    <div class="row">
-                        <div class="col-md-4 mb-3">
-                            <div class="input-group flex-nowrap">
-                                <span class="input-group-text" id="addon-wrapping">Heart-Rate</span>
-                                <input type="number" class="form-control" name="mode_of_ventilation"
-                                    placeholder="heart-rate">
-
-                            </div>
-                        </div>
-                        <div class="col-md-4 mb-3">
-                            <div class="input-group flex-nowrap">
-                                <span class="input-group-text" id="addon-wrapping">BP-Systolic</span>
-                                <input type="number" class="form-control" name="blodd_pressure_sytolic"
-                                    placeholder="Bp-sytolic">
-
-                            </div>
-                        </div>
-                        <div class="col-md-4 mb-3">
-                            <div class="input-group flex-nowrap">
-                                <span class="input-group-text" id="addon-wrapping">BP-Diastolic</span>
-                                <input type="number" class="form-control" name="blodd_pressure_diastolic"
-                                    placeholder="Bp-Diastolic">
-
-                            </div>
-                        </div>
-                        <div class="col-md-4 mb-3">
-                            <div class="input-group flex-nowrap">
-                                <span class="input-group-text" id="addon-wrapping">Temperature 0C</span>
-                                <input type="number" class="form-control" name="temperature" placeholder="temperature">
-
-                            </div>
-                        </div>
-                        <div class="col-md-4 mb-3">
-                            <div class="input-group flex-nowrap">
-                                <span class="input-group-text" id="addon-wrapping">Respiratory Rate</span>
-                                <input type="number" class="form-control" name="respiratory_rate"
-                                    placeholder="Respiratory Rate">
-
-                            </div>
-                        </div>
-                        <div class="col-md-4 mb-3">
-                            <div class="input-group flex-nowrap">
-                                <span class="input-group-text" id="addon-wrapping">Weight</span>
-                                <input type="number" class="form-control" name="weight" placeholder="Weight">
-
-                            </div>
-                        </div>
-                        <div class="col-md-4 mb-3">
-                            <div class="input-group flex-nowrap">
-                                <span class="input-group-text" id="addon-wrapping">map</span>
-                                <input type="number" class="form-control" name="map" placeholder="MAP">
-
-                            </div>
-                        </div>
-                        <div class="col-md-4 mb-3">
-                            <div class="input-group flex-nowrap">
-                                <span class="input-group-text" id="addon-wrapping">CVP</span>
-                                <input type="number" class="form-control" name="cvp" placeholder="CVP">
-
-                            </div>
-                        </div>
-                        <div class="col-md-4 mb-3">
-                            <div class="input-group flex-nowrap">
-                                <span class="input-group-text" id="addon-wrapping">rhythm</span>
-                                <input type="number" class="form-control" name="rhythm" placeholder="rhythm">
-
-                            </div>
-                        </div>
-                        <div class="col-md-4 mb-3">
-                            <div class="input-group flex-nowrap">
-                                <span class="input-group-text" id="addon-wrapping">peripheral Pulses</span>
-                                <input type="number" class="form-control" name="peripheral_pulses"
-                                    placeholder="peripheral_pulses">
-
-                            </div>
-                        </div>
-                        <div class="col-md-4 mb-3">
-                            <div class="input-group flex-nowrap">
-                                <span class="input-group-text" id="addon-wrapping">Capillary Refill Time</span>
-                                <input type="number" class="form-control" name="capillary_refill_time"
-                                    placeholder="capillary_refill_time">
-
-                            </div>
-                        </div>
-                        <div class="col-md-4 mb-3">
-                            <div class="input-group bootstrap-timepicker timepicker">
-                                <input id="timepicker-default" type="text" class="form-control">
-                                <span class="input-group-addon input-group-text">
-                                    <i class="fa fa-clock"></i>
-                                </span>
-                            </div>
-                        </div>
-
-                    </div>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-default" data-bs-dismiss="modal">Close</button>
-                    <button type="button" class="btn btn-primary">Save changes</button>
-                </div>
-
-            </div>
-        </div>
-    </div>
+    @include('recording.cardio-assessment')
     {{-- Modal Respiratory --}}
     <div class="modal fade" id="modal-resp" data-bs-backdrop="static">
         <div class="modal-dialog modal-xl">

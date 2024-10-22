@@ -4,6 +4,8 @@ use App\Http\Controllers\BedModelController;
 use App\Http\Controllers\PatientController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\ReadingController;
+
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -43,6 +45,10 @@ Route::middleware('auth')->group(function () {
 
     //treatment routes
     Route::get('/show-patient/{patient}/treatment', [PatientController::class, 'show'])->name('patient.treatment');
+
+    //cardio assessment routes
+    Route::get('/show-patient/{patientCare}/cardio-assessment/{active_day}', [ReadingController::class, 'showCardio'])->name('cardio.show');
+    Route::post('/store-cardio-assessment', [ReadingController::class, 'storeCardio'])->name('cardio.store');
 });
 
 require __DIR__.'/auth.php';

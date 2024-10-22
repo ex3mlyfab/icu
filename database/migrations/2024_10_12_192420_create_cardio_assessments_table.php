@@ -28,7 +28,6 @@ return new class extends Migration
             $table->smallInteger('capillary_refill_time')->nullable();
             $table->dateTime('time_of_cardio_assessment')->nullable();
             $table->time('hour_taken');
-             $table->dateTime('time_of_respiratory_assessment');
             $table->foreignId('created_by')->constrained('users');
             $table->timestamps();
         });
