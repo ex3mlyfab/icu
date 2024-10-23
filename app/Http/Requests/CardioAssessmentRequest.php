@@ -28,7 +28,7 @@ class CardioAssessmentRequest extends FormRequest
             'blood_pressure_diastolic' => 'required|numeric',
             'temperature'=> 'required|numeric',
             'respiratory_rate' => 'nullable|numeric',
-            'weight' => 'nullable|numeric',
+            'spo2' => 'nullable|numeric',
             'map' => 'nullable|numeric',
             'cvp' =>  'nullable|numeric',
             'rhythm' => 'nullable|numeric',

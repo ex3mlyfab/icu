@@ -10,7 +10,10 @@ class NeuroAssessment extends Model
 {
     use HasFactory;
      protected $guarded = ['id'];
-
+     protected $casts = [
+        'hour_taken' => 'datetime:H:i:s',
+        'time_of_neuro_assessment' => 'datetime',
+    ];
 
     public function patientCare(): BelongsTo
     {

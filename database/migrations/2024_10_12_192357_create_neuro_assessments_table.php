@@ -15,8 +15,15 @@ return new class extends Migration
             $table->id();
             $table->foreignId('patient_care_id')->constrained();
             $table->smallInteger('eyes_open');
+            $table->boolean('sedated')->default(0);
             $table->smallInteger('best_verbal_response');
+            $table->boolean('intubated')->default(0);
             $table->smallInteger('best_motor_response');
+            $table->boolean('muscle_relaxant')->default(0);
+            $table->smallInteger('sedation_score');
+            $table->smallInteger('pupil_diameter')->nullable();
+            $table->time('hour_taken');
+            $table->dateTime('time_of_neuro_assessment');
             $table->foreignId('created_by')->constrained('users');
             $table->timestamps();
         });

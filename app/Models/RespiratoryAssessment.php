@@ -11,6 +11,11 @@ class RespiratoryAssessment extends Model
     use HasFactory;
     protected $guarded = ['id'];
 
+    protected $casts = [
+        'hour_taken' => 'datetime:H:i',
+        'time_of_respiratory_assessment' => 'datetime',
+    ];
+
     public function patientCare(): BelongsTo
     {
         return $this->belongsTo(PatientCare::class);

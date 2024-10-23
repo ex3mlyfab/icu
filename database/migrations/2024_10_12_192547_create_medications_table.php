@@ -15,8 +15,9 @@ return new class extends Migration
             $table->id();
             $table->foreignId('patient_care_id')->constrained('patient_cares');
             $table->string('medication');
-            $table->string('dosage');
-            $table->string('frequency');
+            $table->string('dosage')->nullable();
+            $table->string('frequency')->nullable();
+            $table->time('hour_taken');
             $table->dateTime('time_of_medication');
             $table->foreignId('created_by')->constrained('users');
             $table->timestamps();

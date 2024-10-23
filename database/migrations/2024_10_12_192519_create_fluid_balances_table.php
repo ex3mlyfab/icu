@@ -15,9 +15,10 @@ return new class extends Migration
             $table->id();
             $table->foreignId('patient_care_id')->constrained();
             $table->string('fluid');
-            $table->string('volume');
-            $table->smallInteger('direction');
+            $table->string('direction');
+            $table->smallInteger('volume');
             $table->dateTime('time_of_fluid_balance');
+             $table->time('hour_taken');
             $table->foreignId('created_by')->constrained('users');
             $table->timestamps();
         });

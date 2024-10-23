@@ -15,14 +15,15 @@ return new class extends Migration
             $table->id();
             $table->foreignId('patient_care_id')->constrained();
             $table->string('mode_of_ventilation');
+            $table->string('i_e_ration')->nullable();
             $table->smallInteger('fi02')->nullable();
-             $table->smallInteger('spo2')->nullable();
+
             $table->smallInteger('peep')->nullable();
             $table->smallInteger('patient_tidal_volume')->nullable();
             $table->smallInteger('ventilator_set_rate')->nullable();
-            $table->smallInteger('ph_score')->nullable();
-            $table->string('presuure_support');
-            $table->smallInteger('total_expired_volume')->nullable();
+            $table->string('respiratory_effort')->nullable();
+            $table->string('endothracheal_intubation')->nullable();
+            $table->string('presuure_support')->nullable();
             $table->time('hour_taken');
             $table->dateTime('time_of_respiratory_assessment');
             $table->foreignId('created_by')->constrained('users');

@@ -19,8 +19,7 @@ return new class extends Migration
             $table->smallInteger('blood_pressure_diastolic');
             $table->smallInteger('temperature');
             $table->smallInteger('respiratory_rate')->nullable();
-
-            $table->smallInteger('weight')->nullable();
+            $table->smallInteger('spo2')->nullable();
             $table->smallInteger('map')->nullable();
             $table->smallInteger('cvp')->nullable();
             $table->smallInteger('rhythm')->nullable();

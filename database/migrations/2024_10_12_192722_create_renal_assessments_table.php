@@ -14,6 +14,7 @@ return new class extends Migration
         Schema::create('renal_assessments', function (Blueprint $table) {
             $table->id();
             $table->foreignId('patient_care_id')->constrained();
+            $table->smallInteger('dialysis');
             $table->smallInteger('creatinine_clearance');
             $table->smallInteger('urine_output');
             $table->dateTime('time_of_renal_assessment');

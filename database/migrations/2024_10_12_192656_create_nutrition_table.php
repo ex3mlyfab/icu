@@ -14,8 +14,10 @@ return new class extends Migration
         Schema::create('nutrition', function (Blueprint $table) {
             $table->id();
             $table->foreignId('patient_care_id')->constrained();
-            $table->string('feeding_plan');
-            $table->string('feeding_frequency')->nullable();
+            $table->string('feeding_route');
+            $table->string('caloric_intake')->nullable();
+            $table->time('hour_taken');
+            $table->dateTime('time_of_nutrition');
             $table->foreignId('created_by')->constrained('users');
             $table->timestamps();
         });

@@ -1,6 +1,6 @@
 
 {{-- Modal for cardiovascular assessment --}}
-<div class="modal fade" id="modalXl" data-bs-backdrop="static">
+<div class="modal fade" id="modal-progress" data-bs-backdrop="static">
     <div class="modal-dialog modal-xl">
         <div class="modal-content">
             <div class="modal-header">

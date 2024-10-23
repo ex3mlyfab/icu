@@ -49,6 +49,9 @@ Route::middleware('auth')->group(function () {
     //cardio assessment routes
     Route::get('/show-patient/{patientCare}/cardio-assessment/{active_day}', [ReadingController::class, 'showCardio'])->name('cardio.show');
     Route::post('/store-cardio-assessment', [ReadingController::class, 'storeCardio'])->name('cardio.store');
+    //respiratory Assessment Route
+    Route::get('/show-patients/{patientCare}/resp-assessment/{active_day}', [ReadingController::class, 'showRespiratory'])->name('resp.show');
+    Route::post('/store-respiratory-assessment', [ReadingController::class,'storeRespiratory'])->name('resp.store');
 });
 
 require __DIR__.'/auth.php';

@@ -28,7 +28,6 @@
 
         // Store the GET function in a variable
         var getCardioData = function() {
-
             $.ajax({
                 type: 'GET', // or 'POST' if required
                 url: `{{ URL::to('/') }}/show-patient/{{ $patient->latestPatientCare->id }}/cardio-assessment/${activeDay}`,
@@ -43,7 +42,7 @@
                     var headerIndicator = $('<thead></thead>');
                     // Create a table header row
                     var headerRow = $('<tr></tr>');
-                    headerRow.append('<th>label</th>');
+                    headerRow.append('<th class="bg-yellow-300">label</th>');
                     for (var i = 0; i < myData.label.length; i++) {
 
                         headerRow.append('<th>' + myData.label[i] + '</th>');
@@ -55,23 +54,15 @@
                     for (var key in myData) {
                         if (key !== "label") {
                             var row = $('<tr></tr>');
-                            row.append('<th>' + key + '</th>');
+                            row.append('<th class="bg-yellow-300">' + key + '</th>');
                             for (var i = 0; i < myData[key].length; i++) {
+
                                 row.append('<td>' + myData[key][i] + '</td>');
                             }
                             table.append(row);
                         }
                     }
                     $("#table-cardio").html(table);
-                    // console.log(data.data);
-                    $('cardio-table tbody').empty();
-
-                    // for (var i = 0; i < data.length; i++) {
-                    //     $('cardio-table tbody').append(
-                    //         '<tr>' +
-                    //         '<td>' + data[i].date + '</td>' +
-                    //         '<td>' + data[i].time + '</td>' +
-                    //         '<td>' + data[i].pulse + '</td>' +
 
                 },
                 error: function(error) {
@@ -81,7 +72,52 @@
                 }
             });
         };
+        var getRespData = function() {
+            $.ajax({
+                type: 'GET', // or 'POST' if required
+                url: `{{ URL::to('/') }}/show-patient/{{ $patient->latestPatientCare->id }}/resp-assessment/${activeDay}`,
+                dataType: 'json', // Specify the expected data format (e.g., JSON)
+                success: function(data) {
+
+
+                    // $('#chart-3').html(data.data);
+                    let respData = data.data;
+                    var table = $('<table class="table table-bordered"></table>');
+                    var headerIndicator = $('<thead></thead>');
+                    // Create a table header row
+                    var headerRow = $('<tr></tr>');
+                    headerRow.append('<th class="bg-yellow-300">label</th>');
+                    for (var i = 0; i < respData.label.length; i++) {
+
+                        headerRow.append('<th>' + respData.label[i] + '</th>');
+                    }
+                    headerIndicator.append(headerRow);
+                    table.append(headerIndicator);
+
+                    // Create table body rows
+                    for (var key in respData) {
+                        if (key !== "label") {
+                            var row = $('<tr></tr>');
+                            row.append('<th class="bg-yellow-300">' + key + '</th>');
+                            for (var i = 0; i < respData[key].length; i++) {
+
+                                row.append('<td>' + respData[key][i] + '</td>');
+                            }
+                            table.append(row);
+                        }
+                    }
+                    $("#table-resp").html(table);
+
+                },
+                error: function(error) {
+                    // Handle errors
+                    console.error(error);
+
+                }
+            });
+        };
         getCardioData();
+        getRespData();
         $('#cardio-save-spinner').hide();
         $('#cardio-form').submit(function(event) {
             event.preventDefault(); // Prevent default form submission
@@ -91,33 +127,77 @@
             $('#cardio-save-spinner').show();
 
             $.ajax({
-            type: 'POST',
-            url: '{{ route('cardio.store') }}', // Replace with your server-side script URL
-            data: formData,
-            success: function(response)
-            {
+                type: 'POST',
+                url: '{{ route('cardio.store') }}', // Replace with your server-side script URL
+                data: formData,
+                success: function(response) {
 
-                console.log(response);
-                $('#toast-1 .toast-body').html(response.message);
-                $('#toast-1').toast('show');
-                $('#modalXl').modal('hide');
+                    console.log(response);
+                    $('#toast-1 .toast-body').html(response.message);
+                    $('#toast-1').toast('show');
+                    $('#modalXl').modal('hide');
 
-                $('#cardio-form')[0].reset();
-                $('#cardio-save').prop('disabled', false);
-                $('#cardio-save-spinner').hide();
-                getCardioData();
-            },
-            error: function(error) {
-                // Handle errors
-                console.error(error);
-                // You can display an error message to the user here
-            }
+                    $('#cardio-form')[0].reset();
+                    $('#cardio-save').prop('disabled', false);
+                    $('#cardio-save-spinner').hide();
+                    getCardioData();
+                },
+                error: function(error) {
+                    // Handle errors$
+                    console.error(error);
+                    // You can display an error message to the user here
+                    var errorMessage = error.responseJSON.message;
+                    $('#toast-1 .toast-body').html(errorMessage);
+                    $('#toast-1').toast('show');
+                    $('#cardio-save').prop('disabled', false);
+                    $('#cardio-save-spinner').hide();
+
+                }
+            });
         });
-     });
+        $('#resp-save-spinner').hide();
+        $('#resp-form').submit(function(event) {
+            event.preventDefault(); // Prevent default form submission
+
+            var respData = $(this).serialize(); // Serialize form data
+
+            $('#resp-save').prop('disabled', true);
+            $('#resp-save-spinner').show();
+
+            $.ajax({
+                type: 'POST',
+                url: '{{ route('resp.store') }}', // Replace with your server-side script URL
+                data: respData,
+                success: function(response) {
+
+                    console.log(response);
+                    $('#toast-1 .toast-body').html(response.message);
+                    $('#toast-1').toast('show');
+                    $('#modalXl').modal('hide');
+
+                    $('#resp-form')[0].reset();
+                    $('#resp-save').prop('disabled', false);
+                    $('#resp-save-spinner').hide();
+                    getRespData();
+                },
+                error: function(error) {
+                    // Handle errors$
+                    console.error(error);
+                    // You can display an error message to the user here
+                    var errorMessage = error.responseJSON.message;
+                    $('#toast-1 .toast-body').html(errorMessage);
+                    $('#toast-1').toast('show');
+                    $('#resp-save').prop('disabled', false);
+                    $('#resp-save-spinner').hide();
+
+                }
+            });
+        });
 
         $('#active-day').on('change', function() {
             activeDay = $('#active-day').val();
             getCardioData();
+            getRespData();
         });
     </script>
 @endpush
@@ -199,7 +279,7 @@
         <div class="row gy-2">
             <div class="col-lg-6">
                 <div class="card h-100 mt-2">
-                    <div class="card-header bg-yellow-200 d-flex align-items-center">
+                    <div class="card-header bg-yellow-300 d-flex align-items-center">
                         <div class="flex-grow-1">
                             <h5 class="mb-1">Cardiovascular Assessment</h5>
                         </div>
@@ -245,19 +325,125 @@
             </div>
             <div class="col-lg-6">
                 <div class="card h-100 mt-2">
+                    <div class="card-header  bg-dark d-flex align-items-center">
+                        <div class="flex-grow-1">
+                            <h5 class="mb-1 text-white">Respiratory Assessment</h5>
+                        </div>
+                        <div class="d-flex gap-2 align-items-center">
+
+                            <i class="fa fa-plus text-white" data-bs-toggle="modal" data-bs-target="#modal-resp"></i>
+                            <a href="javascript:;" class="text-secondary"><i class="fa fa-redo"></i></a>
+                            <a href="#" data-toggle="card-expand"
+                                class="text-white text-opacity-20 text-decoration-none"><i
+                                    class="fa fa-fw fa-expand"></i></a>
+                        </div>
+                    </div>
+                    <div class="card-header">
+                        <ul class="nav nav-tabs card-header-tabs">
+                            <li class="nav-item">
+                                <a href="#home-resp" class="nav-link active" data-bs-toggle="tab">Tabular</a>
+                            </li>
+                            <li class="nav-item">
+                                <a href="#table-resp" class="nav-link" data-bs-toggle="tab">Chart</a>
+                            </li>
+                        </ul>
+                    </div>
+
                     <!-- BEGIN card-body -->
                     <div class="card-body">
-                        <div class="d-flex mb-3 gap-1">
-                            <div class="flex-grow-1">
-                                <h5 class="mb-1">Respiratory Assessment</h5>
+                        <div class="tab-content pt-3">
+                            <div class="tab-pane fade show active" id="home-resp">
+                                <div class="table-responsive" id="table-resp">
+
+                                </div>
+
 
                             </div>
-                            <i class="fa fa-plus" data-bs-toggle="modal" data-bs-target="#modal-resp"></i>
-                            <a href="javascript:;" class="text-secondary"><i class="fa fa-redo"></i></a>
+                            <div class="tab-pane fade" id="table-resp">
+                                <div id="chart-resp"></div>
+                            </div>
                         </div>
-                        <div id="chart-3" class="text-gray-900">
+
+
+                    </div>
+                    <!-- END card-body -->
+
+                </div>
+            </div>
+            <div class="col-lg-6">
+                <div class="card h-100 mt-2">
+                    <!-- BEGIN card-body -->
+                    <div class="card-header bg-warning d-flex gap-2 align-items-center">
+
+                            <div class="flex-grow-1">
+                                <h5 class="mb-1">Fluid Balance</h5>
+
+                            </div>
+                            <i class="fa fa-plus" data-bs-toggle="modal" data-bs-target="#modal-fluid"></i>
+                            <a href="javascript:;" class="text-secondary"><i class="fa fa-redo"></i></a>
+                            <a href="#" data-toggle="card-expand"
+                                class="text-white text-opacity-20 text-decoration-none"><i
+                                    class="fa fa-fw fa-expand"></i></a>
+
+                    </div>
+                    <div class="card-body">
+                        <div class="table-responsive" id="table-fluid">
 
                         </div>
+
+
+                    </div>
+                    <!-- END card-body -->
+                </div>
+            </div>
+            <div class="col-lg-6">
+                <div class="card h-100 mt-2">
+                    <!-- BEGIN card-body -->
+                    <div class="card-header bg-danger d-flex gap-2 align-items-center">
+
+                            <div class="flex-grow-1">
+                                <h5 class="mb-1">Neurological Assessment</h5>
+
+                            </div>
+                            <i class="fa fa-plus" data-bs-toggle="modal" data-bs-target="#modal-neuro"></i>
+                            <a href="javascript:;" class="text-secondary"><i class="fa fa-redo"></i></a>
+                            <a href="#" data-toggle="card-expand"
+                                class="text-white text-opacity-20 text-decoration-none"><i
+                                    class="fa fa-fw fa-expand"></i></a>
+
+                    </div>
+                    <div class="card-body">
+                        <div class="table-responsive" id="table-neuro">
+
+                        </div>
+
+
+                    </div>
+                    <!-- END card-body -->
+                </div>
+            </div>
+            <div class="col-lg-6">
+                <div class="card h-100 mt-2">
+                    <!-- BEGIN card-body -->
+                    <div class="card-header bg-gradient bg-warning-400 d-flex gap-2 align-items-center">
+
+                            <div class="flex-grow-1">
+                                <h5 class="mb-1">Medications</h5>
+
+                            </div>
+                            <i class="fa fa-plus" data-bs-toggle="modal" data-bs-target="#modal-neuro"></i>
+                            <a href="javascript:;" class="text-secondary"><i class="fa fa-redo"></i></a>
+                            <a href="#" data-toggle="card-expand"
+                                class="text-white text-opacity-20 text-decoration-none"><i
+                                    class="fa fa-fw fa-expand"></i></a>
+
+                    </div>
+                    <div class="card-body">
+                        <div class="table-responsive" id="table-neuro">
+
+                        </div>
+
+
                     </div>
                     <!-- END card-body -->
                 </div>
@@ -268,58 +454,7 @@
                     <div class="card-body">
                         <div class="d-flex mb-3 gap-1">
                             <div class="flex-grow-1">
-                                <h5 class="mb-1">Blood Gasses</h5>
-
-                            </div>
-                            <i class="fa fa-plus" data-bs-toggle="modal" data-bs-target="#modal-resp"></i>
-                            <a href="javascript:;" class="text-secondary"><i class="fa fa-redo"></i></a>
-                        </div>
-
-                    </div>
-                    <!-- END card-body -->
-                </div>
-            </div>
-            <div class="col-lg-6">
-                <div class="card h-100 mt-2">
-                    <!-- BEGIN card-body -->
-                    <div class="card-body">
-                        <div class="d-flex mb-3 gap-1">
-                            <div class="flex-grow-1">
-                                <h5 class="mb-1"> Fluid Balance</h5>
-
-                            </div>
-                            <i class="fa fa-plus" data-bs-toggle="modal" data-bs-target="#modal-resp"></i>
-                            <a href="javascript:;" class="text-secondary"><i class="fa fa-redo"></i></a>
-                        </div>
-                        <div id="chart-2"></div>
-                    </div>
-                    <!-- END card-body -->
-                </div>
-            </div>
-            <div class="col-lg-6">
-                <div class="card h-100 mt-2">
-                    <!-- BEGIN card-body -->
-                    <div class="card-body">
-                        <div class="d-flex mb-3 gap-1">
-                            <div class="flex-grow-1">
-                                <h5 class="mb-1"> Medications Table</h5>
-
-                            </div>
-                            <i class="fa fa-plus" data-bs-toggle="modal" data-bs-target="#modal-resp"></i>
-                            <a href="javascript:;" class="text-secondary"><i class="fa fa-redo"></i></a>
-                        </div>
-                        <div id="chart-2"></div>
-                    </div>
-                    <!-- END card-body -->
-                </div>
-            </div>
-            <div class="col-lg-6">
-                <div class="card h-100 mt-2">
-                    <!-- BEGIN card-body -->
-                    <div class="card-body">
-                        <div class="d-flex mb-3 gap-1">
-                            <div class="flex-grow-1">
-                                <h5 class="mb-1">Labotory Results</h5>
+                                <h5 class="mb-1">Laboratory Results</h5>
 
                             </div>
                             <i class="fa fa-plus" data-bs-toggle="modal" data-bs-target="#modal-resp"></i>
@@ -371,103 +506,20 @@
     </div>
     @include('recording.cardio-assessment')
     {{-- Modal Respiratory --}}
-    <div class="modal fade" id="modal-resp" data-bs-backdrop="static">
-        <div class="modal-dialog modal-xl">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title">Add New Respiratory Assessment</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                </div>
-                <div class="modal-body">
-                    <div class="row">
-                        <div class="col-md-4 mb-3">
-                            <div class="input-group flex-nowrap">
-                                <span class="input-group-text" id="addon-wrapping">Mode of Ventilation</span>
-                                <input type="text" class="form-control" name="mode_of_ventilation"
-                                    placeholder="Mode of Ventilation">
+    @include('recording.respiratory-assessment')
+    @include('recording.neuro-assessment')
+    @include('recording.fluid-balance')
+    @include('recording.invasive-line')
+    @include('recording.lab-result')
+    @include('recording.renal')
+    @include('recording.skin')
+    @include('recording.daily-note')
+    @include('recording.medication')
+    @include('recording.nutrition')
+    @include('recording.physician-order')
+    @include('recording.progress')
 
-                            </div>
-                        </div>
-                        <div class="col-md-4 mb-3">
-                            <div class="input-group flex-nowrap">
-                                <span class="input-group-text" id="addon-wrapping">fi02</span>
-                                <input type="number" class="form-control" name="fi02" placeholder="fi02">
 
-                            </div>
-                        </div>
-                        <div class="col-md-4 mb-3">
-                            <div class="input-group flex-nowrap">
-                                <span class="input-group-text" id="addon-wrapping">SPO2</span>
-                                <input type="number" class="form-control" name="spo2" placeholder="SPO2">
-
-                            </div>
-                        </div>
-                        <div class="col-md-4 mb-3">
-                            <div class="input-group flex-nowrap">
-                                <span class="input-group-text" id="addon-wrapping">PEEP</span>
-                                <input type="number" class="form-control" name="peep" placeholder="peep">
-
-                            </div>
-                        </div>
-                        <div class="col-md-4 mb-3">
-                            <div class="input-group flex-nowrap">
-                                <span class="input-group-text" id="addon-wrapping">Patient Tidal Volume</span>
-                                <input type="number" class="form-control" name="patient_tidal_volume"
-                                    placeholder="Patient Tidal Volume">
-
-                            </div>
-                        </div>
-                        <div class="col-md-4 mb-3">
-                            <div class="input-group flex-nowrap">
-                                <span class="input-group-text" id="addon-wrapping">Ventilator Set Rate</span>
-                                <input type="number" class="form-control" name="ventilator_set_rate"
-                                    placeholder="Ventilator Set Rate">
-
-                            </div>
-                        </div>
-                        <div class="col-md-4 mb-3">
-                            <div class="input-group flex-nowrap">
-                                <span class="input-group-text" id="addon-wrapping">ph score</span>
-                                <input type="number" class="form-control" name="ph_score" placeholder="ph_score">
-
-                            </div>
-                        </div>
-                        <div class="col-md-4 mb-3">
-                            <div class="input-group flex-nowrap">
-                                <span class="input-group-text" id="addon-wrapping">Pressure Support</span>
-                                <input type="string" class="form-control" name="pressure_support"
-                                    placeholder="pressure_support">
-
-                            </div>
-                        </div>
-                        <div class="col-md-4 mb-3">
-                            <div class="input-group flex-nowrap">
-                                <span class="input-group-text" id="addon-wrapping">total_expired_volume</span>
-                                <input type="number" class="form-control" name="total_expired_volume"
-                                    placeholder="total_expired_volume">
-
-                            </div>
-                        </div>
-
-                        <div class="col-md-4 mb-3">
-                            <div class="input-group bootstrap-timepicker timepicker">
-                                <input id="timepicker-respiratoy" type="text" name="hour_taken" class="form-control">
-                                <span class="input-group-addon input-group-text">
-                                    <i class="fa fa-clock"></i>
-                                </span>
-                            </div>
-                        </div>
-
-                    </div>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-default" data-bs-dismiss="modal">Close</button>
-                    <button type="button" class="btn btn-primary">Save changes</button>
-                </div>
-
-            </div>
-        </div>
-    </div>
     {{-- <div class="block block-themed block-transparent mb-0">
         <div class="block-header bg-secondary-dark">
             <h3 class="block-title">Fluid Intake / Output Record</h3>
