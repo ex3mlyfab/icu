@@ -6,19 +6,24 @@
     <link href="{{ asset('assets/plugins/bootstrap-timepicker/css/bootstrap-timepicker.min.css') }}" rel="stylesheet">
 
     <!-- required js / css -->
-    <link href="{{asset('assets/plugins/select-picker/dist/picker.min.css')}}" rel="stylesheet">
-
-
+    <link href="{{ asset('assets/plugins/select-picker/dist/picker.min.css') }}" rel="stylesheet">
 @endpush
 
 @push('js')
-    <script src="{{asset('assets/plugins/select-picker/dist/picker.min.js')}}"></script>
+    <script src="{{ asset('assets/plugins/select-picker/dist/picker.min.js') }}"></script>
 
     <script src="{{ asset('assets/plugins/bootstrap-timepicker/js/bootstrap-timepicker.min.js') }}"></script>
     <script src="{{ asset('assets/plugins/apexcharts/dist/apexcharts.min.js') }}"></script>
     <script>
-        $('#ex-search').picker({ search: true });
+        $('.searchPicker').picker({
+            search: true
+        });
 
+        $('.timepickerAcross').timepicker({
+            defaultTime: 'current',
+            showMeridian: false,
+            minuteStep: 1
+        });
         $('#timepicker-default').timepicker({
             defaultTime: 'current',
             showMeridian: false,
@@ -29,7 +34,43 @@
             showMeridian: false,
             minuteStep: 1
         });
+        var getFluidSelect = function() {
+            $.ajax({
+                type: 'GET',
+                url: '{{ route('fluid.get', $patient->latestPatientCare->id) }}',
+                dataType: 'json', // Specify the expected data format (e.g., JSON)
+                success: function(data) {
+                    console.log(data.data);
+                    for (let i = 0; i < data.length; i++) {
+                        $('#select-fluid').append('<option value="' + data[i].fluid + '">' + data[i].fluid +
+                            '</option>');
+                    }
 
+                },
+                error: function(error) {
+                    // Handle errors
+                    console.error(error);
+                    // You can display an error message to the user here
+                }
+            })
+        }
+        getFluidSelect()
+        var getFluidData = function() {
+            $.ajax({
+                type: 'GET',
+                url: '{{ route('fluid.get', $patient->latestPatientCare->id) }}',
+                dataType: 'json', // Specify the expected data format (e.g., JSON)
+                success: function(data) {
+                    console.log(data);
+                    $('#table-fluid').html(data);
+                },
+                error: function(error) {
+                    // Handle errors
+                    console.error(error);
+                    // You can display an error message to the user here
+                }
+            });
+        }
 
         let activeDay = $('#active-day').val();
 
@@ -45,7 +86,7 @@
 
                     // $('#chart-3').html(data.data);
                     let myData = data.data;
-                    console.log(myData);
+                    // console.log(myData);
                     var table = $('<table class="table table-bordered"></table>');
                     var headerIndicator = $('<thead></thead>');
                     // Create a table header row
@@ -83,7 +124,7 @@
         var getRespData = function() {
             $.ajax({
                 type: 'GET', // or 'POST' if required
-                url: `{{ URL::to('/') }}/show-patient/{{$patient->latestPatientCare->id}}/resp-assessment/${activeDay}`,
+                url: `{{ URL::to('/') }}/show-patient/{{ $patient->latestPatientCare->id }}/resp-assessment/${activeDay}`,
                 dataType: 'json', // Specify the expected data format (e.g., JSON)
                 success: function(data) {
 
@@ -163,6 +204,18 @@
                 }
             });
         });
+        $('#new-fluid').hide();
+        $('#select-fluid').on('change', function() {
+            var selectVal = $(this).val();
+            console.log(selectVal);
+            if ($(this).val() == 'others') {
+                $('#new-fluid').show();
+            } else {
+                $('#new-fluid').hide();
+            }
+        });
+
+        //respiratory form
         $('#resp-save-spinner').hide();
         $('#resp-form').submit(function(event) {
             event.preventDefault(); // Prevent default form submission
@@ -201,6 +254,46 @@
                 }
             });
         });
+        //fluid-balance form
+        $('#fluid-save-spinner').hide();
+        $('#fluid-form').submit(function(event) {
+            event.preventDefault(); // Prevent default form submission
+
+            var fluidData = $(this).serialize(); // Serialize form data
+
+            $('#fluid-save').prop('disabled', true);
+            $('#fluid-save-spinner').show();
+
+            $.ajax({
+                type: 'POST',
+                url: '{{ route('fluid.store') }}', // Replace with your server-side script URL
+                data: fluidData,
+                success: function(response) {
+
+                    console.log(response);
+                    $('#toast-1 .toast-body').html(response.message);
+                    $('#toast-1').toast('show');
+                    $('#modal-fluid').modal('hide');
+
+                    $('#fluid-form')[0].reset();
+                    $('#fluid-save').prop('disabled', false);
+                    $('#fluid-save-spinner').hide();
+                    getFluidData();
+                },
+                error: function(error) {
+                    // Handle errors$
+                    console.error(error);
+                    // You can display an error message to the user here
+                    var errorMessage = error.responseJSON.message;
+                    $('#toast-1 .toast-body').html(errorMessage);
+                    $('#toast-1').toast('show');
+                    $('#fluid-save').prop('disabled', false);
+                    $('#fluid-save-spinner').hide();
+
+                }
+            });
+        });
+
         $('#pupil-diameter').on('change', function() {
             $('#value-pupil-diameter').html(this.value);
         })
@@ -385,15 +478,14 @@
                     <!-- BEGIN card-body -->
                     <div class="card-header bg-warning d-flex gap-2 align-items-center">
 
-                            <div class="flex-grow-1">
-                                <h5 class="mb-1">Fluid Balance</h5>
+                        <div class="flex-grow-1">
+                            <h5 class="mb-1">Fluid Balance</h5>
 
-                            </div>
-                            <i class="fa fa-plus" data-bs-toggle="modal" data-bs-target="#modal-fluid"></i>
-                            <a href="javascript:;" class="text-secondary"><i class="fa fa-redo"></i></a>
-                            <a href="#" data-toggle="card-expand"
-                                class="text-white text-opacity-20 text-decoration-none"><i
-                                    class="fa fa-fw fa-expand"></i></a>
+                        </div>
+                        <i class="fa fa-plus" data-bs-toggle="modal" data-bs-target="#modal-fluid"></i>
+                        <a href="javascript:;" class="text-secondary"><i class="fa fa-redo"></i></a>
+                        <a href="#" data-toggle="card-expand"
+                            class="text-white text-opacity-20 text-decoration-none"><i class="fa fa-fw fa-expand"></i></a>
 
                     </div>
                     <div class="card-body">
@@ -411,15 +503,14 @@
                     <!-- BEGIN card-body -->
                     <div class="card-header bg-danger d-flex gap-2 align-items-center">
 
-                            <div class="flex-grow-1">
-                                <h5 class="mb-1">Neurological Assessment</h5>
+                        <div class="flex-grow-1">
+                            <h5 class="mb-1">Neurological Assessment</h5>
 
-                            </div>
-                            <i class="fa fa-plus" data-bs-toggle="modal" data-bs-target="#modal-neuro"></i>
-                            <a href="javascript:;" class="text-secondary"><i class="fa fa-redo"></i></a>
-                            <a href="#" data-toggle="card-expand"
-                                class="text-white text-opacity-20 text-decoration-none"><i
-                                    class="fa fa-fw fa-expand"></i></a>
+                        </div>
+                        <i class="fa fa-plus" data-bs-toggle="modal" data-bs-target="#modal-neuro"></i>
+                        <a href="javascript:;" class="text-secondary"><i class="fa fa-redo"></i></a>
+                        <a href="#" data-toggle="card-expand"
+                            class="text-white text-opacity-20 text-decoration-none"><i class="fa fa-fw fa-expand"></i></a>
 
                     </div>
                     <div class="card-body">
@@ -437,15 +528,14 @@
                     <!-- BEGIN card-body -->
                     <div class="card-header bg-gradient bg-warning-400 d-flex gap-2 align-items-center">
 
-                            <div class="flex-grow-1">
-                                <h5 class="mb-1">Medications</h5>
+                        <div class="flex-grow-1">
+                            <h5 class="mb-1">Medications</h5>
 
-                            </div>
-                            <i class="fa fa-plus" data-bs-toggle="modal" data-bs-target="#modal-medication"></i>
-                            <a href="javascript:;" class="text-secondary"><i class="fa fa-redo"></i></a>
-                            <a href="#" data-toggle="card-expand"
-                                class="text-white text-opacity-20 text-decoration-none"><i
-                                    class="fa fa-fw fa-expand"></i></a>
+                        </div>
+                        <i class="fa fa-plus" data-bs-toggle="modal" data-bs-target="#modal-medication"></i>
+                        <a href="javascript:;" class="text-secondary"><i class="fa fa-redo"></i></a>
+                        <a href="#" data-toggle="card-expand"
+                            class="text-white text-opacity-20 text-decoration-none"><i class="fa fa-fw fa-expand"></i></a>
 
                     </div>
                     <div class="card-body">

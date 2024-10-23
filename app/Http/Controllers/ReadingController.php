@@ -176,9 +176,30 @@ class ReadingController extends Controller
     {
         $data = $request->all();
 
-        $data['created_by'] = Auth::user()->id;
-        $data['time_of_fluid_assessment'] = now();
-        $record = FluidBalance::create($data);
+       if($data['fluid_select'] == 'others')
+       {
+           $fluidRecord = FluidBalance::create([
+            'patient_care_id' => $data['patient_care_id'],
+            'fluid' => $data['fluid_name'],
+            'volume' => $data['volume'],
+            'direction' => $data['direction'],
+            'hour_taken' => $data['hour_taken'],
+            'created_by' => Auth::user()->id,
+            'time_of_fluid_balance' => now(),
+           ]);
+       }else{
+            $fluidBefore = FluidBalance::where('patient_care_id', $data['patient_care_id'])->where('fluid', $data['fluid_select'])->get(['fluid','direction']);
+            $newrecord = FluidBalance::create([
+            'patient_care_id' => $data['patient_care_id'],
+            'fluid' => $fluidBefore->fluid,
+            'volume' => $data['volume'],
+            'direction' => $fluidBefore->direction,
+            'hour_taken' => $data['hour_taken'],
+            'created_by' => Auth::user()->id,
+            'time_of_fluid_balance' => now(),
+           ]);
+       }
+
 
         return response(['message'=> 'Fluid Reading Added successfully'], 200);
     }
@@ -217,5 +238,9 @@ class ReadingController extends Controller
             return response(['data' => $fluid_chart], 200);
     }
 
+    public function getFluid(PatientCare $patientCare)
+    {
 
+        return response(['data' => $patientCare->fluidBalances], 200);
+    }
 }

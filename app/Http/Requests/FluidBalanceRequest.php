@@ -22,10 +22,11 @@ class FluidBalanceRequest extends FormRequest
     public function rules(): array
     {
         return [
+            'fluid_select'=> 'required',
             'patient_care_id' => 'required',
-            'fluid' => 'required|numeric',
+            'fluid_name' => 'required_if:fluid_select,others',
             'volume' => 'required|numeric',
-            'direction' => 'required',
+            'direction' => 'required_if:fluid_select,others',
             'hour_taken' => 'required',
         ];
     }

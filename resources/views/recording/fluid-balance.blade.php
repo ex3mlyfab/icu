@@ -1,4 +1,4 @@
-{{-- Modal for cardiovascular assessment --}}
+
 <div class="modal fade" id="modal-fluid" data-bs-backdrop="static">
     <div class="modal-dialog modal-xl">
         <div class="modal-content">
@@ -16,13 +16,9 @@
                         <div class="col-xl-6">
                             <div class="mb-3">
                                 <label class="form-label">Select Fluid <span class="text-danger">*</span></label>
-                                <select class="selectpicker form-control" id="ex-search" name="fluid_select">
-                                    <option value="1">Mustard</option>
-                                    <option value="2">Ketchup</option>
-                                    <option value="3">Relish</option>
-                                    <option value="4">Tent</option>
-                                    <option value="5">Flashlight</option>
-                                    <option value="6">Toilet Paper</option>
+                                <select class="form-control" id="select-fluid" name="fluid_select" required>
+                                    <option selected>Select Fluid</option>
+                                    <option value="others">Enter New Fluid</option>
                                 </select>
                             </div>
                         </div>
@@ -40,7 +36,7 @@
                         <div class="col-md-6 mb-3">
                             <div class="input-group flex-nowrap">
                                 <span class="input-group-text" id="addon-2">Direction</span>
-                                <select class="form-select form-select-sm">
+                                <select class="form-select form-select-sm" name="direction">
                                     <option selected>Select Direction</option>
                                     <option value="input">Intake</option>
                                     <option value="output">Output</option>
@@ -53,8 +49,8 @@
                         <div class="col-md-6 mb-3">
                             <div class="input-group flex-nowrap">
                                 <span class="input-group-text" id="addon-wrapping">Volume(ml)</span>
-                                <input type="number" class="form-control" name="blood_pressure_diastolic"
-                                    placeholder="Bp-Diastolic" required>
+                                <input type="number" class="form-control" name="volume"
+                                    placeholder="Volume" required>
 
                             </div>
                         </div>
@@ -62,7 +58,7 @@
                         <div class="col-md-6 mb-3">
                             <div class="input-group bootstrap-timepicker timepicker">
                                 <span class="input-group-text" id="addon-wrapping">Hour Recorded</span>
-                                <input id="timepicker-default" type="text" class="form-control"
+                                <input id="timepicker-default2" type="text" class="form-control timepickerAcross"
                                     name="hour_taken">
                                 <span class="input-group-addon input-group-text">
                                     <i class="fa fa-clock"></i>

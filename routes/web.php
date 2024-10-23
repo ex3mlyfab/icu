@@ -52,6 +52,10 @@ Route::middleware('auth')->group(function () {
     //respiratory Assessment Route
     Route::get('/show-patient/{patientCare}/resp-assessment/{active_day}', [ReadingController::class, 'showRespiratory'])->name('resp.show');
     Route::post('/store-respiratory-assessment', [ReadingController::class,'storeRespiratory'])->name('resp.store');
+    //fluid balance routes
+    Route::get('/get-patient-fluids/{patientCare}/select', [ReadingController::class, 'getFluid'])->name('fluid.get');
+    Route::get('/show-patient/{patientCare}/fluid-assessment/{active_day}', [ReadingController::class, 'showFluid'])->name('fluid.show');
+    Route::post('/store-fluid-assessment', [ReadingController::class, 'storeFluid'])->name('fluid.store');
 });
 
 require __DIR__.'/auth.php';
