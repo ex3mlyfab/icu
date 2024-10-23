@@ -95,13 +95,13 @@ class ReadingController extends Controller
          }else{
          $cardio_chart['label'][] = $hour;
 
-             $cardio_chart['heart rate'][] = '--';
+             $cardio_chart['Heart Rate'][] = '--';
                 $cardio_chart['Bp Systolic'][] = '--';
                 $cardio_chart['Bp Diastolic'][] = '--';
                 $cardio_chart['Capillary Refill Time'][] =  '--';
                 $cardio_chart['CVP'][] = '--';
                 $cardio_chart['MAP'][]= '--';
-                $cardio_chart['peripheral pulses'][] =   '--';
+                $cardio_chart['Peripheral pulses'][] =   '--';
                 $cardio_chart['Rhythm'][] = '--';
                 $cardio_chart['Respiratory Rate'][] = '--';
                 $cardio_chart['Temperature'][] = '--';
@@ -131,7 +131,7 @@ class ReadingController extends Controller
         ->whereDate('created_at', Carbon::parse($active_day))
         ->orderBy('hour_taken')
         ->get();
-        $resp_group = $resp_reading->groupBy(function(CardioAssessment $item) {
+        $resp_group = $resp_reading->groupBy(function(RespiratoryAssessment $item) {
             return $item->hour_taken->format('H');
         });
 
@@ -144,15 +144,15 @@ class ReadingController extends Controller
                 foreach($resp_group[$key] as $value)
                 {
                     $resp_chart['label'][] = $hour;
-                    $resp_chart['Mode of Ventilation'][] =$value->mode_of_ventilation;
-                    $resp_chart['I E Ration'][] = $value->i_e_ration;
-                    $resp_chart['FiO2'][] = $value->fi02;
-                    $resp_chart['PEEP'][] = $value->peep;
-                    $resp_chart['Tidal Volume'] = $value->patient_tidal_volume;
-                    $resp_chart['Ventilator Setting'][] =$value->ventilator_set_rate;
-                    $resp_chart['Respiratory Effort'][] = $value->respiratory_effort;
-                    $resp_chart['Endothracheal Intubation'][] = $value->endothracheal_intubation;
-                    $resp_chart['Pressure Support'][] = $value->pressure_support;
+                    $resp_chart['Mode of Ventilation'][] =$value->mode_of_ventilation ?? '--';
+                    $resp_chart['I E Ration'][] = $value->i_e_ration ?? '--';
+                    $resp_chart['FiO2'][] = $value->fi02 ?? '--';
+                    $resp_chart['PEEP'][] = $value->peep ?? '--';
+                    $resp_chart['Tidal Volume'] = $value->patient_tidal_volume ?? '--';
+                    $resp_chart['Ventilator Setting'][] =$value->ventilator_set_rate ?? '--';
+                    $resp_chart['Respiratory Effort'][] = $value->respiratory_effort ?? '--';
+                    $resp_chart['Endothracheal Intubation'][] = $value->endothracheal_intubation ?? '--';
+                    $resp_chart['Pressure Support'][] = $value->pressure_support ?? '--';
 
                 }
             }else

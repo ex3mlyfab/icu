@@ -56,7 +56,7 @@
                         <div class="col-md-4 mb-3">
                             <div class="input-group flex-nowrap">
                                 <span class="input-group-text" id="addon-wrapping">SPO<sub>2</sub></span>
-                                <input type="number" class="form-control" name="weight" placeholder="Weight">
+                                <input type="number" class="form-control" name="spo2" placeholder="SPO2">
 
                             </div>
                         </div>

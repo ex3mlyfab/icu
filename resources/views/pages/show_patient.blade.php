@@ -4,13 +4,21 @@
 
 @push('css')
     <link href="{{ asset('assets/plugins/bootstrap-timepicker/css/bootstrap-timepicker.min.css') }}" rel="stylesheet">
+
+    <!-- required js / css -->
+    <link href="{{asset('assets/plugins/select-picker/dist/picker.min.css')}}" rel="stylesheet">
+
+
 @endpush
 
 @push('js')
+    <script src="{{asset('assets/plugins/select-picker/dist/picker.min.js')}}"></script>
+
     <script src="{{ asset('assets/plugins/bootstrap-timepicker/js/bootstrap-timepicker.min.js') }}"></script>
     <script src="{{ asset('assets/plugins/apexcharts/dist/apexcharts.min.js') }}"></script>
-    <script src="{{ asset('assets/js/demo/dashboard.demo.js') }}"></script>
     <script>
+        $('#ex-search').picker({ search: true });
+
         $('#timepicker-default').timepicker({
             defaultTime: 'current',
             showMeridian: false,
@@ -54,7 +62,7 @@
                     for (var key in myData) {
                         if (key !== "label") {
                             var row = $('<tr></tr>');
-                            row.append('<th class="bg-yellow-300">' + key + '</th>');
+                            row.append('<th class="bg-yellow-300 ps-1">' + key + '</th>');
                             for (var i = 0; i < myData[key].length; i++) {
 
                                 row.append('<td>' + myData[key][i] + '</td>');
@@ -75,7 +83,7 @@
         var getRespData = function() {
             $.ajax({
                 type: 'GET', // or 'POST' if required
-                url: `{{ URL::to('/') }}/show-patient/{{ $patient->latestPatientCare->id }}/resp-assessment/${activeDay}`,
+                url: `{{ URL::to('/') }}/show-patient/{{$patient->latestPatientCare->id}}/resp-assessment/${activeDay}`,
                 dataType: 'json', // Specify the expected data format (e.g., JSON)
                 success: function(data) {
 
@@ -86,7 +94,7 @@
                     var headerIndicator = $('<thead></thead>');
                     // Create a table header row
                     var headerRow = $('<tr></tr>');
-                    headerRow.append('<th class="bg-yellow-300">label</th>');
+                    headerRow.append('<th class="bg-dark-300 text-light">label</th>');
                     for (var i = 0; i < respData.label.length; i++) {
 
                         headerRow.append('<th>' + respData.label[i] + '</th>');
@@ -98,7 +106,7 @@
                     for (var key in respData) {
                         if (key !== "label") {
                             var row = $('<tr></tr>');
-                            row.append('<th class="bg-yellow-300">' + key + '</th>');
+                            row.append('<th class="bg-dark-300 ps-2 text-white">' + key + '</th>');
                             for (var i = 0; i < respData[key].length; i++) {
 
                                 row.append('<td>' + respData[key][i] + '</td>');
@@ -173,7 +181,7 @@
                     console.log(response);
                     $('#toast-1 .toast-body').html(response.message);
                     $('#toast-1').toast('show');
-                    $('#modalXl').modal('hide');
+                    $('#modal-resp').modal('hide');
 
                     $('#resp-form')[0].reset();
                     $('#resp-save').prop('disabled', false);
@@ -193,7 +201,9 @@
                 }
             });
         });
-
+        $('#pupil-diameter').on('change', function() {
+            $('#value-pupil-diameter').html(this.value);
+        })
         $('#active-day').on('change', function() {
             activeDay = $('#active-day').val();
             getCardioData();
@@ -431,7 +441,7 @@
                                 <h5 class="mb-1">Medications</h5>
 
                             </div>
-                            <i class="fa fa-plus" data-bs-toggle="modal" data-bs-target="#modal-neuro"></i>
+                            <i class="fa fa-plus" data-bs-toggle="modal" data-bs-target="#modal-medication"></i>
                             <a href="javascript:;" class="text-secondary"><i class="fa fa-redo"></i></a>
                             <a href="#" data-toggle="card-expand"
                                 class="text-white text-opacity-20 text-decoration-none"><i
