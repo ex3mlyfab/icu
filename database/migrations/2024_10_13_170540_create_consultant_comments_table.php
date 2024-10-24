@@ -15,6 +15,7 @@ return new class extends Migration
             $table->id();
             $table->foreignId('patient_care_id')->constrained('patient_cares');
             $table->text('comment');
+            $table->dateTime('time_of_comment');
             $table->foreignId('created_by')->constrained('users');
 
             $table->timestamps();

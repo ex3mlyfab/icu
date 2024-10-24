@@ -15,6 +15,7 @@
     <script src="{{ asset('assets/plugins/bootstrap-timepicker/js/bootstrap-timepicker.min.js') }}"></script>
     <script src="{{ asset('assets/plugins/apexcharts/dist/apexcharts.min.js') }}"></script>
     <script>
+        let activeDay = $('#active-day').val();
         $('.searchPicker').picker({
             search: true
         });
@@ -34,35 +35,41 @@
             showMeridian: false,
             minuteStep: 1
         });
-        var getFluidSelect = function() {
-            $.ajax({
-                type: 'GET',
-                url: '{{ route('fluid.get', $patient->latestPatientCare->id) }}',
-                dataType: 'json', // Specify the expected data format (e.g., JSON)
-                success: function(data) {
-                    console.log(data.data);
-                    for (let i = 0; i < data.length; i++) {
-                        $('#select-fluid').append('<option value="' + data[i].fluid + '">' + data[i].fluid +
-                            '</option>');
-                    }
 
-                },
-                error: function(error) {
-                    // Handle errors
-                    console.error(error);
-                    // You can display an error message to the user here
-                }
-            })
-        }
-        getFluidSelect()
         var getFluidData = function() {
             $.ajax({
                 type: 'GET',
-                url: '{{ route('fluid.get', $patient->latestPatientCare->id) }}',
+               url: `{{ URL::to('/') }}/show-patient/{{ $patient->latestPatientCare->id }}/fluid-assessment/${activeDay}`,
                 dataType: 'json', // Specify the expected data format (e.g., JSON)
                 success: function(data) {
-                    console.log(data);
-                    $('#table-fluid').html(data);
+                    let fluidData = data.data;
+                    // console.log(myData);
+                    // console.log()
+                    var table = $('<table class="table table-bordered"></table>');
+                    var headerIndicator = $('<thead></thead>');
+                    // Create a table header row
+                    var headerRow = $('<tr></tr>');
+                    headerRow.append('<th class="bg-yellow-300">label</th>');
+                    for (var i = 0; i < fluidData.label.length; i++) {
+
+                        headerRow.append('<th>' + fluidData.label[i] + '</th>');
+                    }
+                    headerIndicator.append(headerRow);
+                    table.append(headerIndicator);
+
+                    // Create table body rows
+                    for (var key in fluidData) {
+                        if (key !== "label" && key !== 'Direction') {
+                            var row = $('<tr></tr>');
+                            row.append('<th class="bg-yellow-300 ps-1">' + key + '</th>');
+                            for (var i = 0; i < fluidData[key].length; i++) {
+
+                                row.append('<td>' + fluidData[key][i] + '</td>');
+                            }
+                            table.append(row);
+                        }
+                    }
+                    $('#table-fluid').html(table);
                 },
                 error: function(error) {
                     // Handle errors
@@ -71,10 +78,6 @@
                 }
             });
         }
-
-        let activeDay = $('#active-day').val();
-
-
         // Store the GET function in a variable
         var getCardioData = function() {
             $.ajax({
@@ -165,8 +168,115 @@
                 }
             });
         };
+        var getMedicationData = function() {
+            $.ajax({
+                type: 'GET', // or 'POST' if required
+                url: `{{ URL::to('/') }}/show-patient/{{ $patient->latestPatientCare->id }}/medication/${activeDay}`,
+                dataType: 'json', // Specify the expected data format (e.g., JSON)
+                success: function(data) {
+                    // $('#chart-3').html(data.data);
+                    let medicationData = data.data;
+                    var table = $('<table class="table table-bordered"></table>');
+                    var headerIndicator = $('<thead></thead>');
+                    // Create a table header row
+                    var headerRow = $('<tr></tr>');
+                    headerRow.append('<th class="bg-dark-300 text-light">label</th>');
+                    for (var i = 0; i < medicationData.label.length; i++) {
+
+                        headerRow.append('<th>' + medicationData.label[i] + '</th>');
+                    }
+                    headerIndicator.append(headerRow);
+                    table.append(headerIndicator);
+
+                    // Create table body rows
+                    for (var key in medicationData) {
+                        if (key !== "label") {
+                            var row = $('<tr></tr>');
+                            row.append('<th class="bg-dark-300 ps-2 text-white">' + key + '</th>');
+                            for (var i = 0; i < medicationData[key].length; i++) {
+
+                                row.append('<td>' + medicationData[key][i] + '</td>');
+                            }
+                            table.append(row);
+                        }
+                    }
+                    $("#table-medication").html(table);
+
+                },
+                error: function(error) {
+                    // Handle errors
+                    console.error(error);
+                }
+            });
+
+        }
+        var getNutritionData = function() {
+            $.ajax({
+                type: 'GET', // or 'POST' if required
+                url: `{{ URL::to('/') }}/show-patient/{{ $patient->latestPatientCare->id }}/nutritions/${activeDay}`,
+                dataType: 'json', // Specify the expected data format (e.g., JSON)
+                success: function(data) {
+                    // $('#chart-3').html(data.data);
+                    let nutritionData = data.data;
+                    var table = $('<table class="table table-bordered"></table>');
+                    var headerIndicator = $('<thead></thead>');
+                    // Create a table header row
+                    var headerRow = $('<tr></tr>');
+                    headerRow.append('<th class="bg-dark-300 text-light">label</th>');
+                    for (var i = 0; i < nutritionData.label.length; i++) {
+
+                        headerRow.append('<th>' + nutritionData.label[i] + '</th>');
+                    }
+                    headerIndicator.append(headerRow);
+                    table.append(headerIndicator);
+
+                    // Create table body rows
+                    for (var key in nutritionData) {
+                        if (key !== "label") {
+                            var row = $('<tr></tr>');
+                            row.append('<th class="ps-2">' + key + '</th>');
+                            for (var i = 0; i < nutritionData[key].length; i++) {
+
+                                row.append('<td class="text-center">' + nutritionData[key][i] + '</td>');
+                            }
+                            table.append(row);
+                        }
+                    }
+                    $("#table-nutrition").html(table);
+
+                },
+                error: function(error) {
+                    // Handle errors
+                    console.error(error);
+                }
+            });
+
+        }
+        var getNeuroData = function() {
+            $.ajax({
+                type: 'GET', // or 'POST' if required
+                url: `{{ URL::to('/') }}/show-patient/{{ $patient->latestPatientCare->id }}/neuro/${activeDay}`,
+                dataType: 'json', // Specify the expected data format (e.g., JSON)
+                success: function(data) {
+
+                    let neuroData = data.data;
+                    let neuroCard = $('<div id="neuro-chart"></div>');
+                    neuroCard.append('<div class="row"></div>');
+
+                    $("#neuro-chart").html(neuroData.data);
+                },
+                error: function(error) {
+                    // Handle errors
+                    console.error(error);
+                }
+            })
+        }
+
         getCardioData();
         getRespData();
+        getFluidData();
+        getMedicationData();
+         getNutritionData();
         $('#cardio-save-spinner').hide();
         $('#cardio-form').submit(function(event) {
             event.preventDefault(); // Prevent default form submission
@@ -205,6 +315,26 @@
             });
         });
         $('#new-fluid').hide();
+        $('#new-medication').hide();
+        $('#select-medication').on('change', function() {
+            var selectVal = $(this).val();
+            console.log(selectVal);
+            if ($(this).val() == 'others') {
+                $('#new-medication').show();
+            } else {
+                $('#new-medication').hide();
+            }
+        });
+        $('#new-nutrition').hide();
+        $('#select-nutrition').on('change', function() {
+            var selectVal = $(this).val();
+            console.log(selectVal);
+            if ($(this).val() == 'others') {
+                $('#new-nutrition').show();
+            } else {
+                $('#new-mutrition').hide();
+            }
+        });
         $('#select-fluid').on('change', function() {
             var selectVal = $(this).val();
             console.log(selectVal);
@@ -278,6 +408,7 @@
                     $('#fluid-form')[0].reset();
                     $('#fluid-save').prop('disabled', false);
                     $('#fluid-save-spinner').hide();
+                    $('#new-fluid').hide();
                     getFluidData();
                 },
                 error: function(error) {
@@ -293,6 +424,126 @@
                 }
             });
         });
+        //medication form
+        $('#medication-save-spinner').hide();
+        $('#medication-form').submit(function(event) {
+            event.preventDefault(); // Prevent default form submission
+
+            var medicationData = $(this).serialize(); // Serialize form data
+
+            $('#medication-save').prop('disabled', true);
+            $('#medication-save-spinner').show();
+
+            $.ajax({
+                type: 'POST',
+                url: '{{ route('medication.store') }}', // Replace with your server-side script URL
+                data: medicationData,
+                success: function(response) {
+
+                    console.log(response);
+                    $('#toast-1 .toast-body').html(response.message);
+                    $('#toast-1').toast('show');
+                    $('#modal-medication').modal('hide');
+
+                    $('#medication-form')[0].reset();
+                    $('#medication-save').prop('disabled', false);
+                    $('#medication-save-spinner').hide();
+                    getMedicationData();
+
+            },
+                error: function(error) {
+                    // Handle errors$
+                    console.error(error);
+                    // You can display an error message to the user here
+                    var errorMessage = error.responseJSON.message;
+                    $('#toast-1 .toast-body').html(errorMessage);
+                    $('#toast-1').toast('show');
+                    $('#medication-save').prop('disabled', false);
+                    $('#medication-save-spinner').hide();
+
+                }
+            });
+
+        });
+        //nutrition form
+        $('#nutrition-save-spinner').hide();
+        $('#nutrition-form').submit(function(event) {
+            event.preventDefault(); // Prevent default form submission
+
+            var nutritionData = $(this).serialize(); // Serialize form data
+
+            $('#nutrition-save').prop('disabled', true);
+            $('#nutrition-save-spinner').show();
+
+            $.ajax({
+                type: 'POST',
+                url: '{{ route('nutrition.store') }}', // Replace with your server-side script URL
+                data: nutritionData,
+                success: function(response) {
+
+                    console.log(response);
+                    $('#toast-1 .toast-body').html(response.message);
+                    $('#toast-1').toast('show');
+                    $('#modal-nutrition').modal('hide');
+
+                    $('#nutrition-form')[0].reset();
+                    $('#nutrition-save').prop('disabled', false);
+                    $('#nutrition-save-spinner').hide();
+                    getNutritionData();
+
+                },
+                error: function(error) {
+                    // Handle errors$
+                    console.error(error);
+                    // You can display an error message to the user here
+                    var errorMessage = error.responseJSON.message;
+                    $('#toast-1 .toast-body').html(errorMessage);
+                    $('#toast-1').toast('show');
+                    $('#nutrition-save').prop('disabled', false);
+                    $('#nutrition-save-spinner').hide();
+                }
+            });
+
+        });
+        //neuro form
+        $('#neuro-save-spinner').hide();
+        $('#neuro-form').submit(function(event) {
+            event.preventDefault(); // Prevent default form submission
+
+            var neuroData = $(this).serialize(); // Serialize form data
+
+            $('#neuro-save').prop('disabled', true);
+            $('#neuro-save-spinner').show();
+
+            $.ajax({
+                type: 'POST',
+                url: '{{ route('neuro.store') }}', // Replace with your server-side script URL
+                data: neuroData,
+                success: function(response) {
+
+                    console.log(response);
+                    $('#toast-1 .toast-body').html(response.message);
+                    $('#toast-1').toast('show');
+                    $('#modal-neuro').modal('hide');
+                    $('#neuro-form')[0].reset();
+                    $('#neuro-save').prop('disabled', false);
+                    $('#neuro-save-spinner').hide();
+                    getNeuroData();
+
+                },
+                error: function(error) {
+                    // Handle errors$
+                    console.error(error);
+                    // You can display an error message to the user here
+                    var errorMessage = error.responseJSON.message;
+                    $('#toast-1 .toast-body').html(errorMessage);
+                    $('#toast-1').toast('show');
+                    $('#neuro-save').prop('disabled', false);
+                    $('#neuro-save-spinner').hide();
+                }
+            });
+
+        });
 
         $('#pupil-diameter').on('change', function() {
             $('#value-pupil-diameter').html(this.value);
@@ -301,6 +552,9 @@
             activeDay = $('#active-day').val();
             getCardioData();
             getRespData();
+            getFluidData();
+            getMedicationData();
+            getNutritionData();
         });
     </script>
 @endpush
@@ -515,6 +769,43 @@
                     </div>
                     <div class="card-body">
                         <div class="table-responsive" id="table-neuro">
+                                @php
+                                    $neuro = \App\Models\NeuroAssessment::all()->where('patient_care_id', $patient->latestPatientCare->id)->all();
+                                @endphp
+
+                                @forelse ($neuro as $item_neuro)
+                                    <table class="table table-bordered">
+                                        <tr>
+                                            <th>Eyes Open</th>
+                                            <td>{{$item_neuro->eyes_open}}</td>
+                                        </tr>
+                                        <tr>
+                                            <td>Sedated</td>
+                                            <td>{{ $item_neuro->sedated ? 'Yes' : 'No'}}</td>
+                                        </tr>
+                                        <tr>
+                                            <th>Best VerBal Response</th>
+                                            <td>{{ $item_neuro->best_verbal_response }}</td>
+                                        </tr>
+                                        <tr>
+                                            <td>Intubated</td>
+                                            <td>{{$item_neuro->intubated ? 'Yes' : 'No'}}</td>
+                                        </tr>
+                                        <tr>
+                                            <th>Best Motor Response</th>
+                                            <td>{{$item_neuro->best_motor_response}}</td>
+                                        </tr>
+                                        <tr>
+                                            <td>Recorded at: {{ $item_neuro->created_at->format('d/M/y: H:i') }}</td>
+                                        </tr>
+
+
+
+
+                                </table>
+                                @empty
+                                    <h5>No Neurological Assessment Found</h5>
+                                @endforelse
 
                         </div>
 
@@ -539,7 +830,7 @@
 
                     </div>
                     <div class="card-body">
-                        <div class="table-responsive" id="table-neuro">
+                        <div class="table-responsive" id="table-medication">
 
                         </div>
 
@@ -568,16 +859,24 @@
             <div class="col-lg-6">
                 <div class="card h-100 mt-2">
                     <!-- BEGIN card-body -->
-                    <div class="card-body">
-                        <div class="d-flex mb-3 gap-1">
-                            <div class="flex-grow-1">
-                                <h5 class="mb-1">Nutrition</h5>
+                    <div class="card-header bg-gradient bg-teal-400 d-flex gap-2 align-items-center">
 
-                            </div>
-                            <i class="fa fa-plus" data-bs-toggle="modal" data-bs-target="#modal-resp"></i>
-                            <a href="javascript:;" class="text-secondary"><i class="fa fa-redo"></i></a>
+                        <div class="flex-grow-1">
+                            <h5 class="mb-1">Nutrition</h5>
+
                         </div>
-                        <div id="chart-2"></div>
+                        <i class="fa fa-plus" data-bs-toggle="modal" data-bs-target="#modal-nutrition"></i>
+                        <a href="javascript:;" class="text-secondary"><i class="fa fa-redo"></i></a>
+                        <a href="#" data-toggle="card-expand"
+                            class="text-white text-opacity-20 text-decoration-none"><i class="fa fa-fw fa-expand"></i></a>
+
+                    </div>
+                    <div class="card-body">
+                        <div class="table-responsive" id="table-nutrition">
+
+                        </div>
+
+
                     </div>
                     <!-- END card-body -->
                 </div>

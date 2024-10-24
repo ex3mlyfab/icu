@@ -12,6 +12,10 @@ class Nutrition extends Model
 
     protected $guarded = ['id'];
 
+     protected $casts = [
+        'hour_taken' => 'datetime:H:i:s',
+        'time_of_nutrition' => 'datetime',
+    ];
     public function patientCare(): BelongsTo
     {
         return $this->belongsTo(PatientCare::class);

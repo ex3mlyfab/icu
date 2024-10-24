@@ -14,12 +14,16 @@
 
                     <div class="row">
                         <div class="col-xl-6">
-                            <div class="mb-3">
+                            <div class="mb-3" >
                                 <label class="form-label">Select Fluid <span class="text-danger">*</span></label>
-                                <select class="form-control" id="select-fluid" name="fluid_select" required>
+                                <select class="form-select" id="select-fluid" name="fluid_select">
                                     <option selected>Select Fluid</option>
-                                    <option value="others">Enter New Fluid</option>
+                                    @foreach ($patient->latestPatientCare->fluidBalances->unique('fluid') as $fluiditem)
+                                        <option value="{{ $fluiditem->fluid }}"> {{ $fluiditem->fluid }}</option>
+                                    @endforeach
+                                    <option value="others">Add New Fluid</option>
                                 </select>
+
                             </div>
                         </div>
                     </div>
@@ -29,7 +33,7 @@
                             <div class="input-group flex-nowrap">
                                 <span class="input-group-text" id="addon-wrapping1">Fluid Name</span>
                                 <input type="text" id="fluid_name" class="form-control" name="fluid_name"
-                                    placeholder="Fluid Name" required>
+                                    placeholder="Fluid Name">
 
                             </div>
                         </div>

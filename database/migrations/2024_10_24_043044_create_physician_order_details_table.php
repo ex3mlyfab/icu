@@ -11,12 +11,11 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('physician_orders', function (Blueprint $table) {
+        Schema::create('physician_order_details', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('patient_care_id')->constrained('patient_cares');
-            $table->string('name');
+            $table->foreignId('physician_order_id')->constrained();
+            $table->time('hour_taken');
             $table->foreignId('created_by')->constrained('users');
-            $table->boolean('is_discontinued')->default(0);
             $table->timestamps();
         });
     }
@@ -26,6 +25,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('physician_orders');
+        Schema::dropIfExists('physician_order_details');
     }
 };

@@ -4,9 +4,15 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\CardioAssessmentRequest;
 use App\Http\Requests\FluidBalanceRequest;
+use App\Http\Requests\MedicationRequest;
+use App\Http\Requests\NeuroAssessmentRequest;
+use App\Http\Requests\NutritionRequest;
 use App\Http\Requests\RespiRatoryAssessmentRequest;
 use App\Models\CardioAssessment;
 use App\Models\FluidBalance;
+use App\Models\Medication;
+use App\Models\NeuroAssessment;
+use App\Models\Nutrition;
 use App\Models\PatientCare;
 use App\Models\RespiratoryAssessment;
 use Carbon\Carbon;
@@ -174,7 +180,8 @@ class ReadingController extends Controller
 
     public function storeFluid(FluidBalanceRequest $request)
     {
-        $data = $request->all();
+         $data = $request->all();
+        //  dd($data);
 
        if($data['fluid_select'] == 'others')
        {
@@ -188,7 +195,9 @@ class ReadingController extends Controller
             'time_of_fluid_balance' => now(),
            ]);
        }else{
-            $fluidBefore = FluidBalance::where('patient_care_id', $data['patient_care_id'])->where('fluid', $data['fluid_select'])->get(['fluid','direction']);
+            $fluidBefore = FluidBalance::where('patient_care_id', $data['patient_care_id'])
+                            ->where('fluid', $data['fluid_select'])->first();
+            // dump($fluidBefore);
             $newrecord = FluidBalance::create([
             'patient_care_id' => $data['patient_care_id'],
             'fluid' => $fluidBefore->fluid,
@@ -210,10 +219,11 @@ class ReadingController extends Controller
         ->whereDate('created_at', Carbon::parse($active_day))
         ->orderBy('hour_taken')
         ->get();
-        $fluid_group = $fluid_reading->groupBy(function(CardioAssessment $item) {
+        $fluid_group = $fluid_reading->groupBy(function(FluidBalance $item) {
             return $item->hour_taken->format('H');
         });
-
+        $fluid_names = $fluid_reading->unique('fluid')->select(['fluid', 'direction']);
+        // dump($fluid_names);
         $fluid_chart = [];
 
         foreach($this->hours as $key=>$hour)
@@ -223,16 +233,18 @@ class ReadingController extends Controller
                 foreach($fluid_group[$key] as $value)
                 {
                     $fluid_chart['label'][] = $hour;
-                    $fluid_chart['Fluid Type'][] = $value->fluid_type;
-                    $fluid_chart['Volume'][] = $value->volume;
+                    $fluid_chart[$value->fluid][] = $value->volume;
                     $fluid_chart['Direction'][] = $value->direction;
                 }
             }else
                 {
                     $fluid_chart['label'][] = $hour;
-                    $fluid_chart['Fluid Type'][] = '--';
-                    $fluid_chart['Volume'][] = '--';
-                    $fluid_chart['Direction'][] = '--';
+                    foreach($fluid_names as $name)
+                    {
+                        $fluid_chart[$name['fluid']][] = "--";
+                        $fluid_chart['Direction'][] =$name['direction'];
+                    }
+
                 }
             }
             return response(['data' => $fluid_chart], 200);
@@ -241,6 +253,187 @@ class ReadingController extends Controller
     public function getFluid(PatientCare $patientCare)
     {
 
-        return response(['data' => $patientCare->fluidBalances], 200);
+        return response(['data' => $patientCare->fluidBalances->unique('fluid')], 200);
     }
+    public function getMedication(PatientCare $patientCare)
+    {
+        return response($patientCare->medications->unique('medication'), 200);
+    }
+    public function showMedication(PatientCare $patientCare, $active_day)
+    {
+        // $medication_reading =
+        $medication_reading = Medication::where('patient_care_id', $patientCare->id)
+                        ->whereDate('created_at', Carbon::parse($active_day))
+                        ->orderBy('hour_taken')
+                        ->get();
+        $medication_group = $medication_reading->groupBy(function(Medication $item) {
+            return $item->hour_taken->format('H');
+        });
+        $medication_names = $medication_reading->unique('medication')->select(['medication', 'dosage', 'frequency']);
+        // dump($fluid_names);
+        $medication_chart = [];
+
+        foreach($this->hours as $key=>$hour)
+        {
+            if(isset($medication_group[$key]))
+            {
+                foreach($medication_group[$key] as $value)
+                {
+                    $medication_chart['label'][] = $hour;
+                    $medication_chart[$value->medication][] = $value->dosage;
+
+                }
+            }else
+                {
+                    $medication_chart['label'][] = $hour;
+                    foreach($medication_names as $name)
+                    {
+                        $medication_chart[$name['medication']][] = "--";
+
+                    }
+
+                }
+            }
+            return response(['data' => $medication_chart], 200);
+
+    }
+    public function storeMedication(MedicationRequest $request)
+    {
+        $data= $request->all();
+         if($data['medication_select'] == 'others')
+         {
+             $medicationRecord = Medication::create([
+                'patient_care_id' => $data['patient_care_id'],
+                'medication' => $data['medication_name'],
+                'dosage' => $data['dosage'],
+                'frequency' => $data['frequency'],
+                'created_by' => Auth::user()->id,
+                'hour_taken' => $data['hour_taken'],
+                'time_of_medication' => now(),
+             ]);
+         }else{
+            $medicationBefore = Medication::where('patient_care_id', $data['patient_care_id'])
+                            ->where('medication', $data['medication_select'])->first();
+            // dump($fluidBefore);
+            $newrecord = Medication::create([
+            'patient_care_id' => $data['patient_care_id'],
+            'medication' => $medicationBefore->medication,
+            'dosage' => $data['dosage'],
+            'frequency' => $medicationBefore->frequency,
+            'created_by' => Auth::user()->id,
+            'hour_taken' => $data['hour_taken'],
+            'time_of_medication' => now(),
+        ]);
+         }
+
+         return response(['message'=> 'Medication Added successfully'], 200);
+    }
+    public function getNutrition(PatientCare $patientCare)
+    {
+        return response($patientCare->nutritions->unique('feeding_route'), 200);
+    }
+    public function showNutrition(PatientCare $patientCare, $active_day)
+    {
+        // $medication_reading =
+        $nutrition_reading = Nutrition::where('patient_care_id', $patientCare->id)
+                        ->whereDate('created_at', Carbon::parse($active_day))
+                        ->orderBy('hour_taken')
+                        ->get();
+        $nutrition_group = $nutrition_reading->groupBy(function(Nutrition $item) {
+            return $item->hour_taken->format('H');
+        });
+        $nutrition_names = $nutrition_reading->unique('Nutrition')->select(['feeding_route', 'caloric_intake']);
+        // dump($fluid_names);
+        $nutrition_chart = [];
+
+        foreach($this->hours as $key=>$hour)
+        {
+            if(isset($nutrition_group[$key]))
+            {
+                foreach($nutrition_group[$key] as $value)
+                {
+                    $nutrition_chart['label'][] = $hour;
+                    $nutrition_chart[$value->feeding_route][] = $value->caloric_intake;
+
+                }
+            }else
+                {
+                    $nutrition_chart['label'][] = $hour;
+                    foreach($nutrition_names as $name)
+                    {
+                        $nutrition_chart[$name['feeding_route']][] = "--";
+
+                    }
+
+                }
+            }
+            return response(['data' => $nutrition_chart], 200);
+
+    }
+    public function storeNutrition(NutritionRequest $request)
+    {
+        $data= $request->all();
+         if($data['nutrition_select'] == 'others')
+         {
+             $medicationRecord = Nutrition::create([
+                'patient_care_id' => $data['patient_care_id'],
+                'feeding_route' => $data['nutrition_name'],
+                'caloric_intake' => $data['caloric_intake'],
+
+                'created_by' => Auth::user()->id,
+                'hour_taken' => $data['hour_taken'],
+                'time_of_nutrition' => now(),
+             ]);
+         }else{
+            $medicationBefore = Nutrition::where('patient_care_id', $data['patient_care_id'])
+                            ->where('medication', $data['nutrition_select'])->first();
+            // dump($fluidBefore);
+            $newrecord = Nutrition::create([
+            'patient_care_id' => $data['patient_care_id'],
+            'feeding_route' => $medicationBefore->feeding_route,
+            'caloric_intake' => $data['caloric_intake'],
+            'created_by' => Auth::user()->id,
+            'hour_taken' => $data['hour_taken'],
+            'time_of_nutrition' => now(),
+        ]);
+         }
+
+         return response(['message'=> 'Nutrition Added successfully'], 200);
+    }
+    public function storeNeuro(NeuroAssessmentRequest $request)
+    {
+        $data= $request->all();
+         $medicationRecord = NeuroAssessment::create([
+            'patient_care_id' => $data['patient_care_id'],
+            'eyes_open' => $data['eyes_open'],
+            'sedated' => $data['sedated'],
+            'best_verbal_response' => $data['best_verbal_response'],
+            'intubated' => $data['intubated'],
+            'best_motor_response' => $data['best_motor_response'],
+            'sedation_score' => $data['sedation_score'],
+            'pupil_diameter' => $data['pupil_diameter'],
+            'hour_taken' => $data['hour_taken'],
+            'time_of_neuro_assessment' => now(),
+         ]);
+         return response(['message'=> 'Neuro Added successfully'], 200);
+    }
+    public function showNeuro(PatientCare $patientCare, $active_day)
+    {
+        $neuro_reading = NeuroAssessment::where('patient_care_id', $patientCare->id)
+                        ->whereDate('created_at', Carbon::parse($active_day))
+                        ->get();
+        $neuro_chart = [];
+        foreach($neuro_reading as $reading)
+        {
+            $neuro_chart['eyes_open'][] = $reading->eyes_open;
+            $neuro_chart['sedated'][] = $reading->sedated;
+            $neuro_chart['intubated'][] = $reading->intubated;
+            $neuro_chart['best_verbal_response'][] = $reading->best_verbal_response;
+            $neuro_chart['sedation_score'][] = $reading->sedation_score;
+            $neuro_chart['pupil_diameter'][] = $reading->pupil_diameter;
+            $neuro_chart['hour_taken'][] = $reading->hour_taken->format('H');
+        }
+        return response($neuro_chart, 200);
+    }
+
 }

@@ -95,7 +95,7 @@
                                 <label class="form-label">Pupil Diameter <span class="text-danger">*</span></label>
 													<div>
 														<input id="pupil-diameter" class="form-range" type="range" value="1"
-                                                        min="1" max="6" name="pupil_diameter"/>
+                                                        min="1" max="6" name="pupil_diameter" required/>
 													</div>
                                                     <span class="range-indicator" id="value-pupil-diameter"></span>
                             </div>

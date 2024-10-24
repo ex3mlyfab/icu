@@ -10,6 +10,10 @@ class FluidBalance extends Model
 {
     use HasFactory;
     protected $guarded = ['id'];
+     protected $casts = [
+        'hour_taken' => 'datetime:H:i:s',
+        'time_of_fluid_balance' => 'datetime',
+    ];
 
     public function patientCare(): BelongsTo
     {

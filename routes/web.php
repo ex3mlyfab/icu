@@ -56,6 +56,25 @@ Route::middleware('auth')->group(function () {
     Route::get('/get-patient-fluids/{patientCare}/select', [ReadingController::class, 'getFluid'])->name('fluid.get');
     Route::get('/show-patient/{patientCare}/fluid-assessment/{active_day}', [ReadingController::class, 'showFluid'])->name('fluid.show');
     Route::post('/store-fluid-assessment', [ReadingController::class, 'storeFluid'])->name('fluid.store');
+    //medication routes
+    Route::get('/show-patient/{patientCare}/medication/{active_day}', [ReadingController::class, 'showMedication'])->name('medication.show');
+    Route::post('/store-medication', [ReadingController::class, 'storeMedication'])->name('medication.store');
+    Route::get('/get-patient-medications/{patientCare}/select', [ReadingController::class, 'getMedication'])->name('medication.get');
+
+    //neuro Assessment routes
+    Route::get('/show-patient/{patientCare}/neuro-assessment/{active_day}', [ReadingController::class, 'showNeuro'])->name('neuro.show');
+    Route::post('/store-neuro-assessment', [ReadingController::class, 'storeNeuro'])->name('neuro.store');
+
+    //nutritions routes
+    Route::get('/show-patient/{patientCare}/nutritions/{active_day}', [ReadingController::class, 'showNutrition'])->name('nutrition.show');
+    Route::post('/store-nutritions', [ReadingController::class, 'storeNutrition'])->name('nutrition.store');
+    Route::get('/get-patient-nutritions/{patientCare}/select', [ReadingController::class, 'getNutrition'])->name('nutrition.get');
+
+    //seizure Chart routes
+    Route::get('/show-patient/{patientCare}/seizure-chart/{active_day}', [ReadingController::class, 'showSeizure'])->name('seizure.show');
+    Route::post('/store-seizure-chart', [ReadingController::class, 'storeSeizure'])->name('seizure.store');
+    Route::get('/get-patient-seizure-chart/{patientCare}/select', [ReadingController::class, 'getSeizure'])->name('seizure.get');
+
 });
 
 require __DIR__.'/auth.php';
