@@ -222,27 +222,36 @@ class ReadingController extends Controller
         $fluid_group = $fluid_reading->groupBy(function(FluidBalance $item) {
             return $item->hour_taken->format('H');
         });
-        $fluid_names = $fluid_reading->unique('fluid')->select(['fluid', 'direction']);
+        $fluid_names = $patientCare->fluidBalances->unique('fluid')->pluck('fluid')->toArray();
+
         // dump($fluid_names);
         $fluid_chart = [];
 
         foreach($this->hours as $key=>$hour)
         {
+             $fluid_chart['label'][] = $hour;
             if(isset($fluid_group[$key]))
             {
-                foreach($fluid_group[$key] as $value)
+                $targetFluids = $fluid_group[$key]->pluck('fluid')->toArray();
+                $targetDirections = $fluid_group[$key]->pluck('direction')->toArray();
+                $targetVolumes = $fluid_group[$key]->pluck('volume')->toArray();
+                $balanceFluids = array_diff($fluid_names, $targetFluids);
+                foreach($targetFluids as $targatFluid)
                 {
-                    $fluid_chart['label'][] = $hour;
-                    $fluid_chart[$value->fluid][] = $value->volume;
-                    $fluid_chart['Direction'][] = $value->direction;
+                    $fluid_chart[$targatFluid][] = $targetVolumes[array_search($targatFluid, $targetFluids)];
+                    $fluid_chart['Direction'][] = $targetDirections[array_search($targatFluid, $targetFluids)];
+                }
+                foreach($balanceFluids as $balanceFluid){
+                    $fluid_chart[$balanceFluid][] = "--";
+                    $fluid_chart['Direction'][] = "--";
                 }
             }else
                 {
-                    $fluid_chart['label'][] = $hour;
+
                     foreach($fluid_names as $name)
                     {
-                        $fluid_chart[$name['fluid']][] = "--";
-                        $fluid_chart['Direction'][] =$name['direction'];
+                        $fluid_chart[$name][] = "--";
+
                     }
 
                 }
@@ -269,26 +278,34 @@ class ReadingController extends Controller
         $medication_group = $medication_reading->groupBy(function(Medication $item) {
             return $item->hour_taken->format('H');
         });
-        $medication_names = $medication_reading->unique('medication')->select(['medication', 'dosage', 'frequency']);
+        $medication_names = $patientCare->medications->unique('medication')->pluck('medication')->toArray();
         // dump($fluid_names);
         $medication_chart = [];
 
         foreach($this->hours as $key=>$hour)
         {
+            $medication_chart['label'][] = $hour;
+
+
             if(isset($medication_group[$key]))
             {
-                foreach($medication_group[$key] as $value)
+                $targetMeds= $medication_group[$key]->pluck('medication')->toArray();
+                $targetDosage= $medication_group[$key]->pluck('dosage')->toArray();
+                $absentmeds = array_diff($medication_names, $targetMeds);
+                foreach($targetMeds as $targetmed)
                 {
-                    $medication_chart['label'][] = $hour;
-                    $medication_chart[$value->medication][] = $value->dosage;
-
+                    $medication_chart[$targetmed][] = $targetDosage[array_search($targetmed, $targetMeds)];
                 }
+                foreach($absentmeds as $absetMed){
+                    $medication_chart[$absetMed][]= "--";
+                }
+
             }else
                 {
-                    $medication_chart['label'][] = $hour;
+
                     foreach($medication_names as $name)
                     {
-                        $medication_chart[$name['medication']][] = "--";
+                        $medication_chart[$name][] = "--";
 
                     }
 
@@ -342,26 +359,34 @@ class ReadingController extends Controller
         $nutrition_group = $nutrition_reading->groupBy(function(Nutrition $item) {
             return $item->hour_taken->format('H');
         });
-        $nutrition_names = $nutrition_reading->unique('Nutrition')->select(['feeding_route', 'caloric_intake']);
-        // dump($fluid_names);
+        $nutrition_names = $patientCare->nutritions->unique('feeding_route')->pluck('feeding_route')->toArray();
+        // dump($nutrition_names);
         $nutrition_chart = [];
+        // dump($nutrition_group);
 
         foreach($this->hours as $key=>$hour)
         {
+            $nutrition_chart['label'][] = $hour;
+
             if(isset($nutrition_group[$key]))
             {
-                foreach($nutrition_group[$key] as $value)
-                {
-                    $nutrition_chart['label'][] = $hour;
-                    $nutrition_chart[$value->feeding_route][] = $value->caloric_intake;
+                // $number_of_occurrences = array_count_values()
+                $targetnames = $nutrition_group[$key]->pluck('feeding_route')->toArray();
+                $calorifices = $nutrition_group[$key]->pluck('caloric_intake')->toArray();
+                $absentname = array_diff($nutrition_names, $targetnames);
+                foreach($targetnames as $targetname){
 
+                    $nutrition_chart[$targetname][] = $calorifices[array_search($targetname, $targetnames)];
+                }
+                foreach($absentname as $absent){
+                    $nutrition_chart[$absent][] = "--";
                 }
             }else
                 {
-                    $nutrition_chart['label'][] = $hour;
                     foreach($nutrition_names as $name)
                     {
-                        $nutrition_chart[$name['feeding_route']][] = "--";
+                       // $nutrition_chart['label'][] = $hour;
+                        $nutrition_chart[$name][] = "--";
 
                     }
 

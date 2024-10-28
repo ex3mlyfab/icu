@@ -18,10 +18,10 @@
                         <div class="col-xl-6">
                             <div class="mb-3">
                                 <label class="form-label">Select Food <span class="text-danger">*</span></label>
-                                <select class="form-select" id="select-nutrition" name="nutrition_select">
+                                <select class="form-select" id="select-nutrition" name="nutrition_select" required>
                                     <option selected>Select Food</option>
                                     @foreach ($patient->latestPatientCare->nutritions->unique('feeding_route') as $nutritionitem)
-                                        <option value="{{ $nutritionitem->feeding_route }}"> {{ $nutritionitem->feeding_route }}</option>
+                                        <option value="{{$nutritionitem->feeding_route}}"> {{ $nutritionitem->feeding_route }}</option>
                                     @endforeach
                                     <option value="others">Add New Food</option>
                                 </select>
