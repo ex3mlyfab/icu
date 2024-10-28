@@ -35,8 +35,53 @@
             showMeridian: false,
             minuteStep: 1
         });
+        function getFluidSelect() {
+            $.ajax({
+                type: 'GET',
+                url: '{{route('fluid.get', $patient->latestPatientCare->id)}}',
+                dataType: 'json', // Specify the expected data format (e.g., JSON)
+                success: function(data) {
+                $("#select-fluid").empty().append('<option value="others">Add New Fluid</option><option value="" selected>Select an option</option>');
 
-        var getFluidData = function() {
+                // Populate with new options
+                $.each(data.data, function(index, option) {
+                    $("#select-fluid").prepend('<option value="' + option.fluid + '">' + option.fluid + '</option>');
+                });
+            }
+        });
+    }
+    function getMedicationSelect() {
+        $.ajax({
+            type: 'GET',
+            url:"{{ route('medication.get', $patient->latestPatientCare->id) }}",
+            dataType: 'json', // Specify the expected data format (e.g., JSON)
+            success: function(data) {
+                $("#select-medication").empty().append('<option value="others">Add New Medication</option><option value="" selected>Select an option</option>');
+                $.each(data, function(index, option) {
+                    $("#select-medication").prepend('<option value="' + option.medication + '">' + option.medication + '</option>');
+                });
+
+            }
+        });
+    }
+    function getNutritionSelect() {
+        $.ajax({
+            type: 'GET',
+            url:"{{ route('nutrition.get', $patient->latestPatientCare->id) }}",
+            dataType: 'json', // Specify the expected data format (e.g., JSON)
+            success: function(data) {
+                $("#select-nutrition").empty().append('<option value="others">Add New Nutrition</option><option value="" selected>Select an option</option>');
+                $.each(data, function(index, option) {
+                    $("#select-nutrition").prepend('<option value="' + option.feeding_route + '">' + option.feeding_route + '</option>');
+                });
+            }
+        });
+    }
+
+        getFluidSelect();
+        getMedicationSelect();
+        getNutritionSelect();
+        function getFluidData() {
             $.ajax({
                 type: 'GET',
                url: `{{ URL::to('/') }}/show-patient/{{ $patient->latestPatientCare->id }}/fluid-assessment/${activeDay}`,
@@ -79,7 +124,7 @@
             });
         }
         // Store the GET function in a variable
-        var getCardioData = function() {
+        function getCardioData() {
             $.ajax({
                 type: 'GET', // or 'POST' if required
                 url: `{{ URL::to('/') }}/show-patient/{{ $patient->latestPatientCare->id }}/cardio-assessment/${activeDay}`,
@@ -124,7 +169,7 @@
                 }
             });
         };
-        var getRespData = function() {
+        function getRespData() {
             $.ajax({
                 type: 'GET', // or 'POST' if required
                 url: `{{ URL::to('/') }}/show-patient/{{ $patient->latestPatientCare->id }}/resp-assessment/${activeDay}`,
@@ -168,7 +213,7 @@
                 }
             });
         };
-        var getMedicationData = function() {
+        function getMedicationData() {
             $.ajax({
                 type: 'GET', // or 'POST' if required
                 url: `{{ URL::to('/') }}/show-patient/{{ $patient->latestPatientCare->id }}/medication/${activeDay}`,
@@ -195,7 +240,7 @@
                             row.append('<th class="bg-dark-300 ps-2 text-white">' + key + '</th>');
                             for (var i = 0; i < medicationData[key].length; i++) {
 
-                                row.append('<td>' + medicationData[key][i] + '</td>');
+                                row.append('<td class="text-center">' + medicationData[key][i] + '</td>');
                             }
                             table.append(row);
                         }
@@ -210,7 +255,7 @@
             });
 
         }
-        var getNutritionData = function() {
+        function getNutritionData() {
             $.ajax({
                 type: 'GET', // or 'POST' if required
                 url: `{{ URL::to('/') }}/show-patient/{{ $patient->latestPatientCare->id }}/nutritions/${activeDay}`,
@@ -252,18 +297,19 @@
             });
 
         }
-        var getNeuroData = function() {
+        function getNeuroData() {
             $.ajax({
                 type: 'GET', // or 'POST' if required
-                url: `{{ URL::to('/') }}/show-patient/{{ $patient->latestPatientCare->id }}/neuro/${activeDay}`,
+                url: `{{ URL::to('/') }}/show-patient/{{ $patient->latestPatientCare->id }}/neuro-assessment/${activeDay}`,
                 dataType: 'json', // Specify the expected data format (e.g., JSON)
                 success: function(data) {
 
-                    let neuroData = data.data;
-                    let neuroCard = $('<div id="neuro-chart"></div>');
-                    neuroCard.append('<div class="row"></div>');
+                    let neuroData = data;
+                    console.log(neuroData);
+                    // let neuroCard = $('<div id="neuro-chart"></div>');
+                    // neuroCard.append('<div class="row"></div>');
 
-                    $("#neuro-chart").html(neuroData.data);
+                    $("#neuro-chart").html(neuroData);
                 },
                 error: function(error) {
                     // Handle errors
@@ -277,6 +323,7 @@
         getFluidData();
         getMedicationData();
          getNutritionData();
+         getNeuroData();
         $('#cardio-save-spinner').hide();
         $('#cardio-form').submit(function(event) {
             event.preventDefault(); // Prevent default form submission
@@ -410,6 +457,7 @@
                     $('#fluid-save-spinner').hide();
                     $('#new-fluid').hide();
                     getFluidData();
+                    getMedicationSelect();
                 },
                 error: function(error) {
                     // Handle errors$
@@ -449,6 +497,7 @@
                     $('#medication-save').prop('disabled', false);
                     $('#medication-save-spinner').hide();
                     getMedicationData();
+                    getMedicationSelect();
 
             },
                 error: function(error) {
@@ -490,6 +539,7 @@
                     $('#nutrition-save').prop('disabled', false);
                     $('#nutrition-save-spinner').hide();
                     getNutritionData();
+                    getNutritionSelect();
 
                 },
                 error: function(error) {
@@ -575,7 +625,7 @@
     </div>
 
     <div class="mx-2 mx-md-5 mt-2">
-        <div class="card border-theme border-3  sticky-top">
+        <div class="card border-theme border-3 sticky-md-top">
             <div class="card-body row gx-0 align-items-center shadow-lg">
                 <div class="col-md-12">
                     <div class="row">
@@ -680,7 +730,7 @@
                     <!-- END card-body -->
                 </div>
             </div>
-            <div class="col-lg-6">
+            <div class="col-lg-6" id="resp-card">
                 <div class="card h-100 mt-2">
                     <div class="card-header  bg-dark d-flex align-items-center">
                         <div class="flex-grow-1">
@@ -727,7 +777,7 @@
 
                 </div>
             </div>
-            <div class="col-lg-6">
+            <div class="col-lg-6" id="fluid-card">
                 <div class="card h-100 mt-2">
                     <!-- BEGIN card-body -->
                     <div class="card-header bg-warning d-flex gap-2 align-items-center">
@@ -754,6 +804,7 @@
             </div>
             <div class="col-lg-6">
                 <div class="card h-100 mt-2">
+                    <div id="neuroChart"></div>
                     <!-- BEGIN card-body -->
                     <div class="card-header bg-danger d-flex gap-2 align-items-center">
 
@@ -768,12 +819,11 @@
 
                     </div>
                     <div class="card-body">
+                        <div id="neuro-chart"></div>
                         <div class="table-responsive" id="table-neuro">
-                                @php
-                                    $neuro = \App\Models\NeuroAssessment::all()->where('patient_care_id', $patient->latestPatientCare->id)->all();
-                                @endphp
 
-                                @forelse ($neuro as $item_neuro)
+
+                                @forelse ($patient->latestPatientCare->neuroAssessments as $item_neuro)
                                     <table class="table table-bordered">
                                         <tr>
                                             <th>Eyes Open</th>
@@ -796,7 +846,7 @@
                                             <td>{{$item_neuro->best_motor_response}}</td>
                                         </tr>
                                         <tr>
-                                            <td>Recorded at: {{ $item_neuro->created_at->format('d/M/y: H:i') }}</td>
+                                            <td colspan="2" class="text-center">Recorded at: {{ $item_neuro->created_at->format('d/M/y-h:i A') }}</td>
                                         </tr>
 
 
@@ -848,7 +898,7 @@
                                 <h5 class="mb-1">Laboratory Results</h5>
 
                             </div>
-                            <i class="fa fa-plus" data-bs-toggle="modal" data-bs-target="#modal-resp"></i>
+                            <i class="fa fa-plus" data-bs-toggle="modal" data-bs-target="#modal-lab"></i>
                             <a href="javascript:;" class="text-secondary"><i class="fa fa-redo"></i></a>
                         </div>
                         <div id="chart-2"></div>

@@ -4,7 +4,7 @@
     <div class="modal-dialog modal-xl">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title">Add New Cardiovasular assessment</h5>
+                <h5 class="modal-title">Add New Nutrition Details</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
             </div>
             <form id="nutrition-form">
@@ -19,11 +19,7 @@
                             <div class="mb-3">
                                 <label class="form-label">Select Food <span class="text-danger">*</span></label>
                                 <select class="form-select" id="select-nutrition" name="nutrition_select" required>
-                                    <option selected>Select Food</option>
-                                    @foreach ($patient->latestPatientCare->nutritions->unique('feeding_route') as $nutritionitem)
-                                        <option value="{{$nutritionitem->feeding_route}}"> {{ $nutritionitem->feeding_route }}</option>
-                                    @endforeach
-                                    <option value="others">Add New Food</option>
+
                                 </select>
                             </div>
                         </div>

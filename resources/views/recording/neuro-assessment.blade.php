@@ -14,7 +14,7 @@
                     <input type="hidden" name="patient_care_id" value="{{$patient->latestPatientCare->id}}" >
 
                     <div class="row gx-2 align-items-center border rounded p-2">
-                        <div class="col-md-6 mb-3 ">
+                        <div class="col-md-4 mb-3 ">
                             <div class="form-group mb-3">
                                     <label class="form-label d-block fw-bold">Eyes Open</label>
                                     @foreach (\App\Enums\EyesOpenEnum::cases() as $eyeOpen)
@@ -40,7 +40,7 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="col-md-6 mb-3 border-start p2-1">
+                        <div class="col-md-4 mb-3 border-start ps-1">
                            <div class="form-group ">
                                     <label class="form-label d-block fw-bold">Best Verbal Response</label>
                                     @foreach (\App\Enums\VerbalResponseEnum::cases() as $verbalResponse)
@@ -65,9 +65,7 @@
                                 </div>
                             </div>
                         </div>
-                    </div>
-                    <div class="row gx-2 align-items-center  border rounded p-2">
-                        <div class="col-md-4 mb-3">
+                        <div class="col-md-4 mb-3 border-start ps-1">
                             <div class="form-group mb-3 ">
                                     <label class="form-label d-block fw-bold">Best Motor Response</label>
                                     @foreach (\App\Enums\MotorResponseEnum::cases() as $motor)
@@ -78,12 +76,15 @@
                                     @endforeach
                             </div>
                         </div>
+                    </div>
+                    <div class="row align-items-center  border rounded ps-2">
+
                         <div class="col-md-4 mb-3 border-start pl-2">
                             <div class="form-group mb-3 rounded">
                                     <label class="form-label d-block fw-bold">Sedation Score(Ramsey)</label>
                                     @foreach (\App\Enums\SedationScoreEnum::cases() as $sedation)
                                     <div class="form-check">
-                                        <input class="form-check-input" type="radio" value="{{$sedation->value}}" id="defaultRadio{{$sedation->value }}" name="best_sedation_response">
+                                        <input class="form-check-input" type="radio" value="{{$sedation->value}}" id="defaultRadio{{$sedation->value }}" name="sedation_score">
                                         <label class="form-check-label" for="defaultRadio{{$sedation->value}}">{{$sedation->name}}</label>
                                         </div>
                                     @endforeach
@@ -100,6 +101,18 @@
                                                     <span class="range-indicator" id="value-pupil-diameter"></span>
                             </div>
                         </div>
+                         <div class="col-md-4 mb-3">
+                            <div class="input-group bootstrap-timepicker timepicker">
+                                <span class="input-group-text" id="addon-wrapping">Hour Recorded</span>
+                                <input id="timepicker-default23" type="text" class="form-control timepickerAcross" name="hour_taken">
+                                <span class="input-group-addon input-group-text">
+                                    <i class="fa fa-clock"></i>
+                                </span>
+                            </div>
+                        </div>
+
+                    </div>
+                    <div class="row mt-2">
 
                     </div>
                 </div>

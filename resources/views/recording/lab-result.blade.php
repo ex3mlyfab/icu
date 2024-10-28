@@ -1,117 +1,78 @@
 
-{{-- Modal for cardiovascular assessment --}}
+{{-- Modal for lab test --}}
 <div class="modal fade" id="modal-lab" data-bs-backdrop="static">
-    <div class="modal-dialog modal-xl">
+    <div class="modal-dialog modal-md">
         <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title">Add New Cardiovasular assessment</h5>
+            <div class="modal-header bg-teal-600">
+                <h5 class="modal-title">Add New Lab Test Request</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
             </div>
-            <form id="cardio-form">
+            <form id="lab-form">
 
                 <div class="modal-body">
                     @csrf
                     <input type="hidden" name="patient_care_id" value="{{$patient->latestPatientCare->id}}" >
 
                     <div class="row">
-                        <div class="col-md-4 mb-3">
-                            <div class="input-group flex-nowrap">
-                                <span class="input-group-text" id="addon-wrapping1">Heart-Rate</span>
-                                <input type="number" id="heart_rate" class="form-control" name="heart_rate"
-                                    placeholder="heart-rate" required>
+                        <div class="small text-inverse text-opacity-50 mb-2"><b class="fw-bold">Select Investigation Type</b></div>
+                        <div class="col-md-6">
+
+                            <div class="form-group mb-4 d-flex flex-column justify-content-end">
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" value="Lab" id="defaultLabTest" name="lab_test[]" checked>
+                                    <label class="form-check-label" for="defaultLabTest">Lab</label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" name="lab_test[]" value="X-Ray" id="defaultXray" >
+                                    <label class="form-check-label" for="defaultXray">X-Ray</label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox"  name="lab_test[]" value="Doppler Scan" id="defaultusound" >
+                                    <label class="form-check-label" for="defaultusound">Ultra Sound</label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox"  name="lab_test[]" value="MRI" id="defaultmri" >
+                                    <label class="form-check-label" for="defaultmri">MRI</label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox"  name="lab_test[]" value="Dialyses" id="defaultDialyses" >
+                                    <label class="form-check-label" for="defaultDialyses">Dialyses</label>
+                                </div>
 
                             </div>
                         </div>
-                        <div class="col-md-4 mb-3">
-                            <div class="input-group flex-nowrap">
-                                <span class="input-group-text" id="addon-2">BP-Systolic</span>
-                                <input type="number" class="form-control" name="blood_pressure_systolic"
-                                    placeholder="Bp-sytolic" required>
 
+                        <div class="col-md-6">
+                            <div class="form-group mb-4">
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox"  name="lab_test[]" value="ECG" id="defaultecg" >
+                                    <label class="form-check-label" for="defaultecg">ECG</label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox"  name="lab_test[]" value="ct scan" id="defaultct-scan" >
+                                    <label class="form-check-label" for="defaultct-scan">CT SCAN</label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox"  name="lab_test[]" value="Echo" id="defaultecho" >
+                                    <label class="form-check-label" for="defaultecho">ECHO</label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox"  name="lab_test[]" value="Doppler Scan" id="defaultdoppler" >
+                                    <label class="form-check-label" for="defaultdoppler">Doppler Scan</label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox"  name="lab_test[]" value="others" id="defaultothers" >
+                                    <label class="form-check-label" for="defaultothers">Others</label>
+                                </div>
                             </div>
-                        </div>
-                        <div class="col-md-4 mb-3">
-                            <div class="input-group flex-nowrap">
-                                <span class="input-group-text" id="addon-wrapping">BP-Diastolic</span>
-                                <input type="number" class="form-control" name="blood_pressure_diastolic"
-                                    placeholder="Bp-Diastolic" required>
 
-                            </div>
                         </div>
-                        <div class="col-md-4 mb-3">
-                            <div class="input-group flex-nowrap">
-                                <span class="input-group-text" id="addon-wrapping">Temperature <sup>0</sup>C</span>
-                                <input type="number" class="form-control" name="temperature" placeholder="temperature">
-
-                            </div>
-                        </div>
-                        <div class="col-md-4 mb-3">
-                            <div class="input-group flex-nowrap">
-                                <span class="input-group-text" id="addon-wrapping">Respiratory Rate</span>
-                                <input type="number" class="form-control" name="respiratory_rate"
-                                    placeholder="Respiratory Rate">
-
-                            </div>
-                        </div>
-                        <div class="col-md-4 mb-3">
-                            <div class="input-group flex-nowrap">
-                                <span class="input-group-text" id="addon-wrapping">SPO<sub>2</sub></span>
-                                <input type="number" class="form-control" name="weight" placeholder="Weight">
-
-                            </div>
-                        </div>
-                        <div class="col-md-4 mb-3">
-                            <div class="input-group flex-nowrap">
-                                <span class="input-group-text" id="addon-wrapping">MAP</span>
-                                <input type="number" class="form-control" name="map" placeholder="MAP">
-
-                            </div>
-                        </div>
-                        <div class="col-md-4 mb-3">
-                            <div class="input-group flex-nowrap">
-                                <span class="input-group-text" id="addon-wrapping">CVP</span>
-                                <input type="number" class="form-control" name="cvp" placeholder="CVP">
-
-                            </div>
-                        </div>
-                        <div class="col-md-4 mb-3">
-                            <div class="input-group flex-nowrap">
-                                <span class="input-group-text" id="addon-wrapping">Rhythm</span>
-                                <input type="number" class="form-control" name="rhythm" placeholder="rhythm">
-
-                            </div>
-                        </div>
-                        <div class="col-md-4 mb-3">
-                            <div class="input-group flex-nowrap">
-                                <span class="input-group-text" id="addon-wrapping">Peripheral Pulses</span>
-                                <input type="number" class="form-control" name="peripheral_pulses"
-                                    placeholder="peripheral_pulses">
-
-                            </div>
-                        </div>
-                        <div class="col-md-4 mb-3">
-                            <div class="input-group flex-nowrap">
-                                <span class="input-group-text" id="addon-wrapping">Capillary Refill Time</span>
-                                <input type="number" class="form-control" name="capillary_refill_time"
-                                    placeholder="capillary_refill_time">
-
-                            </div>
-                        </div>
-                        <div class="col-md-4 mb-3">
-                            <div class="input-group bootstrap-timepicker timepicker">
-                                <span class="input-group-text" id="addon-wrapping">Hour Recorded</span>
-                                <input id="timepicker-default" type="text" class="form-control" name="hour_taken">
-                                <span class="input-group-addon input-group-text">
-                                    <i class="fa fa-clock"></i>
-                                </span>
-                            </div>
-                        </div>
-
                     </div>
+                    <hr>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-default" data-bs-dismiss="modal">Close</button>
-                    <button type="submit" class="btn btn-primary" id="cardio-save"><div class="spinner-grow spinner-grow-sm" id="cardio-save-spinner"></div> Save</button>
+                    <button type="submit" class="btn btn-primary" id="lab-save"><div class="spinner-grow spinner-grow-sm" id="lab-save-spinner"></div> Save</button>
                 </div>
             </form>
 

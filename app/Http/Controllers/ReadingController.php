@@ -439,6 +439,7 @@ class ReadingController extends Controller
             'pupil_diameter' => $data['pupil_diameter'],
             'hour_taken' => $data['hour_taken'],
             'time_of_neuro_assessment' => now(),
+            'created_by' => Auth::user()->id,
          ]);
          return response(['message'=> 'Neuro Added successfully'], 200);
     }

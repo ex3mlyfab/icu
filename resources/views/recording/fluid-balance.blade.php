@@ -17,11 +17,7 @@
                             <div class="mb-3" >
                                 <label class="form-label">Select Fluid <span class="text-danger">*</span></label>
                                 <select class="form-select" id="select-fluid" name="fluid_select">
-                                    <option selected>Select Fluid</option>
-                                    @foreach ($patient->latestPatientCare->fluidBalances->unique('fluid') as $fluiditem)
-                                        <option value="{{ $fluiditem->fluid }}"> {{ $fluiditem->fluid }}</option>
-                                    @endforeach
-                                    <option value="others">Add New Fluid</option>
+                                    
                                 </select>
 
                             </div>
