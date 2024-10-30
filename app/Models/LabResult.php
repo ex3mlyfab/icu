@@ -9,7 +9,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 class LabResult extends Model
 {
     use HasFactory;
-    protected $guarded = ['id'];
+    protected $guarded = [];
 
     public function patientCare(): BelongsTo
     {

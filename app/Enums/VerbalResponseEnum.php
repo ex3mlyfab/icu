@@ -2,14 +2,24 @@
 
 namespace App\Enums;
 
+use App\Attributes\Description;
+use App\Traits\AttributableEnum;
 use Illuminate\Contracts\Support\DeferringDisplayableValue;
 
 enum VerbalResponseEnum: int implements DeferringDisplayableValue
 {
+    use AttributableEnum;
+
+
+    #[Description('No Response')]
     case NoResponse = 1;
+    #[Description('Incomprehensible Sound')]
     case IncomprehensibleSound = 2;
+    #[Description('Inappropraite Words')]
     case InappropriateWords = 3;
+    #[Description('Disoriented Converses')]
     case DisorientedConverses = 4;
+    #[Description('Orientated Converses')]
     case OrientatedConverses = 5;
 
     public function resolveDisplayableValue()
@@ -22,4 +32,6 @@ enum VerbalResponseEnum: int implements DeferringDisplayableValue
             self::OrientatedConverses => 'Orientated Converses',
         };
     }
+
+
 }

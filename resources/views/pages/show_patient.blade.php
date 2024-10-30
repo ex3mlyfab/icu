@@ -305,11 +305,37 @@
                 success: function(data) {
 
                     let neuroData = data;
-                    console.log(neuroData);
-                    // let neuroCard = $('<div id="neuro-chart"></div>');
-                    // neuroCard.append('<div class="row"></div>');
 
-                    $("#neuro-chart").html(neuroData);
+                    if ($.isEmptyObject(neuroData)) {
+                        $("#neuro-chart").html('<h2 class="text-center">No data</h2>');
+
+                    }
+                    else{
+                     var table = $('<table class="table table-bordered"></table>');
+                    var headerIndicator = $('<thead></thead>');
+                    // Create a table header row
+                    var headerRow = $('<tr></tr>');
+                    headerRow.append('<th class="bg-danger-300">label</th>');
+                    for (var i = 0; i < neuroData.hour_taken.length; i++) {
+
+                        headerRow.append('<th>' + neuroData.hour_taken[i] + '</th>');
+                    }
+                    headerIndicator.append(headerRow);
+                    table.append(headerIndicator);
+                    for (var key in neuroData) {
+                        if (key !== "hour_taken") {
+                            var row = $('<tr></tr>');
+                            row.append('<th class="bg-danger text-white ps-1">' + key + '</th>');
+                            for (var i = 0; i < neuroData[key].length; i++) {
+
+                                row.append('<td class="ps-3">' + neuroData[key][i] + '</td>');
+                            }
+                            table.append(row);
+                        }
+                    }
+
+                    $("#neuro-chart").html(table);
+                }
                 },
                 error: function(error) {
                     // Handle errors
@@ -317,6 +343,45 @@
                 }
             })
         }
+        function getLabData() {
+            $.ajax({
+                type: 'GET', // or 'POST' if required
+                url: `{{ URL::to('/') }}/show-patient/{{ $patient->latestPatientCare->id }}/lab-test/${activeDay}`,
+                dataType: 'json', // Specify the expected data format (e.g., JSON)
+                success: function(data) {
+                    // $('#chart-3').html(data.data);
+                    let labData = data.data;
+                    if($.isEmptyObject(labData)) {
+                        $("#table-lab").html('<h2 class="text-center">No data</h2>');
+                    }else{
+                         var table = $('<table class="table table-bordered"></table>');
+                    var headerIndicator = $('<thead></thead>');
+                    // Create a table header row
+                    var headerRow = $('<tr></tr>');
+                    headerRow.append(`<th class="bg-dark-300 text-light">Test Name</th>
+                    <th class="bg-dark-300 text-light">Sent</th>
+                    <th class="bg-dark-300 text-light">Collected</th>
+                    <th class="bg-dark-300 text-light">Action</th>`);
+
+
+                    headerIndicator.append(headerRow);
+                    table.append(headerIndicator);
+
+
+
+                    $("#table-lab").html(table);
+                    }
+
+                },
+                error: function(error) {
+                    // Handle errors
+                    console.error(error);
+                }
+            });
+
+
+        }
+
 
         getCardioData();
         getRespData();
@@ -324,6 +389,7 @@
         getMedicationData();
          getNutritionData();
          getNeuroData();
+         getLabData();
         $('#cardio-save-spinner').hide();
         $('#cardio-form').submit(function(event) {
             event.preventDefault(); // Prevent default form submission
@@ -392,7 +458,19 @@
             }
         });
 
-        //respiratory form
+        $('#new-lab').hide();
+        $('#defaultothers').on('change', function() {
+            var selectVal = $(this).val();
+            if ($(this).is(':checked')) {
+                // Checkbox is checked
+                $('#new-lab').show();
+
+             } else {
+
+                $('#new-lab').hide();
+            }
+        });
+
         $('#resp-save-spinner').hide();
         $('#resp-form').submit(function(event) {
             event.preventDefault(); // Prevent default form submission
@@ -594,6 +672,47 @@
             });
 
         });
+        $('#lab-save-spinner').hide();
+        $('#lab-form').submit(function(event) {
+            event.preventDefault(); // Prevent default form submission
+
+            var labData = $(this).serialize(); // Serialize form data
+
+            $('#lab-save').prop('disabled', true);
+            $('#lab-save-spinner').show();
+
+            $.ajax({
+                type: 'POST',
+                url: '{{ route('lab.store') }}', // Replace with your server-side script URL
+                data: labData,
+                success: function(response) {
+
+                    console.log(response);
+                    $('#toast-1 .toast-body').html(response.message);
+                    $('#toast-1').toast('show');
+                    $('#modal-lab').modal('hide');
+                    $('#lab-form')[0].reset();
+                    $('#lab-save').prop('disabled', false);
+                    $('#lab-save-spinner').hide();
+                    getLabData();
+
+                },
+                error: function(error) {
+                    // Handle errors$
+                    console.error(error);
+                    $('#lab-save').prop('disabled', false);
+                    $('#lab-save-spinner').hide();
+                    // You can display an error message to the user here
+                    $.each(error.responseJSON.errors, function(field, messages) {
+                        $.each(messages, function(i, message) {
+                            $('#lab-form .alert-danger').append('<p>' + message + '</p>');
+                        });
+                    })
+
+
+                }
+            });
+            });
 
         $('#pupil-diameter').on('change', function() {
             $('#value-pupil-diameter').html(this.value);
@@ -605,6 +724,8 @@
             getFluidData();
             getMedicationData();
             getNutritionData();
+            getNeuroData();
+            getLabData();
         });
     </script>
 @endpush
@@ -819,52 +940,15 @@
 
                     </div>
                     <div class="card-body">
-                        <div id="neuro-chart"></div>
-                        <div class="table-responsive" id="table-neuro">
+                        <div class="table-responsive" id="neuro-chart"></div>
 
-
-                                @forelse ($patient->latestPatientCare->neuroAssessments as $item_neuro)
-                                    <table class="table table-bordered">
-                                        <tr>
-                                            <th>Eyes Open</th>
-                                            <td>{{$item_neuro->eyes_open}}</td>
-                                        </tr>
-                                        <tr>
-                                            <td>Sedated</td>
-                                            <td>{{ $item_neuro->sedated ? 'Yes' : 'No'}}</td>
-                                        </tr>
-                                        <tr>
-                                            <th>Best VerBal Response</th>
-                                            <td>{{ $item_neuro->best_verbal_response }}</td>
-                                        </tr>
-                                        <tr>
-                                            <td>Intubated</td>
-                                            <td>{{$item_neuro->intubated ? 'Yes' : 'No'}}</td>
-                                        </tr>
-                                        <tr>
-                                            <th>Best Motor Response</th>
-                                            <td>{{$item_neuro->best_motor_response}}</td>
-                                        </tr>
-                                        <tr>
-                                            <td colspan="2" class="text-center">Recorded at: {{ $item_neuro->created_at->format('d/M/y-h:i A') }}</td>
-                                        </tr>
-
-
-
-
-                                </table>
-                                @empty
-                                    <h5>No Neurological Assessment Found</h5>
-                                @endforelse
-
-                        </div>
 
 
                     </div>
                     <!-- END card-body -->
                 </div>
             </div>
-            <div class="col-lg-6">
+            <div class="col-lg-6" id="med-card">
                 <div class="card h-100 mt-2">
                     <!-- BEGIN card-body -->
                     <div class="card-header bg-gradient bg-warning-400 d-flex gap-2 align-items-center">
@@ -889,19 +973,27 @@
                     <!-- END card-body -->
                 </div>
             </div>
-            <div class="col-lg-6">
+            <div class="col-lg-6" id="lab-card">
                 <div class="card h-100 mt-2">
                     <!-- BEGIN card-body -->
-                    <div class="card-body">
-                        <div class="d-flex mb-3 gap-1">
-                            <div class="flex-grow-1">
-                                <h5 class="mb-1">Laboratory Results</h5>
+                    <div class="card-header bg-gradient bg-gray-400 d-flex gap-2 align-items-center">
 
-                            </div>
-                            <i class="fa fa-plus" data-bs-toggle="modal" data-bs-target="#modal-lab"></i>
-                            <a href="javascript:;" class="text-secondary"><i class="fa fa-redo"></i></a>
+                        <div class="flex-grow-1">
+                            <h5 class="mb-1">Investigations</h5>
+
                         </div>
-                        <div id="chart-2"></div>
+                        <i class="fa fa-plus" data-bs-toggle="modal" data-bs-target="#modal-lab"></i>
+                        <a href="javascript:;" class="text-secondary"><i class="fa fa-redo"></i></a>
+                        <a href="#" data-toggle="card-expand"
+                            class="text-white text-opacity-20 text-decoration-none"><i class="fa fa-fw fa-expand"></i></a>
+
+                    </div>
+                    <div class="card-body">
+                        <div class="table-responsive" id="table-lab">
+
+                        </div>
+
+
                     </div>
                     <!-- END card-body -->
                 </div>

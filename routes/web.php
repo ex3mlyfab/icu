@@ -4,6 +4,7 @@ use App\Http\Controllers\BedModelController;
 use App\Http\Controllers\PatientController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\Reading2Controller;
 use App\Http\Controllers\ReadingController;
 
 /*
@@ -74,6 +75,10 @@ Route::middleware('auth')->group(function () {
     Route::get('/show-patient/{patientCare}/seizure-chart/{active_day}', [ReadingController::class, 'showSeizure'])->name('seizure.show');
     Route::post('/store-seizure-chart', [ReadingController::class, 'storeSeizure'])->name('seizure.store');
     Route::get('/get-patient-seizure-chart/{patientCare}/select', [ReadingController::class, 'getSeizure'])->name('seizure.get');
+    // Lab test routes
+    Route::get('/show-patient/{patientCare}/lab-test/{active_day}', [Reading2Controller::class, 'showLab'])->name('lab.show');
+    Route::post('/store-lab-test', [Reading2Controller::class, 'storeLab'])->name('lab.store');
+
 
 });
 

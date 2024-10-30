@@ -2,14 +2,20 @@
 
 namespace App\Http\Controllers;
 
+use App\Enums\EyesOpenEnum;
+use App\Enums\MotorResponseEnum;
+use App\Enums\SedationScoreEnum;
+use App\Enums\VerbalResponseEnum;
 use App\Http\Requests\CardioAssessmentRequest;
 use App\Http\Requests\FluidBalanceRequest;
+use App\Http\Requests\LabResultRequest;
 use App\Http\Requests\MedicationRequest;
 use App\Http\Requests\NeuroAssessmentRequest;
 use App\Http\Requests\NutritionRequest;
 use App\Http\Requests\RespiRatoryAssessmentRequest;
 use App\Models\CardioAssessment;
 use App\Models\FluidBalance;
+use App\Models\LabResult;
 use App\Models\Medication;
 use App\Models\NeuroAssessment;
 use App\Models\Nutrition;
@@ -451,15 +457,60 @@ class ReadingController extends Controller
         $neuro_chart = [];
         foreach($neuro_reading as $reading)
         {
-            $neuro_chart['eyes_open'][] = $reading->eyes_open;
-            $neuro_chart['sedated'][] = $reading->sedated;
-            $neuro_chart['intubated'][] = $reading->intubated;
-            $neuro_chart['best_verbal_response'][] = $reading->best_verbal_response;
-            $neuro_chart['sedation_score'][] = $reading->sedation_score;
+            // dump($reading->eyes_open);
+            $neuro_chart['Eyes Open'][] = $this->processEyeOpenEnum($reading->eyes_open->value);
+            $neuro_chart['Sedated'][] = $reading->sedated ? 'True' : 'False';
+            $neuro_chart['Intubated'][] = $reading->intubated ? 'True' : 'False';
+            $neuro_chart['Best Motor Response'][] = $this->processMotorResponseEnum($reading->best_motor_response->value);
+            $neuro_chart['Best Verbal Response'][] = $this->processVerbalCommandEnum($reading->best_verbal_response->value);
+            $neuro_chart['sedation_score'][] = $this->processSwdationScoreEnum($reading->sedation_score);
             $neuro_chart['pupil_diameter'][] = $reading->pupil_diameter;
             $neuro_chart['hour_taken'][] = $reading->hour_taken->format('H');
         }
         return response($neuro_chart, 200);
     }
+   
+    public function processEyeOpenEnum($eyeopen)
+    {
+        return match($eyeopen){
+            4 => 'Spontaneously',
+            3 => 'To Verbal Command',
+            2 => 'To Pain',
+            1 => 'No Response',
+        };
+    }
 
+    public function processVerbalCommandEnum($verbalcommand)
+    {
+        return match($verbalcommand){
+            1 => 'No Response',
+            2 => 'Incomprehensible Sound',
+            3 => 'Inappropriate Words',
+           4 => 'Disoriented Converses',
+            5=> 'Orientated Converses',
+        };
+    }
+    public function processSwdationScoreEnum($sedation)
+    {
+        return match($sedation){
+           1 => 'Anxious , Agitated or Restless or Both',
+            2 => 'Cooperative, oriented & Tranquil',
+           3 => 'Response To Command',
+            4 => 'Asleep but Brisk, response to glabellar tap',
+            5 => 'Asleep Sluggish response to glabellar tap',
+            6 => 'No Response',
+        };
+    }
+
+    public function processMotorResponseEnum($motorresponse)
+    {
+        return match($motorresponse){
+           6 => 'Obeys Commands',
+           5 => 'Localise Pain',
+           4 => 'Flexion Withdrawal',
+           3 => 'Flexion Abnormal',
+           2 => 'Extention to Pain',
+           1 => 'None',
+        };
+    }
 }

@@ -68,7 +68,17 @@
 
                         </div>
                     </div>
-                    <hr>
+                     <div class="row" id="new-lab">
+                        <div class="col-md-6 mb-3">
+                            <div class="input-group flex-nowrap">
+                                <span class="input-group-text" id="addon-wrapping1">Test Name</span>
+                                <input type="text" id="test_name" class="form-control" name="lab_test[]"
+                                    placeholder="Test Name">
+
+                            </div>
+                        </div>
+                    </div>
+
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-default" data-bs-dismiss="modal">Close</button>
