@@ -3,9 +3,12 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\LabResultRequest;
+use App\Models\DailyNote;
+use App\Models\DailyTreatmentPlan;
 use App\Models\InvasiveLine;
 use App\Models\LabResult;
 use App\Models\PatientCare;
+use App\Models\PhysicianOrder;
 use App\Models\SeizureChart;
 use App\Models\SkinWoundCare;
 use Carbon\Carbon;
@@ -126,4 +129,60 @@ class Reading2Controller extends Controller
         });
         return response($labs, 200);
     }
+    public function storeDailyNote(Request $request)
+    {
+        $data = $request->all();
+        $data['created_by'] = Auth::user()->id;
+        $data['date_of_note'] = now();
+
+        DailyNote::create($data);
+
+        return response(['message'=> 'Daily Note Added successfully'], 200);
+    }
+
+    public function showDailyNote(PatientCare $patientCare, $active_day)
+    {
+        $labs = DailyNote::where('patient_care_id', $patientCare->id)
+        ->whereDate('created_at', Carbon::parse($active_day))
+        ->get();
+
+       return response($labs, 200);
+    }
+
+    public function storeDailyTreatment(Request $request)
+    {
+        $data = $request->all();
+        $data['created_by'] = Auth::user()->id;
+        $data['date_of_treatment'] = now();
+        DailyTreatmentPlan::create($data);
+
+        return response(['message'=> 'Daily Treatment Added successfully'], 200);
+    }
+
+    public function showDailyTreatment(PatientCare $patientCare, $active_day)
+    {
+        $labs = DailyTreatmentPlan::where('patient_care_id', $patientCare->id)
+        ->whereDate('created_at', Carbon::parse($active_day))
+        ->get();
+        return response($labs, 200);
+    }
+    public function storePhysicianNote(Request $request)
+    {
+        $data = $request->all();
+        $data['created_by'] = Auth::user()->id;
+        $data['date_of_note'] = now();
+
+        PhysicianOrder::create($data);
+
+        return response(['message'=> 'Physician Note Added successfully'], 200);
+    }
+
+    public function showPhysicianNote(PatientCare $patientCare, $active_day)
+    {
+        $labs = PhysicianOrder::where('patient_care_id', $patientCare->id)
+        ->whereDate('created_at', Carbon::parse($active_day))
+        ->get();
+        return response($labs, 200);
+    }
+
 }

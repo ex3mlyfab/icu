@@ -7,12 +7,11 @@
 
     <!-- required js / css -->
     <link href="{{ asset('assets/plugins/select-picker/dist/picker.min.css') }}" rel="stylesheet">
-    <link href="{{asset('assets/plugins/summernote/dist/summernote-lite.css')}}" rel="stylesheet">
-
+    <link href="{{ asset('assets/plugins/summernote/dist/summernote-lite.css') }}" rel="stylesheet">
 @endpush
 
 @push('js')
-    <script src="{{asset('assets/plugins/summernote/dist/summernote-lite.min.js')}}"></script>
+    <script src="{{ asset('assets/plugins/summernote/dist/summernote-lite.min.js') }}"></script>
     <script src="{{ asset('assets/plugins/select-picker/dist/picker.min.js') }}"></script>
 
     <script src="{{ asset('assets/plugins/bootstrap-timepicker/js/bootstrap-timepicker.min.js') }}"></script>
@@ -22,8 +21,7 @@
 
             $('.summernote').summernote({
                 height: 300,
-                tabsize: 2,
-                airMode: true
+
             });
             let activeDay = $('#active-day').val();
             $('.searchPicker').picker({
@@ -430,6 +428,7 @@
 
 
             }
+
             function getSkinData() {
                 $.ajax({
                     type: 'GET', // or 'POST' if required
@@ -464,6 +463,7 @@
                 });
 
             }
+
             function getSeizureData() {
                 $.ajax({
                     type: 'GET', // or 'POST' if required
@@ -502,6 +502,47 @@
 
                 });
             }
+            function getDailyData() {
+                $.ajax({
+                    type: 'GET', // or 'POST' if required
+                    url: `{{url('/') }}/show-patient/{{ $patient->latestPatientCare->id }}/dailynotes/${activeDay}`,
+                    dataType: 'json', // Specify the expected data format (e.g., JSON)
+                    success: function(data) {
+                        // $('#chart-3').html(data.data);
+                        let dailyData = data
+                        console.log(dailyData);
+                        if ($.isEmptyObject(dailyData)) {
+                            $("#table-daily").html(
+                                '<h2 class="text-center">No Daily Notes Recorded</h2>');
+                        } else {
+                            var table = $(
+                                '<table class="table table-bordered" id="form-table-daily"></table>'
+                            );
+                            var headerIndicator = $('<thead></thead>');
+                            // Create a table header row
+                            var headerRow = $('<tr></tr>');
+                            headerRow.append(`<th class="bg-dark-300 text-light">Daily Notes</th>
+                    <th class="bg-dark-300 text-light">Date Inserted</th>
+                   `);
+                            headerIndicator.append(headerRow);
+                            table.append(headerIndicator);
+                            $.each(dailyData, function(key, value) {
+                                var row = $('<tr></tr>');
+                                row.append(`<td>${value}</td>
+                                <td>${key}</td>
+                                `);
+                                table.append(row);
+                            });
+                            $("#table-daily").html(table);
+                        }
+                    },
+                    error: function(error) {
+                        // Handle errors
+                        console.error(error);
+                    }
+
+                })
+            }
 
             function getInvasiveData() {
                 $.ajax({
@@ -518,7 +559,7 @@
                         } else {
                             var table = $(
                                 '<table class="table table-bordered" id="form-table-invasive"></table>'
-                                );
+                            );
                             var headerIndicator = $('<thead></thead>');
                             // Create a table header row
                             var headerRow = $('<tr></tr>');
@@ -530,7 +571,7 @@
                             $.each(invasiveData, function(key, value) {
                                 var row = $('<tr></tr>');
                                 row.append(`<th class="ps-2">${value.invasive_lines}</th>
-                    <td class="text-center">${value.created_at}</td>
+                    <td class="text-center">${value.new_date}</td>
                    `);
                                 table.append(row);
                             });
@@ -554,9 +595,11 @@
             getLabData();
             getSeizureData();
             getInvasiveData();
+            getDailyData();
+            getRenalData();
             $(document).on('click', '.result', function() {
                 let id = $(this).data('id');
-                
+
                 $('#collectResult').val(id);
 
                 $('#collectResultLabel').append('Mark <span class="text-danger fw-bolder">' + $(this).data(
@@ -724,44 +767,44 @@
             //invasive line form
             $('#invasive-save-spinner').hide();
             $('#invasive-form').submit(function(event) {
-                    event.preventDefault(); // Prevent default form submission
+                event.preventDefault(); // Prevent default form submission
 
-                    var invasiveData = $(this).serialize(); // Serialize form data
+                var invasiveData = $(this).serialize(); // Serialize form data
 
-                    $('#invasive-save').prop('disabled', true);
-                    $('#invasive-save-spinner').show();
+                $('#invasive-save').prop('disabled', true);
+                $('#invasive-save-spinner').show();
 
-                    $.ajax({
-                            type: 'POST',
-                            url: '{{ route('invasive.store') }}', // Replace with your server-side script URL
-                            data: invasiveData,
-                            success: function(response) {
+                $.ajax({
+                    type: 'POST',
+                    url: '{{ route('invasive.store') }}', // Replace with your server-side script URL
+                    data: invasiveData,
+                    success: function(response) {
 
-                                console.log(response);
-                                $('#toast-1 .toast-body').html(response.message);
-                                $('#toast-1').toast('show');
-                                $('#modal-invasive').modal('hide');
+                        console.log(response);
+                        $('#toast-1 .toast-body').html(response.message);
+                        $('#toast-1').toast('show');
+                        $('#modal-invasive').modal('hide');
 
-                                $('#invasive-form')[0].reset();
-                                $('#invasive-save').prop('disabled', false);
-                                $('#invasive-save-spinner').hide();
-                                getInvasiveData();
-                            },
-                            error: function(error) {
-                                // Handle errors$
-                                console.error(error);
-                                // You can display an error message to the user here
-                                var errorMessage = error.responseJSON.message;
-                                $.each(error.responseJSON.errors, function(key, value) {
-                                    $('#invasive-form').append(
-                                        '<div class="alert alert-danger">' +
-                                        value + '</div>');
-                                });
+                        $('#invasive-form')[0].reset();
+                        $('#invasive-save').prop('disabled', false);
+                        $('#invasive-save-spinner').hide();
+                        getInvasiveData();
+                    },
+                    error: function(error) {
+                        // Handle errors$
+                        console.error(error);
+                        // You can display an error message to the user here
+                        var errorMessage = error.responseJSON.message;
+                        $.each(error.responseJSON.errors, function(key, value) {
+                            $('#invasive-form').append(
+                                '<div class="alert alert-danger">' +
+                                value + '</div>');
+                        });
 
-                                $('#invasive-save').prop('disabled', false);
-                                $('#invasive-save-spinner').hide();
-                            }
-                    });
+                        $('#invasive-save').prop('disabled', false);
+                        $('#invasive-save-spinner').hide();
+                    }
+                });
 
             });
             //fluid-balance form
@@ -927,6 +970,7 @@
                 });
 
             });
+            //seizure form
             $('#seizure-save-spinner').hide();
             $('#seizure-form').submit(function(event) {
                 event.preventDefault();
@@ -961,6 +1005,75 @@
 
                 })
             });
+            //daily note form
+            $('#daily-save-spinner').hide();
+            $('#daily-form').submit(function(event) {
+                event.preventDefault();
+                var dailyData = $(this).serialize();
+                $('#daily-save').prop('disabled', true);
+                $('#daily-save-spinner').show();
+
+                $.ajax({
+                    type: 'POST',
+                    url: '{{ route('dailynotes.store') }}',
+                    data: dailyData,
+                    success: function(response) {
+
+                        console.log(response);
+                        $('#toast-1 .toast-body').html(response.message);
+                        $('#toast-1').toast('show');
+                        $('#modal-daily').modal('hide');
+                        $('#daily-form')[0].reset();
+                        $('#daily-save').prop('disabled', false);
+                        $('#daily-save-spinner').hide();
+                        getDailyData();
+                    },
+                    error: function(error) {
+                        // Handle errors$
+                        $.each(error.responseJSON.errors, function(key, value) {
+                            $('#daily-form').append('<div class="text-danger">' +
+                                value + '</div>');
+                        });
+                        $('#daily-save').prop('disabled', false);
+                        $('#daily-save-spinner').hide();
+                    }
+                });
+            })
+            //skin form wire:abort
+            $('#skin-save-spinner').hide();
+            $('#skin-form').submit(function(event) {
+                event.preventDefault();
+                var skinData = $(this).serialize();
+                $('#skin-save').prop('disabled', true);
+                $('#skin-save-spinner').show();
+
+                $.ajax({
+                    type: 'POST',
+                    url: '{{ route('skin.store') }}',
+                    data: skinData,
+                    success: function(response) {
+
+                        console.log(response);
+                        $('#toast-1 .toast-body').html(response.message);
+                        $('#toast-1').toast('show');
+                        $('#modal-skin').modal('hide');
+                        $('#skin-form')[0].reset();
+                        $('#skin-save').prop('disabled', false);
+                        $('#skin-save-spinner').hide();
+                        getSkinData();
+                    },
+                    error: function(error) {
+                        // Handle errors$
+                        $.each(error.responseJSON.errors, function(key, value) {
+                            $('#skin-form').append('<div class="text-danger">' +
+                                value + '</div>');
+                        });
+                        $('#skin-save').prop('disabled', false);
+                        $('#skin-save-spinner').hide();
+                    }
+                })
+            })
+            //lab form
             $('#lab-save-spinner').hide();
             $('#lab-form').submit(function(event) {
                 event.preventDefault(); // Prevent default form submission
@@ -1003,7 +1116,7 @@
                     }
                 });
             });
-
+            //
             $('#pupil-diameter').on('change', function() {
                 $('#value-pupil-diameter').html(this.value);
             })
@@ -1016,6 +1129,9 @@
                 getNutritionData();
                 getNeuroData();
                 getLabData();
+                getInvasiveData();
+                getDailyData();
+                getRenalData();
             });
         });
     </script>
@@ -1151,7 +1267,7 @@
                         <div class="d-flex gap-2 align-items-center">
 
                             <i class="fa fa-plus text-white" data-bs-toggle="modal" data-bs-target="#modal-resp"></i>
-                            <a href="javascript:;" onclick="getResp()" class="text-secondary"><i
+                            <a href="javascript:;" class="text-secondary"><i
                                     class="fa fa-redo"></i></a>
                             <a href="#" data-toggle="card-expand"
                                 class="text-white text-opacity-20 text-decoration-none"><i
@@ -1327,7 +1443,7 @@
                             <i class="fa fa-plus" data-bs-toggle="modal" data-bs-target="#modal-resp"></i>
                             <a href="javascript:;" class="text-secondary"><i class="fa fa-redo"></i></a>
                         </div>
-                        <div id="chart-2"></div>
+                        <div id="table-renal" class="table-responsive"></div>
                     </div>
                     <!-- END card-body -->
                 </div>
@@ -1441,14 +1557,14 @@
                             <h5 class="mb-1">Nursing Assessment</h5>
 
                         </div>
-                        <i class="fa fa-plus" data-bs-toggle="modal" data-bs-target="#modal-nutrition"></i>
+                        <i class="fa fa-plus" data-bs-toggle="modal" data-bs-target="#modal-daily"></i>
                         <a href="javascript:;" class="text-secondary"><i class="fa fa-redo"></i></a>
                         <a href="#" data-toggle="card-expand"
                             class="text-white text-opacity-20 text-decoration-none"><i class="fa fa-fw fa-expand"></i></a>
 
                     </div>
                     <div class="card-body">
-                        <div class="table-responsive" id="table-nursing">
+                        <div class="table-responsive" id="table-daily">
 
                         </div>
 
@@ -1488,7 +1604,6 @@
 
     </div>
     @include('recording.cardio-assessment')
-    {{-- Modal Respiratory --}}
     @include('recording.respiratory-assessment')
     @include('recording.neuro-assessment')
     @include('recording.fluid-balance')
