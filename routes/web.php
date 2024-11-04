@@ -72,12 +72,31 @@ Route::middleware('auth')->group(function () {
     Route::get('/get-patient-nutritions/{patientCare}/select', [ReadingController::class, 'getNutrition'])->name('nutrition.get');
 
     //seizure Chart routes
-    Route::get('/show-patient/{patientCare}/seizure-chart/{active_day}', [ReadingController::class, 'showSeizure'])->name('seizure.show');
-    Route::post('/store-seizure-chart', [ReadingController::class, 'storeSeizure'])->name('seizure.store');
-    Route::get('/get-patient-seizure-chart/{patientCare}/select', [ReadingController::class, 'getSeizure'])->name('seizure.get');
+    Route::get('/show-patient/{patientCare}/seizure-chart', [Reading2Controller::class, 'showSeizure'])->name('seizure.show');
+    Route::post('/store-seizure-chart', [Reading2Controller::class, 'storeSeizure'])->name('seizure.store');
+
     // Lab test routes
     Route::get('/show-patient/{patientCare}/lab-test/{active_day}', [Reading2Controller::class, 'showLab'])->name('lab.show');
     Route::post('/store-lab-test', [Reading2Controller::class, 'storeLab'])->name('lab.store');
+    Route::post('/update-lab-test', [Reading2Controller::class, 'updateLab'])->name('collect-result.store');
+    //invasive line routes
+    Route::get('/show-patient/{patientCare}/invasive-line', [Reading2Controller::class, 'showInvasiveLine'])->name('invasive.show');
+    Route::post('/store-invasive-line', [Reading2Controller::class, 'storeInvasiveLine'])->name('invasive.store');
+    //dailynotes
+    Route::get('/show-patient/{patientCare}/dailynotes/{active_day}', [Reading2Controller::class, 'showDailyNotes'])->name('dailynotes.show');
+    Route::post('/store-dailynotes', [Reading2Controller::class, 'storeDailyNotes'])->name('dailynotes.store');
+    //renal assessment routes
+    Route::get('/show-patient/{patientCare}/renal-assessment/{active_day}', [Reading2Controller::class, 'showRenal'])->name('renal.show');
+    Route::post('/store-renal-assessment', [Reading2Controller::class, 'storeRenal'])->name('renal.store');
+    // mursing notes routes
+    Route::get('/show-patient/{patientCare}/mursing-notes/{active_day}', [Reading2Controller::class, 'showMursingNotes'])->name('mursing.show');
+    Route::post('/store-mursing-notes', [Reading2Controller::class, 'storeMursingNotes'])->name('mursing.store');
+    //physician order
+    Route::get('/show-patient/{patientCare}/physician-order/{active_day}', [Reading2Controller::class, 'showPhysicianOrder'])->name('physician.show');
+    Route::post('/store-physician-order', [Reading2Controller::class, 'storePhysicianOrder'])->name('physician.store');
+    //skin care
+    Route::get('/show-patient/{patientCare}/skin-care/{active_day}', [Reading2Controller::class, 'showSkinCare'])->name('skin.show');
+    Route::post('/store-skin-care', [Reading2Controller::class, 'storeSkinCare'])->name('skin.store');
 
 
 });

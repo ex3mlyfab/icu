@@ -4,10 +4,10 @@
     <div class="modal-dialog modal-xl">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title">Add New Cardiovasular assessment</h5>
+                <h5 class="modal-title">Record New Physician Order</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
             </div>
-            <form id="cardio-form">
+            <form id="physician-form">
 
                 <div class="modal-body">
                     @csrf

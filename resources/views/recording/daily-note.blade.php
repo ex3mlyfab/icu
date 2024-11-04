@@ -14,88 +14,20 @@
                     <input type="hidden" name="patient_care_id" value="{{$patient->latestPatientCare->id}}" >
 
                     <div class="row">
+                        <div class="small text-inverse text-opacity-50 mb-2"><b class="fw-bold">Handover Notes</b></div>
                         <div class="col-md-4 mb-3">
-                            <div class="input-group flex-nowrap">
-                                <span class="input-group-text" id="addon-wrapping1">Heart-Rate</span>
-                                <input type="number" id="heart_rate" class="form-control" name="heart_rate"
-                                    placeholder="heart-rate" required>
-
-                            </div>
+                            <div class="form-group mb-4 d-flex flex-column justify-content-end">
+                                <div class="form-check">
+                                    <input class="form-check-input" type="radio"  id="daily-note-day" name="duty" value="1morning">
+                                    <label class="form-check-label" for="cardio" id="cardioLabel">Morning</label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="radio"  id="daily-note-night" name="duty" value="night" checked>
+                                    <label class="form-check-label" for="cardio" id="cardioLabel">Night</label>
+                                </div>
                         </div>
-                        <div class="col-md-4 mb-3">
-                            <div class="input-group flex-nowrap">
-                                <span class="input-group-text" id="addon-2">BP-Systolic</span>
-                                <input type="number" class="form-control" name="blood_pressure_systolic"
-                                    placeholder="Bp-sytolic" required>
-
-                            </div>
-                        </div>
-                        <div class="col-md-4 mb-3">
-                            <div class="input-group flex-nowrap">
-                                <span class="input-group-text" id="addon-wrapping">BP-Diastolic</span>
-                                <input type="number" class="form-control" name="blood_pressure_diastolic"
-                                    placeholder="Bp-Diastolic" required>
-
-                            </div>
-                        </div>
-                        <div class="col-md-4 mb-3">
-                            <div class="input-group flex-nowrap">
-                                <span class="input-group-text" id="addon-wrapping">Temperature <sup>0</sup>C</span>
-                                <input type="number" class="form-control" name="temperature" placeholder="temperature">
-
-                            </div>
-                        </div>
-                        <div class="col-md-4 mb-3">
-                            <div class="input-group flex-nowrap">
-                                <span class="input-group-text" id="addon-wrapping">Respiratory Rate</span>
-                                <input type="number" class="form-control" name="respiratory_rate"
-                                    placeholder="Respiratory Rate">
-
-                            </div>
-                        </div>
-                        <div class="col-md-4 mb-3">
-                            <div class="input-group flex-nowrap">
-                                <span class="input-group-text" id="addon-wrapping">SPO<sub>2</sub></span>
-                                <input type="number" class="form-control" name="weight" placeholder="Weight">
-
-                            </div>
-                        </div>
-                        <div class="col-md-4 mb-3">
-                            <div class="input-group flex-nowrap">
-                                <span class="input-group-text" id="addon-wrapping">MAP</span>
-                                <input type="number" class="form-control" name="map" placeholder="MAP">
-
-                            </div>
-                        </div>
-                        <div class="col-md-4 mb-3">
-                            <div class="input-group flex-nowrap">
-                                <span class="input-group-text" id="addon-wrapping">CVP</span>
-                                <input type="number" class="form-control" name="cvp" placeholder="CVP">
-
-                            </div>
-                        </div>
-                        <div class="col-md-4 mb-3">
-                            <div class="input-group flex-nowrap">
-                                <span class="input-group-text" id="addon-wrapping">Rhythm</span>
-                                <input type="number" class="form-control" name="rhythm" placeholder="rhythm">
-
-                            </div>
-                        </div>
-                        <div class="col-md-4 mb-3">
-                            <div class="input-group flex-nowrap">
-                                <span class="input-group-text" id="addon-wrapping">Peripheral Pulses</span>
-                                <input type="number" class="form-control" name="peripheral_pulses"
-                                    placeholder="peripheral_pulses">
-
-                            </div>
-                        </div>
-                        <div class="col-md-4 mb-3">
-                            <div class="input-group flex-nowrap">
-                                <span class="input-group-text" id="addon-wrapping">Capillary Refill Time</span>
-                                <input type="number" class="form-control" name="capillary_refill_time"
-                                    placeholder="capillary_refill_time">
-
-                            </div>
+                        <div class="col-md-12">
+                            
                         </div>
                         <div class="col-md-4 mb-3">
                             <div class="input-group bootstrap-timepicker timepicker">

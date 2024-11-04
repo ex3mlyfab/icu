@@ -19,7 +19,6 @@ return new class extends Migration
             $table->string('description');
             $table->string('intervention');
             $table->foreignId('created_by')->constrained('users');
-
             $table->timestamps();
         });
     }

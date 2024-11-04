@@ -11,6 +11,9 @@ class InvasiveLine extends Model
     use HasFactory;
     protected $guarded = ['id'];
 
+    protected $casts = [
+        'time_of_invasive_lines' => 'datetime',
+    ];
     public function patientCare(): BelongsTo
     {
         return $this->belongsTo(PatientCare::class);

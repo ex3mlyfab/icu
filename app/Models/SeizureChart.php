@@ -11,6 +11,10 @@ class SeizureChart extends Model
     use HasFactory;
     protected $guarded = ['id'];
 
+    protected $casts = [
+        'date' => 'datetime',
+    ];
+
     public function patientCare(): BelongsTo
     {
         return $this->belongsTo(PatientCare::class);
