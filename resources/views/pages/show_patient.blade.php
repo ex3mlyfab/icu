@@ -591,7 +591,7 @@
                 });
             }
             function getRenalData(){
-                $.ajaxa({
+                $.ajax({
                     type: 'GET', // or 'POST' if required
                     url: `{{url('/')}}/show-patient/{{ $patient->latestPatientCare->id }}/renal/${activeDay}`,
                     dataType: 'json', // Specify the expected data format (e.g., JSON)
@@ -628,7 +628,7 @@
                         // Handle errors
                         console.error(error);
                     }
-                    
+
                     })
             }
             getCardioData();
