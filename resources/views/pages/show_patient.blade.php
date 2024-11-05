@@ -437,7 +437,7 @@
             function getSkinData() {
                 $.ajax({
                     type: 'GET', // or 'POST' if required
-                    url: `{{ URL::to('/') }}/show-patient/{{ $patient->latestPatientCare->id }}/skin-test/${activeDay}`,
+                    url: `{{ URL::to('/') }}/show-patient/{{ $patient->latestPatientCare->id }}/skin-care/${activeDay}`,
                     dataType: 'json', // Specify the expected data format (e.g., JSON)
                     success: function(data) {
                         // $('#chart-3').html(data.data);
@@ -593,7 +593,7 @@
             function getRenalData(){
                 $.ajax({
                     type: 'GET', // or 'POST' if required
-                    url: `{{url('/')}}/show-patient/{{ $patient->latestPatientCare->id }}/renal/${activeDay}`,
+                    url: `{{url('/')}}/show-patient/{{ $patient->latestPatientCare->id }}/renal-fluids/${activeDay}`,
                     dataType: 'json', // Specify the expected data format (e.g., JSON)
                     success: function(data) {
                         // $('#chart-3').html(data.data);
@@ -601,7 +601,7 @@
                         console.log(renalData);
                         if ($.isEmptyObject(renalData)) {
                             $("#table-renal").html(
-                                '<h2 class="text-center">No Renal Notes Recorded</h2>');
+                                '<h2 class="text-center">No Renal Fluids Recorded</h2>');
                         } else {
                             var table = $(
                                 '<table class="table table-bordered" id="form-table-renal"></table>'
@@ -609,15 +609,15 @@
                             var headerIndicator = $('<thead></thead>');
                             // Create a table header row
                             var headerRow = $('<tr></tr>');
-                            headerRow.append(`<th class="bg-dark-300 text-light">Renal Notes</th>
-                    <th class="bg-dark-300 text-light">Date Inserted</th>
+                            headerRow.append(`<th class="bg-dark-300 text-light">Renal Fluid</th>
+                    <th class="bg-dark-300 text-light">Total Daily volume</th>
                    `);
                             headerIndicator.append(headerRow);
                             table.append(headerIndicator);
                             $.each(renalData, function(key, value) {
                                 var row = $('<tr></tr>');
-                                row.append(`<td>${value}</td>
-                                <td>${key}</td>
+                                row.append(`<td>${key}</td>
+                                <td class="text-center"> ${value}</td>
                                 `);
                                 table.append(row);
                             });
@@ -631,6 +631,88 @@
 
                     })
             }
+            function getProgressData() {
+                $.ajax({
+                    type: 'GET', // or 'POST' if required
+                    url: `{{url('/')}}/show-patient/{{ $patient->latestPatientCare->id }}/daily-treatment/${activeDay}`,
+                    dataType: 'json', // Specify the expected data format (e.g., JSON)
+                    success: function(data) {
+                        // $('#chart-3').html(data.data);
+                        let progressData = data
+                        console.log(progressData);
+                        if ($.isEmptyObject(progressData)) {
+                            $("#table-progress").html(
+                                '<h2 class="text-center">No Progress Notes Recorded</h2>');
+                        } else {
+                            var table = $(
+                                '<table class="table table-bordered" id="form-table-progress"></table>'
+                            );
+                            var headerIndicator = $('<thead></thead>');
+                            // Create a table header row
+                            var headerRow = $('<tr></tr>');
+                            headerRow.append(`<th class="bg-dark-300 text-light">Progress Notes</th>
+                    <th class="bg-dark-300 text-light">Date Inserted</th>
+                   `);
+                            headerIndicator.append(headerRow);
+                            table.append(headerIndicator);
+                            $.each(progressData, function(key, value) {
+                                var row = $('<tr></tr>');
+                                row.append(`<td>${value}</td>
+                                <td>${key}</td>
+                                `);
+                                table.append(row);
+                            });
+                            $("#table-progress").html(table);
+                        }
+                    },
+                    error: function(error) {
+                        // Handle errors
+                        console.error(error);
+                    }
+
+                })
+            }
+            function getPhysicianData() {
+                $.ajax({
+                    type: 'GET', // or 'POST' if required
+                    url: `{{url('/')}}/show-patient/{{ $patient->latestPatientCare->id }}/physician-order/${activeDay}`,
+                    dataType: 'json', // Specify the expected data format (e.g., JSON)
+                    success: function(data) {
+                        let physicianData = data;
+                        console.log(physicianData, 'physicianData');
+                        if($.isEmptyObject(physicianData)){
+                            $('#table-physician').html(`<h1> No Physician Note </h1>`)
+                        }else{
+                             var table = $(
+                                '<table class="table table-bordered" id="form-table-progress"></table>'
+                            );
+                            var headerIndicator = $('<thead></thead>');
+                            // Create a table header row
+                            var headerRow = $('<tr></tr>');
+                             headerRow.append(`<th class="bg-dark-300 text-light">Physician Notes</th>
+                    <th class="bg-dark-300 text-light">Date Inserted</th>
+                   `);
+                            headerIndicator.append(headerRow);
+                            table.append(headerIndicator);
+                            $.each(physicianData, function(key, value) {
+                                var row = $('<tr></tr>');
+                                row.append(`<td>${value}</td>
+                                <td>${key}</td>
+                                `);
+                                table.append(row);
+                            });
+                            $("#table-physician").html(table);
+
+                        }
+                    },
+                    error: function(error) {
+                        // Handle errors
+                        console.error(error);
+                    }
+
+                });
+            }
+
             getCardioData();
             getRespData();
             getFluidData();
@@ -642,6 +724,9 @@
             getInvasiveData();
             getDailyData();
             getRenalData();
+            getProgressData();
+            getPhysicianData();
+            getSkinData();
             $(document).on('click', '.result', function() {
                 let id = $(this).data('id');
 
@@ -879,6 +964,7 @@
                         $('#new-fluid').hide();
                         getFluidData();
                         getMedicationSelect();
+                        getRenalData();
                     },
                     error: function(error) {
                         // Handle errors$
@@ -1164,7 +1250,72 @@
                     }
                 });
             });
-            //
+            //physician form
+            $('#physician-save-spinner').hide();
+            $('#physician-form').submit(function(event) {
+                event.preventDefault();
+                var physicianData = $(this).serialize();
+                $('#physician-save').prop('disabled', true);
+                $('#physician-save-spinner').show();
+
+                $.ajax({
+                    type: 'POST',
+                    url: '{{ route('physician.store') }}',
+                    data: physicianData,
+                    success: function(response) {
+                        console.log(response);
+                        $('#toast-1 .toast-body').html(response.message);
+                        $('#toast-1').toast('show');
+                        $('#modal-physician').modal('hide');
+                        $('#physician-form')[0].reset();
+                        $('#physician-save').prop('disabled', false);
+                        $('#physician-save-spinner').hide();
+                        getPhysicianData();
+                    },
+                    error: function(error) {
+                        // Handle errors$
+                        $.each(error.responseJSON.errors, function(key, value) {
+                            $('#physician-form').append('<div class="text-danger">' +
+                                value + '</div>');
+                        });
+                        $('#physician-save').prop('disabled', false);
+                        $('#physician-save-spinner').hide();
+                    }
+                });
+            });
+            //progress form
+            $('#progress-save-spinner').hide();
+            $('#progress-form').submit(function(event) {
+                event.preventDefault();
+                var progressData = $(this).serialize();
+                $('#progress-save').prop('disabled', true);
+                $('#progress-save-spinner').show();
+
+                $.ajax({
+                    type: 'POST',
+                    url: '{{ route('dailyTreatment.store') }}',
+                    data: progressData,
+                    success: function(response) {
+                        console.log(response);
+                        $('#toast-1 .toast-body').html(response.message);
+                        $('#toast-1').toast('show');
+                        $('#modal-progress').modal('hide');
+                        $('#progress-form')[0].reset();
+                        $('#progress-save').prop('disabled', false);
+                        $('#progress-save-spinner').hide();
+                        getProgressData();
+                    },
+                    error: function(error) {
+                        // Handle errors$
+                        $.each(error.responseJSON.errors, function(key, value) {
+                            $('#progress-form').append('<div class="text-danger">' +
+                                value + '</div>');
+                        });
+                        $('#progress-save').prop('disabled', false);
+                        $('#progress-save-spinner').hide();
+                    }
+                });
+            });
             $('#pupil-diameter').on('change', function() {
                 $('#value-pupil-diameter').html(this.value);
             })
@@ -1180,6 +1331,10 @@
                 getInvasiveData();
                 getDailyData();
                 getRenalData();
+                 getPhysicianData();
+                 getProgressData();
+                 getSkinData();
+
             });
         });
     </script>
@@ -1242,6 +1397,7 @@
                         </div>
                         <div class="col-md-3 border-start border-2 border-primary">
                             <a href="{{ route('dashboard') }}" class="btn btn-outline-primary">DashBoard</a>
+                            <button type="button" class="btn btn-secondary" data-bs-toggle="modal" data-bs-target="#modal-discharge"> Discharge Patient</button>
                             <div class="form-group row my-1 rounded bg-green-200 px-2 align-items-center">
                                 <label for="active-day" class="form-label fw-bold">Active Day</label>
 
@@ -1502,7 +1658,7 @@
                     <div class="card-header bg-gradient bg-purple d-flex gap-2 align-items-center">
 
                         <div class="flex-grow-1">
-                            <h5 class="mb-1">Skin and Wound Care</h5>
+                            <h5 class="mb-1 text-white">Skin and Wound Care</h5>
 
                         </div>
                         <i class="fa fa-plus" data-bs-toggle="modal" data-bs-target="#modal-skin"></i>
@@ -1555,7 +1711,7 @@
                             <h5 class="mb-1">Progress Notes</h5>
 
                         </div>
-                        <i class="fa fa-plus" data-bs-toggle="modal" data-bs-target="#modal-nutrition"></i>
+                        <i class="fa fa-plus" data-bs-toggle="modal" data-bs-target="#modal-progress"></i>
                         <a href="javascript:;" class="text-secondary"><i class="fa fa-redo"></i></a>
                         <a href="#" data-toggle="card-expand"
                             class="text-white text-opacity-20 text-decoration-none"><i class="fa fa-fw fa-expand"></i></a>
@@ -1630,14 +1786,14 @@
                             <h5 class="mb-1">Physician Order</h5>
 
                         </div>
-                        <i class="fa fa-plus" data-bs-toggle="modal" data-bs-target="#modal-nutrition"></i>
+                        <i class="fa fa-plus" data-bs-toggle="modal" data-bs-target="#modal-physician"></i>
                         <a href="javascript:;" class="text-secondary"><i class="fa fa-redo"></i></a>
                         <a href="#" data-toggle="card-expand"
                             class="text-white text-opacity-20 text-decoration-none"><i class="fa fa-fw fa-expand"></i></a>
 
                     </div>
                     <div class="card-body">
-                        <div class="table-responsive" id="table-seizure">
+                        <div class="table-responsive" id="table-physician">
 
                         </div>
 

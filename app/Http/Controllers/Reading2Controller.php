@@ -5,10 +5,12 @@ namespace App\Http\Controllers;
 use App\Http\Requests\LabResultRequest;
 use App\Models\DailyNote;
 use App\Models\DailyTreatmentPlan;
+use App\Models\FluidBalance;
 use App\Models\InvasiveLine;
 use App\Models\LabResult;
 use App\Models\PatientCare;
 use App\Models\PhysicianOrder;
+use App\Models\ProgressNote;
 use App\Models\SeizureChart;
 use App\Models\SkinWoundCare;
 use Carbon\Carbon;
@@ -154,7 +156,8 @@ class Reading2Controller extends Controller
         $data = $request->all();
         $data['created_by'] = Auth::user()->id;
         $data['date_of_treatment'] = now();
-        DailyTreatmentPlan::create($data);
+
+        ProgressNote::create($data);
 
         return response(['message'=> 'Daily Treatment Added successfully'], 200);
     }
@@ -170,7 +173,7 @@ class Reading2Controller extends Controller
     {
         $data = $request->all();
         $data['created_by'] = Auth::user()->id;
-        $data['date_of_note'] = now();
+        $data['is_discontinued'] = 0;
 
         PhysicianOrder::create($data);
 
@@ -182,7 +185,38 @@ class Reading2Controller extends Controller
         $labs = PhysicianOrder::where('patient_care_id', $patientCare->id)
         ->whereDate('created_at', Carbon::parse($active_day))
         ->get();
+
+
         return response($labs, 200);
     }
+    public function renalFluid(PatientCare $patientCare, $active_day)
+    {
+        $labs = FluidBalance::where('patient_care_id', $patientCare->id)
+        ->whereDate('created_at', Carbon::parse($active_day))
+        ->get();
+         $fluid_names = $patientCare->fluidBalances->unique('fluid')->pluck('fluid')->toArray();
+        $fluid_balance = [];
 
+        foreach($fluid_names as $fluid)
+        {
+            $fluid_balance[$fluid] = $labs->where('fluid', $fluid)->sum('volume');
+
+        }
+
+        return response($fluid_balance, 200);
+    }
+    public function dischargePatient(Request $request, PatientCare $patientCare)
+    {
+        $patientCare->update(['ready_for_discharged' => 1,
+        'discharge_date' => $request->discharge_date,
+        'notes' => $request->notes,
+        // 'discharge_type' => $request->discharge_type
+    ]);
+    $patientCare->bedModel()->update(['is_active' => 0]);
+    
+    $patientCare->bedOccupationHistory()->update(['is_occupied' => 0,
+'end_date' => $request->discharge_date]);
+
+        return route('dashboard');
+    }
 }

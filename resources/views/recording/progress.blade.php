@@ -19,20 +19,20 @@
                         <div class="col-md-12 mb-3">
                             <div class="form-group mb-4 d-flex flex-column justify-content-end">
                                 <div class="form-check">
-                                    <input class="form-check-input" type="radio" id="daily-note-day" name="duty"
+                                    <input class="form-check-input" type="radio" id="daily-note-day" name="type"
                                         value="1morning">
-                                    <label class="form-check-label" for="daily" id="dailyLabel">Morning</label>
+                                    <label class="form-check-label" for="daily" id="dailyLabelProblems">Problems</label>
                                 </div>
                                 <div class="form-check">
-                                    <input class="form-check-input" type="radio" id="daily-note-night" name="duty"
+                                    <input class="form-check-input" type="radio" id="daily-note-night" name="type"
                                         value="night" checked>
-                                    <label class="form-check-label" for="daily" id="dailyLabel">Night</label>
+                                    <label class="form-check-label" for="daily" id="dailyLabelProblim">Intervetion</label>
                                 </div>
                             </div>
                         </div>
                         <div class="col-md-12">
                                 <label for="contents">Handover Summary</label>
-                                <textarea name="text" class="form-control summernote" id="contents" title="Contents"></textarea>
+                                <textarea name="content" class="form-control summernote" id="contents" title="Contents"></textarea>
                         </div>
 
                     </div>

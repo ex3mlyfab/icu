@@ -50,11 +50,12 @@
                             </div>
                         </div>
                         <div class="col-md-12">
-                            <input type="text" class="form-control datepicker-across" name="discharge_date" placeholder="dd/mm/yyyy">
+                            <label for="discharge-date">Discharge Date</label>
+                            <input type="text" class="form-control datepicker-across" name="discharge_date" placeholder="dd/mm/yyyy" id="discharge-date">
                         </div>
                         <div class="col-md-12">
                                 <label for="contents">Discharge Summary</label>
-                                <textarea name="text" class="form-control summernote" id="contents" title="Contents"></textarea>
+                                <textarea name="notes" class="form-control summernote" id="contents" title="Contents"></textarea>
                         </div>
 
                     </div>

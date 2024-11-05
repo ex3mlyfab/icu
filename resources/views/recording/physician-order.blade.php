@@ -12,12 +12,13 @@
                 <div class="modal-body">
                     @csrf
                     <input type="hidden" name="patient_care_id" value="{{$patient->latestPatientCare->id}}" >
+                    <input type="hidden" name="name" value="physician">
 
                     <div class="row">
-                        <
+
                         <div class="col-md-12">
                                 <label for="contents">Medical Note</label>
-                                <textarea name="text" class="form-control summernote" id="contents" title="Contents"></textarea>
+                                <textarea name="content" class="form-control summernote" id="contents" title="Contents"></textarea>
                         </div>
 
 
