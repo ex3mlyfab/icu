@@ -14,15 +14,9 @@
             orientation: "bottom"
         });
         $('#admission_date').datepicker({
-            autoclose:true
+            autoclose:true,
+            todayHighlight: true,
         });
-        // $('#input_patient_id').on('keyup', function() {
-        //     if ($(this).val().length > 0  $(this).val().length <= 6) {
-        //         $('#search_patient_id').prop('disabled', false);
-        //     else {
-        //         $('#search_patient_id').prop('disabled', true);
-        //     }
-        // })
     </script>
 @endpush
 
@@ -99,13 +93,13 @@
                                     @foreach (\App\Enums\GenderEnum::cases() as $key=> $item)
                                     <div class="form-check form-check-inline">
 
-                                        <input class="form-check-input" name="gender" type="radio" value="{{$item->value}}" 
+                                        <input class="form-check-input" name="gender" type="radio" value="{{$item->value}}"
                                             id="gender_{{$key}}" @selected(old('gender')== $item->value)>
                                         <label class="form-check-label" for="gender_{{$key}}">{{$item->name}}</label>
                                     </div>
-                                        
+
                                     @endforeach
-                                    
+
                                 </div>
                             </div>
                             <div class="col-md-4">
@@ -143,7 +137,7 @@
                                     <option selected disabled value="">Choose...</option>
                                     @foreach (\App\Enums\MaritalStatusEnum::cases() as $marital_status)
                                     <option value="{{$marital_status->value}}" @selected(old('marital_status')== $marital_status->value)>{{$marital_status->name}}</option>
-                                        
+
                                     @endforeach
                                 </select>
                                 @error('marital_status')

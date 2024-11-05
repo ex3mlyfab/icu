@@ -23,6 +23,11 @@
                 height: 300,
 
             });
+            $('.datepicker-across').datepicker({
+                autoclose: true,
+                todayHighlight: true,
+                todayBtn: true
+            });
             let activeDay = $('#active-day').val();
             $('.searchPicker').picker({
                 search: true
@@ -585,7 +590,47 @@
 
                 });
             }
-
+            function getRenalData(){
+                $.ajaxa({
+                    type: 'GET', // or 'POST' if required
+                    url: `{{url('/')}}/show-patient/{{ $patient->latestPatientCare->id }}/renal/${activeDay}`,
+                    dataType: 'json', // Specify the expected data format (e.g., JSON)
+                    success: function(data) {
+                        // $('#chart-3').html(data.data);
+                        let renalData = data
+                        console.log(renalData);
+                        if ($.isEmptyObject(renalData)) {
+                            $("#table-renal").html(
+                                '<h2 class="text-center">No Renal Notes Recorded</h2>');
+                        } else {
+                            var table = $(
+                                '<table class="table table-bordered" id="form-table-renal"></table>'
+                            );
+                            var headerIndicator = $('<thead></thead>');
+                            // Create a table header row
+                            var headerRow = $('<tr></tr>');
+                            headerRow.append(`<th class="bg-dark-300 text-light">Renal Notes</th>
+                    <th class="bg-dark-300 text-light">Date Inserted</th>
+                   `);
+                            headerIndicator.append(headerRow);
+                            table.append(headerIndicator);
+                            $.each(renalData, function(key, value) {
+                                var row = $('<tr></tr>');
+                                row.append(`<td>${value}</td>
+                                <td>${key}</td>
+                                `);
+                                table.append(row);
+                            });
+                            $("#table-renal").html(table);
+                        }
+                    },
+                    error: function(error) {
+                        // Handle errors
+                        console.error(error);
+                    }
+                    
+                    })
+            }
             getCardioData();
             getRespData();
             getFluidData();
@@ -1040,6 +1085,8 @@
                 });
             })
             //skin form wire:abort
+
+            //skin form
             $('#skin-save-spinner').hide();
             $('#skin-form').submit(function(event) {
                 event.preventDefault();
@@ -1072,7 +1119,8 @@
                         $('#skin-save-spinner').hide();
                     }
                 })
-            })
+            });
+
             //lab form
             $('#lab-save-spinner').hide();
             $('#lab-form').submit(function(event) {
@@ -1618,5 +1666,5 @@
     @include('recording.progress')
     @include('recording.result-modal')
     @include('recording.seizure-chart')
-
+    @include('recording.discharge')
 @endsection

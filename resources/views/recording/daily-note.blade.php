@@ -27,12 +27,10 @@
                                     <label class="form-check-label" for="daily" id="dailyLabel">Night</label>
                                 </div>
                             </div>
-                            <div class="col-md-12">
+                        </div>
+                        <div class="col-md-12">
                                 <label for="contents">Handover Summary</label>
                                 <textarea name="text" class="form-control summernote" id="contents" title="Contents"></textarea>
-                            </div>
-
-
                         </div>
                     </div>
                 </div>

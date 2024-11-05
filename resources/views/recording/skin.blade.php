@@ -1,4 +1,3 @@
-
 {{-- Modal for skinvascular assessment --}}
 <div class="modal fade" id="modal-skin" data-bs-backdrop="static">
     <div class="modal-dialog modal-xl">
@@ -11,7 +10,7 @@
 
                 <div class="modal-body">
                     @csrf
-                    <input type="hidden" name="patient_care_id" value="{{$patient->latestPatientCare->id}}" >
+                    <input type="hidden" name="patient_care_id" value="{{ $patient->latestPatientCare->id }}">
 
                     <div class="row">
                         <div class="col-md-6 mb-3">
@@ -38,16 +37,17 @@
 
                             </div>
                         </div>
-                        
+
                     </div>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-default" data-bs-dismiss="modal">Close</button>
-                    <button type="submit" class="btn btn-primary" id="skin-save"><div class="spinner-grow spinner-grow-sm" id="skin-save-spinner"></div> Save</button>
+                    <button type="submit" class="btn btn-primary" id="skin-save">
+                        <div class="spinner-grow spinner-grow-sm" id="skin-save-spinner"></div> Save
+                    </button>
                 </div>
             </form>
 
         </div>
     </div>
 </div>
-
