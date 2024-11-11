@@ -10,10 +10,17 @@ class SkinWoundCare extends Model
 {
     use HasFactory;
     protected $guarded = ['id'];
-    
+    protected $casts = [
+        'date_of_care'=>'datetime',
+    ];
 
     public function patientCare(): BelongsTo
     {
-        return $this->belongsTo(PatientCare::class);
+        return $this->belongsTo(PatientCare::class, 'patient_id_care');
+    }
+
+    public function createdBy(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'created_by');
     }
 }

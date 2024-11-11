@@ -12,7 +12,7 @@
     <div class="container">
         <div class="card border-theme">
             <div class="card-title">
-                Add New Bed
+                Update Bed Model
             </div>
             <div class="card-body">
                 @if ($errors->any())
@@ -25,20 +25,21 @@
                     @endforeach
 
                 @endif
-                <form action="{{route('bed.store')}}" method="POST">
+                <form action="{{route('bed.update',$data)}}" method="POST">
                     @csrf
                     @method('PATCH')
+                    {{-- <h1>{{$data->section}}</h1> --}}
                     <div class="form-group mb-3">
                         <label class="form-label d-block" for="bed_section">Select Bed Section</label>
                         <div class="form-check form-check-inline">
 
                             <input class="form-check-input" name="section" type="radio" value="Section A"
-                                id="section_female">
+                                id="section_female" @checked($data->section == 'Section A')>
                             <label class="form-check-label" for="section_female">Section A</label>
                         </div>
                         <div class="form-check form-check-inline">
                             <input class="form-check-input" name="section" type="radio" value="Section B"
-                                id="section_male">
+                                id="section_male" @checked($data->section == 'Section B')>
                             <label class="form-check-label" for="section_male">Section B</label>
 
                         </div>
@@ -46,11 +47,11 @@
                     <div class="form-group mb-3">
                         <label class="form-label" for="name">Bed Code</label>
                         <input type="text" class="form-control" id="name" placeholder="Enter Bed Code"
-                            name="name" value="{{ old('name') }}">
+                            name="name" value="{{ old('name') ?? $data->name }}">
                     </div>
                     <div class="form-group mb-3">
                         <label class="form-label" for="description">Description</label>
-                        <textarea class="form-control" id="description" name="description" rows="3">{{ old('description') }}</textarea>
+                        <textarea class="form-control" id="description" name="description" rows="3">{{ old('description')  ?? $data->description}}</textarea>
                     </div>
                     <button type="submit" class="btn btn-primary w-full"> submit</button>
                 </form>

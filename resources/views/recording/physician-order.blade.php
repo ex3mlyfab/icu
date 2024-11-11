@@ -17,7 +17,7 @@
                     <div class="row">
 
                         <div class="col-md-12">
-                                <label for="contents">Medical Note</label>
+                                <label for="contents" class="fw-bolder"> Add New Medical Note</label>
                                 <textarea name="content" class="form-control summernote" id="contents" title="Contents"></textarea>
                         </div>
 

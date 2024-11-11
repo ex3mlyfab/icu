@@ -1882,20 +1882,5 @@
         </div>
 
     </div>
-    @include('recording.cardio-assessment')
-    @include('recording.respiratory-assessment')
-    @include('recording.neuro-assessment')
-    @include('recording.fluid-balance')
-    @include('recording.invasive-line')
-    @include('recording.lab-result')
-    @include('recording.renal')
-    @include('recording.skin')
-    @include('recording.daily-note')
-    @include('recording.medication')
-    @include('recording.nutrition')
-    @include('recording.physician-order')
-    @include('recording.progress')
-    @include('recording.result-modal')
-    @include('recording.seizure-chart')
-    @include('recording.discharge')
+    
 @endsection

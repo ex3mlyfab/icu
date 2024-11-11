@@ -11,8 +11,16 @@ class DailyNote extends Model
     use HasFactory;
     protected $guarded = ['id'];
 
+    protected $casts = [
+        'time_of_daily_notes' => 'datetime',
+    ];
     public function patientCare(): BelongsTo
     {
         return $this->belongsTo(PatientCare::class);
+    }
+
+    public function createdBy(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'created_by');
     }
 }

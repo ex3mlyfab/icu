@@ -11,8 +11,10 @@
 
                 <div class="modal-body">
                     @csrf
-                    <input type="hidden" name="patient_care_id" value="{{$patient->latestPatientCare->id}}" >
 
+                    <div id="appendage">
+
+                    </div>
                     <div class="row">
                         <div class="small text-inverse text-opacity-50 mb-2"><b class="fw-bold">Discharge Type</b></div>
                         <div class="col-md-12 mb-3">

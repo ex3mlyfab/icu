@@ -35,17 +35,23 @@ Route::middleware('auth')->group(function () {
     Route::get('/create-patient', [PatientController::class, 'create'])->name('create-patient');
     Route::post('/store-patient', [PatientController::class, 'store'])->name('patient.store');
     Route::post('/get-table-data', [PatientController::class, 'get_table_data'])->name('patient.data');
+    Route::post('/get-patient-data', [PatientController::class, 'get_patient_table'])->name('patient_all.data');
+    Route::get('/show-patient/{patient}', [PatientController::class, 'showPatient'])->name('patient.show');
+    Route::get('/patients-list', [PatientController::class, 'patientList'])->name('patient.list');
+
     //bed model
     Route::get('/beds', [BedModelController::class, 'index'])->name('bed.index');
     Route::post('/get-bed-tabledata', [BedModelController::class, 'get_bed_data'])->name('bed.datatable');
     Route::get('/bed-create', [BedModelController::class,  'create'])->name('bed.create');
     Route::post('/bed-store', [BedModelController::class, 'store'])->name('bed.store');
-    Route::get('/bed/{bedModel}/get', [BedModelController::class. 'show'])->name('bed.show');
+    Route::get('/bed/{bedModel}/get', [BedModelController::class, 'show'])->name('bed.show');
     Route::patch('/update/{bedModel}/update', [BedModelController::class, 'update'])->name('bed.update');
     Route::delete('/delete/{bedModel}', [BedModelController::class. 'delete'])->name('bed.delete');
 
     //treatment routes
     Route::get('/show-patient/{patient}/treatment', [PatientController::class, 'show'])->name('patient.treatment');
+    //discharged View
+    Route::get('/show-patient/discharged/{patientCare}', [PatientController::class, 'dischargedView'])->name('patient_view.discharged');
 
     //cardio assessment routes
     Route::get('/show-patient/{patientCare}/cardio-assessment/{active_day}', [ReadingController::class, 'showCardio'])->name('cardio.show');
@@ -97,7 +103,7 @@ Route::middleware('auth')->group(function () {
     Route::post('/store-daily-treatment', [Reading2Controller::class, 'storeDailyTreatment'])->name('dailyTreatment.store');
     Route::get('/show-patient/{patientCare}/daily-treatment/{active_day}', [Reading2Controller::class, 'showDailyTreatment'])->name('dailyTreatment.show');
     //discharge Patient
-    Route::put('/discharge-patient/{patientCare}', [Reading2Controller::class, 'dischargePatient'])->name('patient.discharge');
+    Route::post('/discharge-patient', [Reading2Controller::class, 'dischargePatient'])->name('patient.discharge');
 
 
 });

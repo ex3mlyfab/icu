@@ -38,5 +38,11 @@ return [
         'url' => '/beds',
         'icon' => 'fa fa-bed',
         'text' => 'Bed Information'
-      ]
+      ],
+      [
+        'url' => '/patients-list',
+        'icon' => 'fa fa-users',
+        'text' => 'Patient List'
+      ],
+
 ]];

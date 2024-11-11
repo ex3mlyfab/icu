@@ -33,7 +33,7 @@ class BedModelController extends Controller
             })
              ->addColumn('action', function ($bed) {
                 return '<div class="btn-group">'.
-                '<a type="button" class="btn btn-outline-primary">'.'Edit Bed'.'</a>'.
+                '<a type="button" class="btn btn-outline-primary" href="'.route('bed.show', $bed->id).'">'.'Edit Bed'.'</a>'.
                 '<a type="button" class="btn btn-outline-primary">'.'Delete'.'</a>'.
                 '</div>';
             })

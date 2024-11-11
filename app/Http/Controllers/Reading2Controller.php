@@ -111,6 +111,7 @@ class Reading2Controller extends Controller
     public function storeSkinCare(Request $request)
     {
         $data = $request->all();
+        // dd($data);
         $data['created_by'] = Auth::user()->id;
         $data['date_of_care'] = now();
 
@@ -121,12 +122,13 @@ class Reading2Controller extends Controller
 
     public function showSkinCare(PatientCare $patientCare)
     {
-        $labs = SkinWoundCare::where('patient_care_id', $patientCare->id)
+        $labs = SkinWoundCare::where('patient_id_care', $patientCare->id)
         ->get();
 
         $labs = $labs->map(function($item) {
 
-            $item->new_date = $item->date_of_care->format('Y-m-d');
+            $item->new_date = $item->date_of_care->format('Y-m-d h:i a');
+            $item->recorded_by = $item->createdBy->fullname;
             return $item;
         });
         return response($labs, 200);
@@ -134,8 +136,9 @@ class Reading2Controller extends Controller
     public function storeDailyNote(Request $request)
     {
         $data = $request->all();
+
         $data['created_by'] = Auth::user()->id;
-        $data['date_of_note'] = now();
+        $data['time_of_daily_notes'] = now();
 
         DailyNote::create($data);
 
@@ -147,6 +150,13 @@ class Reading2Controller extends Controller
         $labs = DailyNote::where('patient_care_id', $patientCare->id)
         ->whereDate('created_at', Carbon::parse($active_day))
         ->get();
+
+        $labs = $labs->map(function($item) {
+
+            $item->new_date = $item->time_of_daily_notes->format('Y-m-d h:i a');
+            $item->recorded_by = $item->createdBy->fullname;
+            return $item;
+        });
 
        return response($labs, 200);
     }
@@ -164,16 +174,22 @@ class Reading2Controller extends Controller
 
     public function showDailyTreatment(PatientCare $patientCare, $active_day)
     {
-        $labs = DailyTreatmentPlan::where('patient_care_id', $patientCare->id)
+        $labs = ProgressNote::where('patient_care_id', $patientCare->id)
         ->whereDate('created_at', Carbon::parse($active_day))
         ->get();
+
+         $labs = $labs->map(function($item) {
+
+            $item->new_date = $item->created_at->format('Y-m-d h:i a');
+            $item->recorded_by = $item->createdBy->fullname;
+            return $item;
+        });
         return response($labs, 200);
     }
     public function storePhysicianNote(Request $request)
     {
         $data = $request->all();
         $data['created_by'] = Auth::user()->id;
-        $data['is_discontinued'] = 0;
 
         PhysicianOrder::create($data);
 
@@ -186,6 +202,11 @@ class Reading2Controller extends Controller
         ->whereDate('created_at', Carbon::parse($active_day))
         ->get();
 
+         $labs = $labs->map(function($item) {
+
+            $item->recorded_by = $item->createdBy->fullname;
+            return $item;
+        });
 
         return response($labs, 200);
     }
@@ -205,15 +226,16 @@ class Reading2Controller extends Controller
 
         return response($fluid_balance, 200);
     }
-    public function dischargePatient(Request $request, PatientCare $patientCare)
+    public function dischargePatient(Request $request)
     {
+        $patientCare = PatientCare::find('patient_care_id');
         $patientCare->update(['ready_for_discharged' => 1,
         'discharge_date' => $request->discharge_date,
         'notes' => $request->notes,
         // 'discharge_type' => $request->discharge_type
     ]);
     $patientCare->bedModel()->update(['is_active' => 0]);
-    
+
     $patientCare->bedOccupationHistory()->update(['is_occupied' => 0,
 'end_date' => $request->discharge_date]);
 
