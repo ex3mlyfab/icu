@@ -51,69 +51,13 @@
                 minuteStep: 1
             });
 
-            function getFluidSelect() {
-                $.ajax({
-                    type: 'GET',
-                    url: '{{ route('fluid.get', $patient->latestPatientCare->id) }}',
-                    dataType: 'json', // Specify the expected data format (e.g., JSON)
-                    success: function(data) {
-                        $("#select-fluid").empty().append(
-                            '<option value="others">Add New Fluid</option><option value="" selected>Select an option</option>'
-                        );
 
-                        // Populate with new options
-                        $.each(data.data, function(index, option) {
-                            $("#select-fluid").prepend('<option value="' + option.fluid + '">' +
-                                option.fluid + '</option>');
-                        });
-                    }
-                });
-            }
-
-            function getMedicationSelect() {
-                $.ajax({
-                    type: 'GET',
-                    url: "{{ route('medication.get', $patient->latestPatientCare->id) }}",
-                    dataType: 'json', // Specify the expected data format (e.g., JSON)
-                    success: function(data) {
-                        $("#select-medication").empty().append(
-                            '<option value="others">Add New Medication</option><option value="" selected>Select an option</option>'
-                        );
-                        $.each(data, function(index, option) {
-                            $("#select-medication").prepend('<option value="' + option
-                                .medication + '">' + option.medication + '</option>');
-                        });
-
-                    }
-                });
-            }
-
-            function getNutritionSelect() {
-                $.ajax({
-                    type: 'GET',
-                    url: "{{ route('nutrition.get', $patient->latestPatientCare->id) }}",
-                    dataType: 'json', // Specify the expected data format (e.g., JSON)
-                    success: function(data) {
-                        $("#select-nutrition").empty().append(
-                            '<option value="others">Add New Nutrition</option><option value="" selected>Select an option</option>'
-                        );
-                        $.each(data, function(index, option) {
-                            $("#select-nutrition").prepend('<option value="' + option
-                                .feeding_route + '">' + option.feeding_route + '</option>');
-                        });
-                    }
-                });
-            }
-
-            getFluidSelect();
-            getMedicationSelect();
-            getNutritionSelect();
             const cardioChart = {};
 
             function getFluidData() {
                 $.ajax({
                     type: 'GET',
-                    url: `{{ URL::to('/') }}/show-patient/{{ $patient->latestPatientCare->id }}/fluid-assessment/${activeDay}`,
+                    url: `{{ URL::to('/') }}/show-patient/{{ $patientCare->id }}/fluid-assessment/${activeDay}`,
                     dataType: 'json', // Specify the expected data format (e.g., JSON)
                     success: function(data) {
                         let fluidData = data.data;
@@ -157,7 +101,7 @@
             function getCardioData() {
                 $.ajax({
                     type: 'GET', // or 'POST' if required
-                    url: `{{ URL::to('/') }}/show-patient/{{ $patient->latestPatientCare->id }}/cardio-assessment/${activeDay}`,
+                    url: `{{ URL::to('/') }}/show-patient/{{ $patientCare->id }}/cardio-assessment/${activeDay}`,
                     dataType: 'json', // Specify the expected data format (e.g., JSON)
                     success: function(data) {
 
@@ -204,63 +148,14 @@
                         // You can display an error message to the user here
                     }
                 });
-                // var cardioCTX3 = document.getElementById('chartCardio');
-                // new Chart(cardioCTX3, {
-                //         type: 'line',
-                //         data: {
-                //             labels: cardioChart['label'],
-                //             datasets: [{
-                //                 label: 'Heart Rate',
-                //                 data: cardioChart['Heart Rate'],
-                //                 backgroundColor: 'rgba(255, 99, 132, 0.2)',
-                //                 borderColor: 'rgba(255, 99, 132, 1)',
-                //                 borderWidth: 1
-                //             },
-                //             {
-                //                 label: 'Respiratory Rate',
-                //                 data: cardioChart['Respiratory Rate'],
-                //                 backgroundColor: 'rgba(54, 162, 235, 0.2)',
-                //                 borderColor: 'rgba(54, 162, 235, 1)',
-                //                 borderWidth: 1
-                //             },
-                //             {
-                //                 label: 'Systolic Blood Pressure',
-                //                 data: cardioChart['Bp Systolic'],
-                //                 backgroundColor: 'rgba(255, 206, 86, 0.2)',
-                //                 borderColor: 'rgba(255, 206, 86, 1)',
-                //                 borderWidth: 1
-                //             },
-                //             {
-                //                 label: 'Diastolic Blood Pressure',
-                //                 data: cardioChart['Bp Diastolic'],
-                //                 backgroundColor: 'rgba(75, 192, 192, 0.2)',
-                //                 borderColor: 'rgba(75, 192, 192, 1)',
-                //                 borderWidth: 1
-                //             },
-                //             {
-                //                 label: 'Temperature',
-                //                 data: cardioChart['Temperature'],
-                //                 backgroundColor: 'rgba(89, 89, 89, 0.2)',
-                //                 borderColor: 'rgba(89, 89, 89, 1)',
-                //                 borderWidth: 1
-                //             }
-                //         ]
-                //         },
-                //         options: {
-                //             scales: {
-                //                 y: {
-                //                     beginAtZero: false
-                //                 }
-                //             }
-                //         }
-                // })
+
 
             };
 
             function getRespData() {
                 $.ajax({
                     type: 'GET', // or 'POST' if required
-                    url: `{{ URL::to('/') }}/show-patient/{{ $patient->latestPatientCare->id }}/resp-assessment/${activeDay}`,
+                    url: `{{ URL::to('/') }}/show-patient/{{ $patientCare->id }}/resp-assessment/${activeDay}`,
                     dataType: 'json', // Specify the expected data format (e.g., JSON)
                     success: function(data) {
 
@@ -305,7 +200,7 @@
             function getMedicationData() {
                 $.ajax({
                     type: 'GET', // or 'POST' if required
-                    url: `{{ URL::to('/') }}/show-patient/{{ $patient->latestPatientCare->id }}/medication/${activeDay}`,
+                    url: `{{ URL::to('/') }}/show-patient/{{ $patientCare->id }}/medication/${activeDay}`,
                     dataType: 'json', // Specify the expected data format (e.g., JSON)
                     success: function(data) {
                         // $('#chart-3').html(data.data);
@@ -349,7 +244,7 @@
             function getNutritionData() {
                 $.ajax({
                     type: 'GET', // or 'POST' if required
-                    url: `{{ URL::to('/') }}/show-patient/{{ $patient->latestPatientCare->id }}/nutritions/${activeDay}`,
+                    url: `{{ URL::to('/') }}/show-patient/{{ $patientCare->id }}/nutritions/${activeDay}`,
                     dataType: 'json', // Specify the expected data format (e.g., JSON)
                     success: function(data) {
                         // $('#chart-3').html(data.data);
@@ -393,7 +288,7 @@
             function getNeuroData() {
                 $.ajax({
                     type: 'GET', // or 'POST' if required
-                    url: `{{ URL::to('/') }}/show-patient/{{ $patient->latestPatientCare->id }}/neuro-assessment/${activeDay}`,
+                    url: `{{ URL::to('/') }}/show-patient/{{ $patientCare->id }}/neuro-assessment/${activeDay}`,
                     dataType: 'json', // Specify the expected data format (e.g., JSON)
                     success: function(data) {
 
@@ -440,7 +335,7 @@
             function getLabData() {
                 $.ajax({
                     type: 'GET', // or 'POST' if required
-                    url: `{{ URL::to('/') }}/show-patient/{{ $patient->latestPatientCare->id }}/lab-test/${activeDay}`,
+                    url: `{{ URL::to('/') }}/show-patient/{{ $patientCare->id }}/lab-test/${activeDay}`,
                     dataType: 'json', // Specify the expected data format (e.g., JSON)
                     success: function(data) {
                         // $('#chart-3').html(data.data);
@@ -498,7 +393,7 @@
             function getSkinData() {
                 $.ajax({
                     type: 'GET', // or 'POST' if required
-                    url: `{{ URL::to('/') }}/show-patient/{{ $patient->latestPatientCare->id }}/skin-care/${activeDay}`,
+                    url: `{{ URL::to('/') }}/show-patient/{{ $patientCare->id }}/skin-care/${activeDay}`,
                     dataType: 'json', // Specify the expected data format (e.g., JSON)
                     success: function(data) {
                         // $('#chart-3').html(data.data);
@@ -537,7 +432,7 @@
             function getSeizureData() {
                 $.ajax({
                     type: 'GET', // or 'POST' if required
-                    url: '{{ route('seizure.show', $patient->latestPatientCare->id) }}',
+                    url: '{{ route('seizure.show', $patientCare->id) }}',
                     dataType: 'json', // Specify the expected data format (e.g., JSON)
                     success: function(data) {
 
@@ -575,7 +470,7 @@
             function getDailyData() {
                 $.ajax({
                     type: 'GET', // or 'POST' if required
-                    url: `{{url('/') }}/show-patient/{{ $patient->latestPatientCare->id }}/dailynotes/${activeDay}`,
+                    url: `{{url('/') }}/show-patient/{{ $patientCare->id }}/dailynotes/${activeDay}`,
                     dataType: 'json', // Specify the expected data format (e.g., JSON)
                     success: function(data) {
                         // $('#chart-3').html(data.data);
@@ -624,7 +519,7 @@
             function getInvasiveData() {
                 $.ajax({
                     type: 'GET', // or 'POST' if required
-                    url: `{{ route('invasive.show', $patient->latestPatientCare->id) }}`,
+                    url: `{{ route('invasive.show', $patientCare->id) }}`,
                     dataType: 'json', // Specify the expected data format (e.g., JSON)
                     success: function(data) {
                         // $('#chart-3').html(data.data);
@@ -665,7 +560,7 @@
             function getRenalData(){
                 $.ajax({
                     type: 'GET', // or 'POST' if required
-                    url: `{{url('/')}}/show-patient/{{ $patient->latestPatientCare->id }}/renal-fluids/${activeDay}`,
+                    url: `{{url('/')}}/show-patient/{{ $patientCare->id }}/renal-fluids/${activeDay}`,
                     dataType: 'json', // Specify the expected data format (e.g., JSON)
                     success: function(data) {
                         // $('#chart-3').html(data.data);
@@ -706,7 +601,7 @@
             function getProgressData() {
                 $.ajax({
                     type: 'GET', // or 'POST' if required
-                    url: `{{url('/')}}/show-patient/{{ $patient->latestPatientCare->id }}/daily-treatment/${activeDay}`,
+                    url: `{{url('/')}}/show-patient/{{ $patientCare->id }}/daily-treatment/${activeDay}`,
                     dataType: 'json', // Specify the expected data format (e.g., JSON)
                     success: function(data) {
                         // $('#chart-3').html(data.data);
@@ -754,7 +649,7 @@
             function getPhysicianData() {
                 $.ajax({
                     type: 'GET', // or 'POST' if required
-                    url: `{{url('/')}}/show-patient/{{ $patient->latestPatientCare->id }}/physician-order/${activeDay}`,
+                    url: `{{url('/')}}/show-patient/{{ $patientCare->id }}/physician-order/${activeDay}`,
                     dataType: 'json', // Specify the expected data format (e.g., JSON)
                     success: function(data) {
                         let physicianData = data;
@@ -859,73 +754,7 @@
                     }
                 });
             });
-            $('#cardio-save-spinner').hide();
-            $('#cardio-form').submit(function(event) {
-                event.preventDefault(); // Prevent default form submission
 
-                var formData = $(this).serialize(); // Serialize form data
-                $('#cardio-save').prop('disabled', true);
-                $('#cardio-save-spinner').show();
-
-                $.ajax({
-                    type: 'POST',
-                    url: '{{ route('cardio.store') }}', // Replace with your server-side script URL
-                    data: formData,
-                    success: function(response) {
-
-                        console.log(response);
-                        $('#toast-1 .toast-body').html(response.message);
-                        $('#toast-1').toast('show');
-                        $('#modalXl').modal('hide');
-
-                        $('#cardio-form')[0].reset();
-                        $('#cardio-save').prop('disabled', false);
-                        $('#cardio-save-spinner').hide();
-                        getCardioData();
-                    },
-                    error: function(error) {
-                        // Handle errors$
-                        console.error(error);
-                        // You can display an error message to the user here
-                        var errorMessage = error.responseJSON.message;
-                        $('#toast-1 .toast-body').html(errorMessage);
-                        $('#toast-1').toast('show');
-                        $('#cardio-save').prop('disabled', false);
-                        $('#cardio-save-spinner').hide();
-
-                    }
-                });
-            });
-            $('#new-fluid').hide();
-            $('#new-medication').hide();
-            $('#select-medication').on('change', function() {
-                var selectVal = $(this).val();
-                console.log(selectVal);
-                if ($(this).val() == 'others') {
-                    $('#new-medication').show();
-                } else {
-                    $('#new-medication').hide();
-                }
-            });
-            $('#new-nutrition').hide();
-            $('#select-nutrition').on('change', function() {
-                var selectVal = $(this).val();
-                console.log(selectVal);
-                if ($(this).val() == 'others') {
-                    $('#new-nutrition').show();
-                } else {
-                    $('#new-mutrition').hide();
-                }
-            });
-            $('#select-fluid').on('change', function() {
-                var selectVal = $(this).val();
-                console.log(selectVal);
-                if ($(this).val() == 'others') {
-                    $('#new-fluid').show();
-                } else {
-                    $('#new-fluid').hide();
-                }
-            });
 
             $('#new-lab').hide();
             $('#defaultothers').on('change', function() {
@@ -940,469 +769,30 @@
                 }
             });
 
-            $('#resp-save-spinner').hide();
-            $('#resp-form').submit(function(event) {
-                event.preventDefault(); // Prevent default form submission
 
-                var respData = $(this).serialize(); // Serialize form data
 
-                $('#resp-save').prop('disabled', true);
-                $('#resp-save-spinner').show();
 
-                $.ajax({
-                    type: 'POST',
-                    url: '{{ route('resp.store') }}', // Replace with your server-side script URL
-                    data: respData,
-                    success: function(response) {
-
-                        console.log(response);
-                        $('#toast-1 .toast-body').html(response.message);
-                        $('#toast-1').toast('show');
-                        $('#modal-resp').modal('hide');
-
-                        $('#resp-form')[0].reset();
-                        $('#resp-save').prop('disabled', false);
-                        $('#resp-save-spinner').hide();
-                        getRespData();
-                    },
-                    error: function(error) {
-                        // Handle errors$
-                        console.error(error);
-                        // You can display an error message to the user here
-                        var errorMessage = error.responseJSON.message;
-                        $('#toast-1 .toast-body').html(errorMessage);
-                        $('#toast-1').toast('show');
-                        $('#resp-save').prop('disabled', false);
-                        $('#resp-save-spinner').hide();
-
-                    }
-                });
-            });
-            //invasive line form
-            $('#invasive-save-spinner').hide();
-            $('#invasive-form').submit(function(event) {
-                event.preventDefault(); // Prevent default form submission
-
-                var invasiveData = $(this).serialize(); // Serialize form data
-
-                $('#invasive-save').prop('disabled', true);
-                $('#invasive-save-spinner').show();
-
-                $.ajax({
-                    type: 'POST',
-                    url: '{{ route('invasive.store') }}', // Replace with your server-side script URL
-                    data: invasiveData,
-                    success: function(response) {
-
-                        console.log(response);
-                        $('#toast-1 .toast-body').html(response.message);
-                        $('#toast-1').toast('show');
-                        $('#modal-invasive').modal('hide');
-
-                        $('#invasive-form')[0].reset();
-                        $('#invasive-save').prop('disabled', false);
-                        $('#invasive-save-spinner').hide();
-                        getInvasiveData();
-                    },
-                    error: function(error) {
-                        // Handle errors$
-                        console.error(error);
-                        // You can display an error message to the user here
-                        var errorMessage = error.responseJSON.message;
-                        $.each(error.responseJSON.errors, function(key, value) {
-                            $('#invasive-form').append(
-                                '<div class="alert alert-danger">' +
-                                value + '</div>');
-                        });
-
-                        $('#invasive-save').prop('disabled', false);
-                        $('#invasive-save-spinner').hide();
-                    }
-                });
-
-            });
-            //fluid-balance form
-            $('#fluid-save-spinner').hide();
-            $('#fluid-form').submit(function(event) {
-                event.preventDefault(); // Prevent default form submission
-
-                var fluidData = $(this).serialize(); // Serialize form data
-
-                $('#fluid-save').prop('disabled', true);
-                $('#fluid-save-spinner').show();
-
-                $.ajax({
-                    type: 'POST',
-                    url: '{{ route('fluid.store') }}', // Replace with your server-side script URL
-                    data: fluidData,
-                    success: function(response) {
-
-                        console.log(response);
-                        $('#toast-1 .toast-body').html(response.message);
-                        $('#toast-1').toast('show');
-                        $('#modal-fluid').modal('hide');
-
-                        $('#fluid-form')[0].reset();
-                        $('#fluid-save').prop('disabled', false);
-                        $('#fluid-save-spinner').hide();
-                        $('#new-fluid').hide();
-                        getFluidData();
-                        getMedicationSelect();
-                        getRenalData();
-                    },
-                    error: function(error) {
-                        // Handle errors$
-                        console.error(error);
-                        // You can display an error message to the user here
-                        var errorMessage = error.responseJSON.message;
-                        $('#toast-1 .toast-body').html(errorMessage);
-                        $('#toast-1').toast('show');
-                        $('#fluid-save').prop('disabled', false);
-                        $('#fluid-save-spinner').hide();
-
-                    }
-                });
-            });
             //medication form
-            $('#medication-save-spinner').hide();
-            $('#medication-form').submit(function(event) {
-                event.preventDefault(); // Prevent default form submission
 
-                var medicationData = $(this).serialize(); // Serialize form data
-
-                $('#medication-save').prop('disabled', true);
-                $('#medication-save-spinner').show();
-
-                $.ajax({
-                    type: 'POST',
-                    url: '{{ route('medication.store') }}', // Replace with your server-side script URL
-                    data: medicationData,
-                    success: function(response) {
-
-                        console.log(response);
-                        $('#toast-1 .toast-body').html(response.message);
-                        $('#toast-1').toast('show');
-                        $('#modal-medication').modal('hide');
-
-                        $('#medication-form')[0].reset();
-                        $('#medication-save').prop('disabled', false);
-                        $('#medication-save-spinner').hide();
-                        getMedicationData();
-                        getMedicationSelect();
-
-                    },
-                    error: function(error) {
-                        // Handle errors$
-                        console.error(error);
-                        // You can display an error message to the user here
-                        var errorMessage = error.responseJSON.message;
-                        $('#toast-1 .toast-body').html(errorMessage);
-                        $('#toast-1').toast('show');
-                        $('#medication-save').prop('disabled', false);
-                        $('#medication-save-spinner').hide();
-
-                    }
-                });
-
-            });
             //nutrition form
-            $('#nutrition-save-spinner').hide();
-            $('#nutrition-form').submit(function(event) {
-                event.preventDefault(); // Prevent default form submission
 
-                var nutritionData = $(this).serialize(); // Serialize form data
-
-                $('#nutrition-save').prop('disabled', true);
-                $('#nutrition-save-spinner').show();
-
-                $.ajax({
-                    type: 'POST',
-                    url: '{{ route('nutrition.store') }}', // Replace with your server-side script URL
-                    data: nutritionData,
-                    success: function(response) {
-
-                        console.log(response);
-                        $('#toast-1 .toast-body').html(response.message);
-                        $('#toast-1').toast('show');
-                        $('#modal-nutrition').modal('hide');
-
-                        $('#nutrition-form')[0].reset();
-                        $('#nutrition-save').prop('disabled', false);
-                        $('#nutrition-save-spinner').hide();
-                        getNutritionData();
-                        getNutritionSelect();
-
-                    },
-                    error: function(error) {
-                        // Handle errors$
-                        console.error(error);
-                        // You can display an error message to the user here
-                        var errorMessage = error.responseJSON.message;
-                        $('#toast-1 .toast-body').html(errorMessage);
-                        $('#toast-1').toast('show');
-                        $('#nutrition-save').prop('disabled', false);
-                        $('#nutrition-save-spinner').hide();
-                    }
-                });
-
-            });
             //neuro form
-            $('#neuro-save-spinner').hide();
-            $('#neuro-form').submit(function(event) {
-                event.preventDefault(); // Prevent default form submission
 
-                var neuroData = $(this).serialize(); // Serialize form data
-
-                $('#neuro-save').prop('disabled', true);
-                $('#neuro-save-spinner').show();
-
-                $.ajax({
-                    type: 'POST',
-                    url: '{{ route('neuro.store') }}', // Replace with your server-side script URL
-                    data: neuroData,
-                    success: function(response) {
-
-                        console.log(response);
-                        $('#toast-1 .toast-body').html(response.message);
-                        $('#toast-1').toast('show');
-                        $('#modal-neuro').modal('hide');
-                        $('#neuro-form')[0].reset();
-                        $('#neuro-save').prop('disabled', false);
-                        $('#neuro-save-spinner').hide();
-                        getNeuroData();
-
-                    },
-                    error: function(error) {
-                        // Handle errors$
-                        console.error(error);
-                        // You can display an error message to the user here
-                        var errorMessage = error.responseJSON.message;
-                        $('#toast-1 .toast-body').html(errorMessage);
-                        $('#toast-1').toast('show');
-                        $('#neuro-save').prop('disabled', false);
-                        $('#neuro-save-spinner').hide();
-                    }
-                });
-
-            });
             //seizure form
-            $('#seizure-save-spinner').hide();
-            $('#seizure-form').submit(function(event) {
-                event.preventDefault();
-                var seizureData = $(this).serialize();
-                $('#seizure-save').prop('disabled', true);
-                $('#seizure-save-spinner').show();
 
-                $.ajax({
-                    type: 'POST',
-                    url: '{{ route('seizure.store') }}',
-                    data: seizureData,
-                    success: function(response) {
 
-                        console.log(response);
-                        $('#toast-1 .toast-body').html(response.message);
-                        $('#toast-1').toast('show');
-                        $('#modal-seizure').modal('hide');
-                        $('#seizure-form')[0].reset();
-                        $('#seizure-save').prop('disabled', false);
-                        $('#seizure-save-spinner').hide();
-                        getSeizureData();
-                    },
-                    error: function(error) {
-                        // Handle errors$
-                        $.each(error.responseJSON.errors, function(key, value) {
-                            $('#seizure-form').append('<div class="text-danger">' +
-                                value + '</div>');
-                        });
-                        $('#seizure-save').prop('disabled', false);
-                        $('#seizure-save-spinner').hide();
-                    }
-
-                })
-            });
-            //daily note form
-            $('#daily-save-spinner').hide();
-            $('#daily-form').submit(function(event) {
-                event.preventDefault();
-                var dailyData = $(this).serialize();
-                $('#daily-save').prop('disabled', true);
-                $('#daily-save-spinner').show();
-
-                $.ajax({
-                    type: 'POST',
-                    url: '{{ route('dailynotes.store') }}',
-                    data: dailyData,
-                    success: function(response) {
-
-                        console.log(response);
-                        $('#toast-1 .toast-body').html(response.message);
-                        $('#toast-1').toast('show');
-                        $('#modal-daily').modal('hide');
-                        $('#daily-form')[0].reset();
-                        $('#daily-save').prop('disabled', false);
-                        $('#daily-save-spinner').hide();
-                        getDailyData();
-                    },
-                    error: function(error) {
-                        // Handle errors$
-                        $.each(error.responseJSON.errors, function(key, value) {
-                            $('#daily-form').append('<div class="text-danger">' +
-                                value + '</div>');
-                        });
-                        $('#daily-save').prop('disabled', false);
-                        $('#daily-save-spinner').hide();
-                    }
-                });
-            })
             //skin form wire:abort
 
             //skin form
-            $('#skin-save-spinner').hide();
-            $('#skin-form').submit(function(event) {
-                event.preventDefault();
-                var skinData = $(this).serialize();
-                $('#skin-save').prop('disabled', true);
-                $('#skin-save-spinner').show();
 
-                $.ajax({
-                    type: 'POST',
-                    url: '{{ route('skin.store') }}',
-                    data: skinData,
-                    success: function(response) {
-
-                        console.log(response);
-                        $('#toast-1 .toast-body').html(response.message);
-                        $('#toast-1').toast('show');
-                        $('#modal-skin').modal('hide');
-                        $('#skin-form')[0].reset();
-                        $('#skin-save').prop('disabled', false);
-                        $('#skin-save-spinner').hide();
-                        getSkinData();
-                    },
-                    error: function(error) {
-                        // Handle errors$
-                        $.each(error.responseJSON.errors, function(key, value) {
-                            $('#skin-form').append('<div class="text-danger">' +
-                                value + '</div>');
-                        });
-                        $('#skin-save').prop('disabled', false);
-                        $('#skin-save-spinner').hide();
-                    }
-                })
-            });
 
             //lab form
-            $('#lab-save-spinner').hide();
-            $('#lab-form').submit(function(event) {
-                event.preventDefault(); // Prevent default form submission
 
-                var labData = $(this).serialize(); // Serialize form data
-
-                $('#lab-save').prop('disabled', true);
-                $('#lab-save-spinner').show();
-
-                $.ajax({
-                    type: 'POST',
-                    url: '{{ route('lab.store') }}', // Replace with your server-side script URL
-                    data: labData,
-                    success: function(response) {
-
-                        console.log(response);
-                        $('#toast-1 .toast-body').html(response.message);
-                        $('#toast-1').toast('show');
-                        $('#modal-lab').modal('hide');
-                        $('#lab-form')[0].reset();
-                        $('#lab-save').prop('disabled', false);
-                        $('#lab-save-spinner').hide();
-                        getLabData();
-
-                    },
-                    error: function(error) {
-                        // Handle errors$
-                        console.error(error);
-                        $('#lab-save').prop('disabled', false);
-                        $('#lab-save-spinner').hide();
-                        // You can display an error message to the user here
-                        $.each(error.responseJSON.errors, function(field, messages) {
-                            $.each(messages, function(i, message) {
-                                $('#lab-form .alert-danger').append('<p>' +
-                                    message + '</p>');
-                            });
-                        })
-
-
-                    }
-                });
-            });
             //physician form
-            $('#physician-save-spinner').hide();
-            $('#physician-form').submit(function(event) {
-                event.preventDefault();
-                var physicianData = $(this).serialize();
-                $('#physician-save').prop('disabled', true);
-                $('#physician-save-spinner').show();
 
-                $.ajax({
-                    type: 'POST',
-                    url: '{{ route('physician.store') }}',
-                    data: physicianData,
-                    success: function(response) {
-                        console.log(response);
-                        $('#toast-1 .toast-body').html(response.message);
-                        $('#toast-1').toast('show');
-                        $('#modal-physician').modal('hide');
-                        $('#physician-form')[0].reset();
-                        $('#physician-save').prop('disabled', false);
-                        $('#physician-save-spinner').hide();
-                        getPhysicianData();
-                    },
-                    error: function(error) {
-                        // Handle errors$
-                        $.each(error.responseJSON.errors, function(key, value) {
-                            $('#physician-form').append('<div class="text-danger">' +
-                                value + '</div>');
-                        });
-                        $('#physician-save').prop('disabled', false);
-                        $('#physician-save-spinner').hide();
-                    }
-                });
-            });
             //progress form
-            $('#progress-save-spinner').hide();
-            $('#progress-form').submit(function(event) {
-                event.preventDefault();
-                var progressData = $(this).serialize();
-                $('#progress-save').prop('disabled', true);
-                $('#progress-save-spinner').show();
 
-                $.ajax({
-                    type: 'POST',
-                    url: '{{ route('dailyTreatment.store') }}',
-                    data: progressData,
-                    success: function(response) {
-                        console.log(response);
-                        $('#toast-1 .toast-body').html(response.message);
-                        $('#toast-1').toast('show');
-                        $('#modal-progress').modal('hide');
-                        $('#progress-form')[0].reset();
-                        $('#progress-save').prop('disabled', false);
-                        $('#progress-save-spinner').hide();
-                        getProgressData();
-                    },
-                    error: function(error) {
-                        // Handle errors$
-                        $.each(error.responseJSON.errors, function(key, value) {
-                            $('#progress-form').append('<div class="text-danger">' +
-                                value + '</div>');
-                        });
-                        $('#progress-save').prop('disabled', false);
-                        $('#progress-save-spinner').hide();
-                    }
-                });
-            });
-            $('#pupil-diameter').on('change', function() {
-                $('#value-pupil-diameter').html(this.value);
-            })
+
             $('#active-day').on('change', function() {
                 activeDay = $('#active-day').val();
                 getCardioData();
@@ -1437,40 +827,40 @@
                             <div class="d-flex flex-column">
                                 <h4 class="mb-0"> Name: <span
                                         class=
-                                    "fw-bold text-gray-emphasis">{{ $patient->fullname }}</span>
+                                    "fw-bold text-gray-emphasis">{{ $patientCare->patient->fullname }}</span>
                                 </h4>
                                 <h5 class="text-muted my-0 text-teal-emphasis">Age: &nbsp;
-                                    {{ (int) $patient->date_of_birth->diffInYears() }} Years
-                                    {{ $patient->date_of_birth->diffInMonths() % 12 }} Months</h5>
-                                <h5 class="text-muted my-0 text-gray-emphasis">Sex: &nbsp;{{ $patient->gender->name }}</h5>
-                                <h5 class="text-muted my-0">Marital Status: &nbsp;{{ $patient->marital_status->name }}</h5>
+                                    {{ (int) $patientCare->patient->date_of_birth->diffInYears() }} Years
+                                    {{ $patientCare->patient->date_of_birth->diffInMonths() % 12 }} Months</h5>
+                                <h5 class="text-muted my-0 text-gray-emphasis">Sex: &nbsp;{{ $patientCare->patient->gender->name }}</h5>
+                                <h5 class="text-muted my-0">Marital Status: &nbsp;{{ $patientCare->patient->marital_status->name }}</h5>
                             </div>
                         </div>
                         <div class="col-md-3 border-start border-2 border-primary bg-gray-200 rounded">
                             <h5 class="text-muted my-0 text-gray-emphasis">Bed-No: &nbsp;<span
-                                    class="fw-bold">{{ $patient->latestPatientCare->bedModel->name }} </span></h5>
+                                    class="fw-bold">{{ $patientCare->bedModel->name }} </span></h5>
                             <h5 class="text-muted my-0 text-gray-emphasis">Admission-Date: &nbsp;<span
-                                    class="fw-bold">{{ $patient->latestPatientCare->admission_date->format('d/M/Y') }}</span>
+                                    class="fw-bold">{{ $patientCare->admission_date->format('d/M/Y') }}</span>
                             </h5>
                             <h5 class="text-muted my-0 text-gray-emphasis">Diagnosis: &nbsp;<span
-                                    class="fw-bold">{{ $patient->latestPatientCare->diagnosis }}</span></h5>
+                                    class="fw-bold">{{ $patientCare->diagnosis }}</span></h5>
                             <h5 class="text-muted my-0 text-gray-emphasis"><span class="fw-bold">Admitted-From:
-                                    &nbsp;</span>{{ $patient->latestPatientCare->admitted_from }}</h5>
+                                    &nbsp;</span>{{ $patientCare->admitted_from }}</h5>
                         </div>
                         <div class="col-md-3 border-start border-2 border-primary">
                             <h5 class="text-muted my-0 text-gray-emphasis"><span class="fw-bold">Condition: &nbsp;</span>
-                                {{ $patient->latestPatientCare->notes }}</h5>
+                                {{ $patientCare->notes }}</h5>
                             <h5 class="text-muted my-0 text-gray-emphasis"><span class="fw-bold">Consultant: &nbsp;</span>
-                                {{ $patient->latestPatientCare->icu_consultant }}
+                                {{ $patientCare->icu_consultant }}
                             </h5>
                             <h5 class="text-muted my-0 text-gray-emphasis"><span class="fw-bold">Nurse Incharge:
-                                    &nbsp;</span>{{ $patient->latestPatientCare->nurse_incharge }}</h5>
+                                    &nbsp;</span>{{ $patientCare->nurse_incharge }}</h5>
                             <h5 class="text-muted my-0 text-gray-emphasis"><span class="fw-bold">Next of Kin:
-                                    &nbsp;</span>{{ $patient->next_of_kin }}</h5>
+                                    &nbsp;</span>{{ $patientCare->patient->next_of_kin }}</h5>
                         </div>
                         <div class="col-md-3 border-start border-2 border-primary">
                             <a href="{{ route('dashboard') }}" class="btn btn-outline-primary">DashBoard</a>
-                            <button type="button" class="btn btn-secondary" data-bs-toggle="modal" data-bs-target="#modal-discharge"> Discharge Patient</button>
+
                             <div class="form-group row my-1 rounded bg-green-200 px-2 align-items-center">
                                 <label for="active-day" class="form-label fw-bold">Active Day</label>
 
@@ -1497,7 +887,7 @@
                         </div>
                         <div class="d-flex gap-2 align-items-center">
 
-                            <i class="fa fa-plus" data-bs-toggle="modal" data-bs-target="#modalXl"></i>
+
                             <a href="javascript:;" class="text-secondary"><i class="fa fa-redo"></i></a>
                             <a href="#" data-toggle="card-expand"
                                 class="text-white text-opacity-50 text-decoration-none"><i
@@ -1545,7 +935,7 @@
                         </div>
                         <div class="d-flex gap-2 align-items-center">
 
-                            <i class="fa fa-plus text-white" data-bs-toggle="modal" data-bs-target="#modal-resp"></i>
+
                             <a href="javascript:;" class="text-secondary"><i
                                     class="fa fa-redo"></i></a>
                             <a href="#" data-toggle="card-expand"
@@ -1594,7 +984,7 @@
                             <h5 class="mb-1">Fluid Balance</h5>
 
                         </div>
-                        <i class="fa fa-plus" data-bs-toggle="modal" data-bs-target="#modal-fluid"></i>
+
                         <a href="javascript:;" class="text-secondary"><i class="fa fa-redo"></i></a>
                         <a href="#" data-toggle="card-expand"
                             class="text-white text-opacity-20 text-decoration-none"><i class="fa fa-fw fa-expand"></i></a>
@@ -1620,7 +1010,7 @@
                             <h5 class="mb-1">Neurological Assessment</h5>
 
                         </div>
-                        <i class="fa fa-plus" data-bs-toggle="modal" data-bs-target="#modal-neuro"></i>
+
                         <a href="javascript:;" class="text-secondary"><i class="fa fa-redo"></i></a>
                         <a href="#" data-toggle="card-expand"
                             class="text-white text-opacity-20 text-decoration-none"><i class="fa fa-fw fa-expand"></i></a>
@@ -1644,7 +1034,7 @@
                             <h5 class="mb-1">Medications</h5>
 
                         </div>
-                        <i class="fa fa-plus" data-bs-toggle="modal" data-bs-target="#modal-medication"></i>
+
                         <a href="javascript:;" class="text-secondary"><i class="fa fa-redo"></i></a>
                         <a href="#" data-toggle="card-expand"
                             class="text-white text-opacity-20 text-decoration-none"><i class="fa fa-fw fa-expand"></i></a>
@@ -1669,7 +1059,7 @@
                             <h5 class="mb-1">Investigations</h5>
 
                         </div>
-                        <i class="fa fa-plus" data-bs-toggle="modal" data-bs-target="#modal-lab"></i>
+
                         <a href="javascript:;" class="text-secondary"><i class="fa fa-redo"></i></a>
                         <a href="#" data-toggle="card-expand"
                             class="text-white text-opacity-20 text-decoration-none"><i class="fa fa-fw fa-expand"></i></a>
@@ -1694,7 +1084,7 @@
                             <h5 class="mb-1">Nutrition</h5>
 
                         </div>
-                        <i class="fa fa-plus" data-bs-toggle="modal" data-bs-target="#modal-nutrition"></i>
+
                         <a href="javascript:;" class="text-secondary"><i class="fa fa-redo"></i></a>
                         <a href="#" data-toggle="card-expand"
                             class="text-white text-opacity-20 text-decoration-none"><i class="fa fa-fw fa-expand"></i></a>
@@ -1736,7 +1126,7 @@
                             <h5 class="mb-1 text-white">Skin and Wound Care</h5>
 
                         </div>
-                        <i class="fa fa-plus" data-bs-toggle="modal" data-bs-target="#modal-skin"></i>
+
                         <a href="javascript:;" class="text-secondary"><i class="fa fa-redo"></i></a>
                         <a href="#" data-toggle="card-expand"
                             class="text-white text-opacity-20 text-decoration-none"><i class="fa fa-fw fa-expand"></i></a>
@@ -1761,7 +1151,7 @@
                             <h5 class="mb-1 text-white">Invasive Lines</h5>
 
                         </div>
-                        <i class="fa fa-plus" data-bs-toggle="modal" data-bs-target="#modal-invasive"></i>
+
                         <a href="javascript:;" class="text-secondary"><i class="fa fa-redo"></i></a>
                         <a href="#" data-toggle="card-expand"
                             class="text-white text-opacity-20 text-decoration-none"><i class="fa fa-fw fa-expand"></i></a>
@@ -1786,7 +1176,7 @@
                             <h5 class="mb-1">Progress Notes</h5>
 
                         </div>
-                        <i class="fa fa-plus" data-bs-toggle="modal" data-bs-target="#modal-progress"></i>
+
                         <a href="javascript:;" class="text-secondary"><i class="fa fa-redo"></i></a>
                         <a href="#" data-toggle="card-expand"
                             class="text-white text-opacity-20 text-decoration-none"><i class="fa fa-fw fa-expand"></i></a>
@@ -1811,7 +1201,7 @@
                             <h5 class="mb-1">Seizure Chart</h5>
 
                         </div>
-                        <i class="fa fa-plus" data-bs-toggle="modal" data-bs-target="#modal-seizure"></i>
+
                         <a href="javascript:;" class="text-secondary"><i class="fa fa-redo"></i></a>
                         <a href="#" data-toggle="card-expand"
                             class="text-white text-opacity-20 text-decoration-none"><i class="fa fa-fw fa-expand"></i></a>
@@ -1836,7 +1226,7 @@
                             <h5 class="mb-1">Nursing Assessment</h5>
 
                         </div>
-                        <i class="fa fa-plus" data-bs-toggle="modal" data-bs-target="#modal-daily"></i>
+
                         <a href="javascript:;" class="text-secondary"><i class="fa fa-redo"></i></a>
                         <a href="#" data-toggle="card-expand"
                             class="text-white text-opacity-20 text-decoration-none"><i class="fa fa-fw fa-expand"></i></a>
@@ -1861,7 +1251,7 @@
                             <h5 class="mb-1">Physician Order</h5>
 
                         </div>
-                        <i class="fa fa-plus" data-bs-toggle="modal" data-bs-target="#modal-physician"></i>
+                        
                         <a href="javascript:;" class="text-secondary"><i class="fa fa-redo"></i></a>
                         <a href="#" data-toggle="card-expand"
                             class="text-white text-opacity-20 text-decoration-none"><i class="fa fa-fw fa-expand"></i></a>
@@ -1882,5 +1272,5 @@
         </div>
 
     </div>
-    
+
 @endsection

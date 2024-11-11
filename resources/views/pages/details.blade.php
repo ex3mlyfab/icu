@@ -64,9 +64,9 @@
                             <td>{{ $patientCare->admission_date->format('d/M/Y') }}</td>
                             <td>{{ $patientCare->discharge_date ? $patientCare->discharge_date->format('d/M/Y') : 'On Admission'  }}</td>
                             <td>{{ $patientCare->diagnosis }}</td>
-                            <td>{{ $patientCare->notes }}</td>
+                            <td>{{ $patientCare->condition }}</td>
                             <td>{{ $patientCare->admitted_from }}</td>
-                            <td>{{$patientCare->notes}}</td>
+                            <td>{!!$patientCare->notes!!}</td>
                             <td> <a href="{{ ($patientCare->discharge_date != null ?  route('patient_view.discharged',$patientCare): route('patient.treatment',$patient) )}}" class="btn btn-outline-info">View Admission Details</a></td>
                         </tr>
                     @endforeach

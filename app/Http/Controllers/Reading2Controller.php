@@ -228,8 +228,9 @@ class Reading2Controller extends Controller
     }
     public function dischargePatient(Request $request)
     {
-        $patientCare = PatientCare::find('patient_care_id');
-        $patientCare->update(['ready_for_discharged' => 1,
+        $patientCare = PatientCare::find($request->patient_care_id);
+        // dd($patientCare);
+        $patientCare->update(['ready_for_discharge' => 1,
         'discharge_date' => $request->discharge_date,
         'notes' => $request->notes,
         // 'discharge_type' => $request->discharge_type
@@ -239,6 +240,6 @@ class Reading2Controller extends Controller
     $patientCare->bedOccupationHistory()->update(['is_occupied' => 0,
 'end_date' => $request->discharge_date]);
 
-        return route('dashboard');
+        return redirect(route('dashboard'));
     }
 }
