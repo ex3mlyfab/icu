@@ -3,6 +3,7 @@
 
 <head>
     @include('partial.head')
+    <meta http-equiv="refresh" content="{{ config('session.lifetime')*60 }}" >
     <meta name="csrf-token" content="{{ csrf_token() }}">
 </head>
 

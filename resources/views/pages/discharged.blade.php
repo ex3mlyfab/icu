@@ -1,4 +1,7 @@
-@extends('layout.empty')
+@extends('layout.default', [
+  'appSidebarHide' => true,
+  'appClass' => 'app-content-full-width'
+])
 
 @section('title', 'patient_details')
 
@@ -11,7 +14,8 @@
 @endpush
 
 @push('js')
-    <script src="{{ asset('assets/plugins/chart.js/dist/chart.umd.js') }}"></script>
+    <script src="{{ asset('assets/plugins/apexcharts/dist/apexcharts.min.js') }}"></script>
+    <script src="{{ asset('assets/js/demo/dashboard.demo.js') }}"></script>
 
     <script src="{{ asset('assets/plugins/summernote/dist/summernote-lite.min.js') }}"></script>
     <script src="{{ asset('assets/plugins/select-picker/dist/picker.min.js') }}"></script>
@@ -51,8 +55,37 @@
                 minuteStep: 1
             });
 
-
-            const cardioChart = {};
+            var cardioChart= {};
+             var cardioOptions = {
+                chart: {
+                    type: 'line',
+                    height: 350,
+                    toolbar: {
+                        show: true
+                    }
+                },
+                stroke: {
+                    curve: 'straight'
+                },
+                grid: {
+                    padding: {
+                        right: 30,
+                        left: 20
+                    }
+                },
+                dataLabels: {
+                        enabled: false
+                    },
+                series: [],
+                title: {
+                    text: 'Cardio Chart',
+                },
+                noData: {
+                    text: 'Loading...'
+                }
+            }
+            var cardioCharting = new ApexCharts(document.querySelector("#chartCardio"), cardioOptions);
+            cardioCharting.render();
 
             function getFluidData() {
                 $.ajax({
@@ -137,7 +170,50 @@
                         }
 
 
+                        let cardioOptions = {
 
+                            series:[
+                                {
+                                    name: 'Heart Rate',
+                                    data: cardioChart['Heart Rate']
+
+                                },
+                                {
+                                    name: 'Respiratory Rate',
+                                    data: cardioChart['Respiratory Rate']
+                                },
+                                {
+                                    name: 'Systolic Blood Pressure',
+                                    data: cardioChart['Bp Systolic']
+                                },
+                                {
+                                    name: 'Diastolic Blood Pressure',
+                                    data: cardioChart['Bp Diastolic']
+                                },
+                                {
+                                    name: 'Oxygen Saturation',
+                                    data: cardioChart['Spo2']
+                                },
+                                {
+                                    name: 'Temperature',
+                                    data: cardioChart['Temperature']
+                                },
+                                {
+                                    name: 'Peripheral Pulse',
+                                    data: cardioChart['Peripheral pulses']
+                                },
+                                {
+                                    name: 'Rhythm',
+                                    data: cardioChart['Rhythm']
+                                }
+                            ],
+                            xaxis: {
+                                categories: cardioChart.label
+                            },
+
+                         };
+
+                        cardioCharting.updateOptions(cardioOptions, true)
 
                         $("#table-cardio").html(table);
 
@@ -818,8 +894,8 @@
 @section('content')
 
 
-    <div class="mx-2 mx-md-5 mt-2">
-        <div class="card border-theme border-3 sticky-md-top">
+   
+        <div class="card border-theme border-3 sticky-md-top" style="top:48px;">
             <div class="card-body row gx-0 align-items-center shadow-lg">
                 <div class="col-md-12">
                     <div class="row">
@@ -849,7 +925,7 @@
                         </div>
                         <div class="col-md-3 border-start border-2 border-primary">
                             <h5 class="text-muted my-0 text-gray-emphasis"><span class="fw-bold">Condition: &nbsp;</span>
-                                {{ $patientCare->notes }}</h5>
+                                {{ $patientCare->condition }}</h5>
                             <h5 class="text-muted my-0 text-gray-emphasis"><span class="fw-bold">Consultant: &nbsp;</span>
                                 {{ $patientCare->icu_consultant }}
                             </h5>
@@ -894,33 +970,14 @@
                                     class="fa fa-fw fa-expand"></i></a>
                         </div>
                     </div>
-                    <div class="card-header">
-                        <ul class="nav nav-tabs card-header-tabs">
-                            <li class="nav-item">
-                                <a href="#home-cardio" class="nav-link active" data-bs-toggle="tab">Tabular</a>
-                            </li>
-                            <li class="nav-item">
-                                <a href="#table-cardio" class="nav-link" data-bs-toggle="tab">Chart</a>
-                            </li>
-                        </ul>
-                    </div>
-
                     <!-- BEGIN card-body -->
                     <div class="card-body">
-                        <div class="tab-content pt-3">
-                            <div class="tab-pane fade show active" id="home-cardio">
+                        
                                 <div class="table-responsive" id="table-cardio">
 
                                 </div>
 
-
-
-                            </div>
-                            <div class="tab-pane fade" id="table-cardio">
-                                <canvas id="chartCardio"></canvas>
-
-                            </div>
-                        </div>
+                                <div id="chartCardio"></div>
 
 
                     </div>
@@ -943,31 +1000,13 @@
                                     class="fa fa-fw fa-expand"></i></a>
                         </div>
                     </div>
-                    <div class="card-header">
-                        <ul class="nav nav-tabs card-header-tabs">
-                            <li class="nav-item">
-                                <a href="#home-resp" class="nav-link active" data-bs-toggle="tab">Tabular</a>
-                            </li>
-                            <li class="nav-item">
-                                <a href="#table-resp" class="nav-link" data-bs-toggle="tab">Chart</a>
-                            </li>
-                        </ul>
-                    </div>
 
                     <!-- BEGIN card-body -->
                     <div class="card-body">
-                        <div class="tab-content pt-3">
-                            <div class="tab-pane fade show active" id="home-resp">
+                        
                                 <div class="table-responsive" id="table-resp-table">
 
                                 </div>
-
-
-                            </div>
-                            <div class="tab-pane fade" id="table-resp">
-                                <div id="chart-resp"></div>
-                            </div>
-                        </div>
 
 
                     </div>
@@ -1251,7 +1290,7 @@
                             <h5 class="mb-1">Physician Order</h5>
 
                         </div>
-                        
+
                         <a href="javascript:;" class="text-secondary"><i class="fa fa-redo"></i></a>
                         <a href="#" data-toggle="card-expand"
                             class="text-white text-opacity-20 text-decoration-none"><i class="fa fa-fw fa-expand"></i></a>
@@ -1271,6 +1310,6 @@
 
         </div>
 
-    </div>
+   
 
 @endsection
