@@ -15,7 +15,7 @@
 
 @push('js')
     <script src="{{ asset('assets/plugins/apexcharts/dist/apexcharts.min.js') }}"></script>
-    <script src="{{ asset('assets/js/demo/dashboard.demo.js') }}"></script>
+
 
     <script src="{{ asset('assets/plugins/summernote/dist/summernote-lite.min.js') }}"></script>
     <script src="{{ asset('assets/plugins/select-picker/dist/picker.min.js') }}"></script>
@@ -87,18 +87,99 @@
             var cardioCharting = new ApexCharts(document.querySelector("#chartCardio"), cardioOptions);
             cardioCharting.render();
 
-            function getFluidData() {
+             var respiratoryChart= {};
+            var respiratoryOptions = {
+                chart: {
+                    type: 'line',
+                    height: 350,
+                    toolbar: {
+                        show: true
+                    }
+                },
+                stroke: {
+                    curve: 'straight'
+                },
+                grid: {
+                    padding: {
+                        right: 30,
+                        left: 20
+                    }
+                },
+                dataLabels: {
+                        enabled: false,
+                    },
+                series: [],
+                title: {
+                    text: 'Respiratory Assessment Chart',
+                },
+                noData: {
+                    text: 'Loading...'
+                }
+            }
+            var respiratoryCharting = new ApexCharts(document.querySelector("#chartRespiratory"), respiratoryOptions);
+            respiratoryCharting.render();
+               //fluid Chart
+            var fluidChart= {};
+            var fluidOptions = {
+                chart: {
+                    type: 'bar',
+                    height: 350,
+                    toolbar: {
+                        show: true
+                    }
+                },
+                grid: {
+                    padding: {
+                        right: 30,
+                        left: 20
+                    }
+                },
+                dataLabels: {
+                        enabled: false,
+                    },
+                series: [],
+                title: {
+                    text: 'Fluid Assessment Chart',
+                },                noData: {
+                    text: 'Loading...'
+                }
+            }
+            var fluidCharting = new ApexCharts(document.querySelector("#chartFluid"), fluidOptions);
+            fluidCharting.render();
+
+            function getFluidSelect() {
+                $.ajax({
+                    type: 'GET',
+                    url: '{{ route('fluid.get', $patientCare->id) }}',
+                    dataType: 'json', // Specify the expected data format (e.g., JSON)
+                    success: function(data) {
+                        $("#select-fluid").empty().append(
+                            '<option value="others">Add New Fluid</option><option value="" selected>Select an option</option>'
+                        );
+
+                        // Populate with new options
+                        $.each(data.data, function(index, option) {
+                            $("#select-fluid").prepend('<option value="' + option.fluid + '">' +
+                                option.fluid + '</option>');
+                        });
+                    }
+                });
+            }
+
+
+           function getFluidData() {
                 $.ajax({
                     type: 'GET',
                     url: `{{ URL::to('/') }}/show-patient/{{ $patientCare->id }}/fluid-assessment/${activeDay}`,
                     dataType: 'json', // Specify the expected data format (e.g., JSON)
                     success: function(data) {
                         let fluidData = data.data;
-                        // console.log(myData);
+                        console.log(data.direction.input, "from input");
                         // console.log()
                         var table = $('<table class="table table-bordered"></table>');
                         var headerIndicator = $('<thead></thead>');
                         // Create a table header row
+                        fluidChart.label = fluidData.label
                         var headerRow = $('<tr></tr>');
                         headerRow.append('<th class="bg-yellow-300">label</th>');
                         for (var i = 0; i < fluidData.label.length; i++) {
@@ -107,19 +188,45 @@
                         }
                         headerIndicator.append(headerRow);
                         table.append(headerIndicator);
+                        table.append(`<tr id="fluidIntake">
+                            <td colspan="${fluidData.label.length}" class="text-center bg-gradient bg-danger text-white fw-bold">Intake
+                            </tr><tr id="fluidOutput">
+                            <td colspan="${fluidData.label.length}" class="text-center bg-gradient bg-danger text-white fw-bold">Output
+                            </tr>`);
 
                         // Create table body rows
                         for (var key in fluidData) {
                             if (key !== "label" && key !== 'Direction') {
+                                let fluidArray = [];
                                 var row = $('<tr></tr>');
                                 row.append('<th class="bg-yellow-300 ps-1">' + key + '</th>');
                                 for (var i = 0; i < fluidData[key].length; i++) {
 
-                                    row.append('<td>' + fluidData[key][i] + '</td>');
+                                    row.append('<td class="text-center">' + fluidData[key][i] + '</td>');
+                                    fluidArray.push(~~fluidData[key][i]);
                                 }
                                 table.append(row);
+                                fluidChart[key] = fluidArray
                             }
                         }
+                        let fluiSeriesArray = [];
+                        for (var key in fluidData) {
+                            if (key !== "label" && key !== 'Direction') {
+                                fluiSeriesArray.push({
+                                    name: key,
+                                    data: fluidData[key]
+                                })
+                            }
+                        }
+                        fluidChart.series = fluiSeriesArray
+                        let fluidOptions = {
+                            series: fluiSeriesArray,
+                            xaxis: {
+                                categories: fluidChart.label
+                            },
+                        }
+                        fluidCharting.updateOptions(fluidOptions, true);
+
                         $('#table-fluid').html(table);
                     },
                     error: function(error) {
@@ -161,7 +268,7 @@
                                 let newArray = [];
                                 row.append('<th class="bg-yellow-300 ps-1">' + key + '</th>');
                                 for (var i = 0; i < myData[key].length; i++) {
-                                    row.append('<td>' + myData[key][i] + '</td>');
+                                    row.append('<td class="text-center">' + myData[key][i] + '</td>');
                                     newArray.push(~~myData[key][i]);
                                 }
                                 table.append(row);
@@ -170,7 +277,7 @@
                         }
 
 
-                        let cardioOptions = {
+                         let cardioOptions = {
 
                             series:[
                                 {
@@ -242,6 +349,7 @@
                         var headerIndicator = $('<thead></thead>');
                         // Create a table header row
                         var headerRow = $('<tr></tr>');
+                        respiratoryChart.label = respData.label
                         headerRow.append('<th class="bg-dark-300 text-light">label</th>');
                         for (var i = 0; i < respData.label.length; i++) {
 
@@ -254,14 +362,34 @@
                         for (var key in respData) {
                             if (key !== "label") {
                                 var row = $('<tr></tr>');
+                                let respArray = [];
                                 row.append('<th class="bg-dark-300 ps-2 text-white">' + key + '</th>');
                                 for (var i = 0; i < respData[key].length; i++) {
 
-                                    row.append('<td>' + respData[key][i] + '</td>');
+                                    row.append('<td class="text-center">' + respData[key][i] + '</td>');
+                                    respArray.push(~~respData[key][i]);
                                 }
                                 table.append(row);
+                                respiratoryChart[key] = respArray
                             }
                         }
+
+                        let respOptions = {
+                            series: [
+                                {
+                                    name: "FiO2",
+                                    data:respiratoryChart["FiO2"]
+                                },
+                                {
+                                    name:"Respiratory Effort",
+                                    data: respiratoryChart["Respiratory Effort"]
+                                }
+                            ],
+                            xaxis: {
+                                categories: respiratoryChart.label
+                            },
+                        }
+                        respiratoryCharting.updateOptions(respOptions, true);
                         $("#table-resp-table").html(table);
 
                     },
@@ -894,7 +1022,7 @@
 @section('content')
 
 
-   
+
         <div class="card border-theme border-3 sticky-md-top" style="top:48px;">
             <div class="card-body row gx-0 align-items-center shadow-lg">
                 <div class="col-md-12">
@@ -972,7 +1100,7 @@
                     </div>
                     <!-- BEGIN card-body -->
                     <div class="card-body">
-                        
+
                                 <div class="table-responsive" id="table-cardio">
 
                                 </div>
@@ -1003,10 +1131,11 @@
 
                     <!-- BEGIN card-body -->
                     <div class="card-body">
-                        
-                                <div class="table-responsive" id="table-resp-table">
+
+                                <div class="table-responsive mb-3" id="table-resp-table">
 
                                 </div>
+                                <div id="chartRespiratory"></div>
 
 
                     </div>
@@ -1030,9 +1159,11 @@
 
                     </div>
                     <div class="card-body">
-                        <div class="table-responsive" id="table-fluid">
+                        <div class="table-responsive mb-3" id="table-fluid">
 
                         </div>
+
+                        <div id="chartFluid"></div>
 
 
                     </div>
@@ -1310,6 +1441,6 @@
 
         </div>
 
-   
+
 
 @endsection

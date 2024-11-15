@@ -221,21 +221,31 @@ class ReadingController extends Controller
 
     public function showFluid(PatientCare $patientCare,$active_day)
     {
+        $intake = [];
+        $output = [];
+
+
         $fluid_reading = FluidBalance::where('patient_care_id', $patientCare->id)
         ->whereDate('created_at', Carbon::parse($active_day))
         ->orderBy('hour_taken')
         ->get();
+
         $fluid_group = $fluid_reading->groupBy(function(FluidBalance $item) {
             return $item->hour_taken->format('H');
         });
         $fluid_names = $patientCare->fluidBalances->unique('fluid')->pluck('fluid')->toArray();
+        //go through fluid balances and group them by fluid direction
+        $fluid_drections = $patientCare->fluidBalances->unique('fluid')->groupBy(function(FluidBalance $fluid){
+            return $fluid->direction;
+        });
 
-        // dump($fluid_names);
         $fluid_chart = [];
 
         foreach($this->hours as $key=>$hour)
         {
              $fluid_chart['label'][] = $hour;
+
+
             if(isset($fluid_group[$key]))
             {
                 $targetFluids = $fluid_group[$key]->pluck('fluid')->toArray();
@@ -262,7 +272,7 @@ class ReadingController extends Controller
 
                 }
             }
-            return response(['data' => $fluid_chart], 200);
+            return response(['data' => $fluid_chart, 'direction' => $fluid_drections], 200);
     }
 
     public function getFluid(PatientCare $patientCare)
@@ -469,7 +479,7 @@ class ReadingController extends Controller
         }
         return response($neuro_chart, 200);
     }
-   
+
     public function processEyeOpenEnum($eyeopen)
     {
         return match($eyeopen){
