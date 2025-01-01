@@ -1,4 +1,8 @@
-@extends('layout.default')
+@extends('layout.default', [
+    'appTopNav' => true,
+	'appSidebarHide' => true,
+	'appClass' => 'app-with-top-nav app-without-sidebar'
+])
 
 @section('title', 'Home')
 

@@ -276,98 +276,106 @@
             }
             // Store the GET function in a variable
             function getCardioData() {
+                // $.ajax({
+                //     type: 'GET', // or 'POST' if required
+                //     url: `{{ URL::to('/') }}/show-patient/{{ $patient->latestPatientCare->id }}/cardio-assessment/${activeDay}`,
+                //     dataType: 'json', // Specify the expected data format (e.g., JSON)
+                //     success: function(data) {
+
+                //         // $('#chart-3').html(data.data);
+                //         let myData = data.data;
+                //         // console.log(myData.label);
+                //         var table = $('<table class="table table-bordered"></table>');
+                //         var headerIndicator = $('<thead></thead>');
+                //         // Create a table header row
+                //         var headerRow = $('<tr></tr>');
+                //         cardioChart.label = myData.label
+                //         headerRow.append('<th class="bg-yellow-300">label</th>');
+                //         for (var i = 0; i < myData.label.length; i++) {
+
+                //             headerRow.append('<th>' + myData.label[i] + '</th>');
+                //         }
+                //         headerIndicator.append(headerRow);
+                //         table.append(headerIndicator);
+
+                //         // Create table body rows
+                //         for (var key in myData) {
+                //             if (key !== "label") {
+                //                 var row = $('<tr></tr>');
+                //                 let newArray = [];
+                //                 row.append('<th class="bg-yellow-300 ps-1">' + key + '</th>');
+                //                 for (var i = 0; i < myData[key].length; i++) {
+                //                     row.append('<td class="text-center">' + myData[key][i] + '</td>');
+                //                     newArray.push(~~myData[key][i]);
+                //                 }
+                //                 table.append(row);
+                //                 cardioChart[key] = newArray
+                //             }
+                //         }
+
+
+                //          let cardioOptions = {
+
+                //             series:[
+                //                 {
+                //                     name: 'Heart Rate',
+                //                     data: cardioChart['Heart Rate']
+
+                //                 },
+                //                 {
+                //                     name: 'Respiratory Rate',
+                //                     data: cardioChart['Respiratory Rate']
+                //                 },
+                //                 {
+                //                     name: 'Systolic Blood Pressure',
+                //                     data: cardioChart['Bp Systolic']
+                //                 },
+                //                 {
+                //                     name: 'Diastolic Blood Pressure',
+                //                     data: cardioChart['Bp Diastolic']
+                //                 },
+                //                 {
+                //                     name: 'Oxygen Saturation',
+                //                     data: cardioChart['Spo2']
+                //                 },
+                //                 {
+                //                     name: 'Temperature',
+                //                     data: cardioChart['Temperature']
+                //                 },
+                //                 {
+                //                     name: 'Peripheral Pulse',
+                //                     data: cardioChart['Peripheral pulses']
+                //                 },
+                //                 {
+                //                     name: 'Rhythm',
+                //                     data: cardioChart['Rhythm']
+                //                 }
+                //             ],
+                //             xaxis: {
+                //                 categories: cardioChart.label
+                //             },
+
+                //          };
+
+                //         cardioCharting.updateOptions(cardioOptions, true)
+
+                //         $("#table-cardio").html(table);
+
+                //     },
+                //     error: function(error) {
+                //         // Handle errors
+                //         console.error(error);
+                //         // You can display an error message to the user here
+                //     }
+                // });
                 $.ajax({
-                    type: 'GET', // or 'POST' if required
-                    url: `{{ URL::to('/') }}/show-patient/{{ $patient->latestPatientCare->id }}/cardio-assessment/${activeDay}`,
-                    dataType: 'json', // Specify the expected data format (e.g., JSON)
-                    success: function(data) {
-
-                        // $('#chart-3').html(data.data);
+                    type: "GET",
+                    url: `{{url('/')}}/show-cardio/{{ $patient->latestPatientCare->id }}/${activeDay}`,
+                    dataType: 'json',
+                    success: function(data){
                         let myData = data.data;
-                        // console.log(myData.label);
-                        var table = $('<table class="table table-bordered"></table>');
-                        var headerIndicator = $('<thead></thead>');
-                        // Create a table header row
-                        var headerRow = $('<tr></tr>');
-                        cardioChart.label = myData.label
-                        headerRow.append('<th class="bg-yellow-300">label</th>');
-                        for (var i = 0; i < myData.label.length; i++) {
-
-                            headerRow.append('<th>' + myData.label[i] + '</th>');
-                        }
-                        headerIndicator.append(headerRow);
-                        table.append(headerIndicator);
-
-                        // Create table body rows
-                        for (var key in myData) {
-                            if (key !== "label") {
-                                var row = $('<tr></tr>');
-                                let newArray = [];
-                                row.append('<th class="bg-yellow-300 ps-1">' + key + '</th>');
-                                for (var i = 0; i < myData[key].length; i++) {
-                                    row.append('<td class="text-center">' + myData[key][i] + '</td>');
-                                    newArray.push(~~myData[key][i]);
-                                }
-                                table.append(row);
-                                cardioChart[key] = newArray
-                            }
-                        }
-
-
-                         let cardioOptions = {
-
-                            series:[
-                                {
-                                    name: 'Heart Rate',
-                                    data: cardioChart['Heart Rate']
-
-                                },
-                                {
-                                    name: 'Respiratory Rate',
-                                    data: cardioChart['Respiratory Rate']
-                                },
-                                {
-                                    name: 'Systolic Blood Pressure',
-                                    data: cardioChart['Bp Systolic']
-                                },
-                                {
-                                    name: 'Diastolic Blood Pressure',
-                                    data: cardioChart['Bp Diastolic']
-                                },
-                                {
-                                    name: 'Oxygen Saturation',
-                                    data: cardioChart['Spo2']
-                                },
-                                {
-                                    name: 'Temperature',
-                                    data: cardioChart['Temperature']
-                                },
-                                {
-                                    name: 'Peripheral Pulse',
-                                    data: cardioChart['Peripheral pulses']
-                                },
-                                {
-                                    name: 'Rhythm',
-                                    data: cardioChart['Rhythm']
-                                }
-                            ],
-                            xaxis: {
-                                categories: cardioChart.label
-                            },
-
-                         };
-
-                        cardioCharting.updateOptions(cardioOptions, true)
-
-                        $("#table-cardio").html(table);
-
-                    },
-                    error: function(error) {
-                        // Handle errors
-                        console.error(error);
-                        // You can display an error message to the user here
                     }
-                });
+                })
 
 
             };

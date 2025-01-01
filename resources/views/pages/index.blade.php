@@ -1,4 +1,8 @@
-@extends('layout.default', [])
+@extends('layout.default', [
+    'appTopNav' => true,
+	'appSidebarHide' => true,
+	'appClass' => 'app-with-top-nav app-without-sidebar'
+])
 
 @section('title', 'Home')
 
@@ -34,7 +38,7 @@ $(document).ready(function() {
         $("#appendage").empty().append(`<input type="hidden" value="${tester}" name="patient_care_id">`);
     });
     $('#discharge-save-spinner').hide();
-    
+
     $('.summernote').summernote({
                 height: 200,
     });

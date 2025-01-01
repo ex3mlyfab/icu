@@ -125,7 +125,41 @@ class ReadingController extends Controller
         }
         return response(['data' => $cardio_chart], 200);
     }
+    public function newCardioShow(PatientCare $patientCare, $active_day)
+    {
+        $cardio_reading = CardioAssessment::where('patient_care_id', $patientCare->id)
+        ->whereDate('created_at', Carbon::parse($active_day))
+        ->orderBy('hour_taken')
+        ->get();
 
+        $cardio_reading = $cardio_reading->groupBy(function (CardioAssessment $item) {
+            return $item->created_at->format('d/m/Y h:i:s A');
+        });
+        $cardioChart = [];
+
+        //select the last two grouping in $cardio_reading
+        $lastTwoGroups = $cardio_reading->slice(-2);
+
+        foreach ($lastTwoGroups as $time => $readings) {
+            foreach ($readings as $reading) {
+                $cardioChart['label'][] = $time;
+                $cardioChart['Heart Rate'][] = (float)$reading->heart_rate;
+                $cardioChart['Bp Systolic'][] = (int)$reading->blood_pressure_systolic;
+                $cardioChart['Bp Diastolic'][] = (int)$reading->blood_pressure_diastolic;
+                $cardioChart['Capillary Refill Time'][] = (int)$reading->capillary_refill_time;
+                $cardioChart['CVP'][] = (int)$reading->cvp;
+                $cardioChart['MAP'][] = (int)$reading->map;
+                $cardioChart['Peripheral pulses'][] = (int)$reading->peripheral_pulses;
+                $cardioChart['Rhythm'][] = (int)$reading->rhythm;
+                $cardioChart['Respiratory Rate'][] = (int)$reading->respiratory_rate;
+                $cardioChart['Temperature'][] = (int)$reading->temperature;
+                $cardioChart['Spo2'][] = (int)$reading->spo2;
+            }
+        }
+
+        return response(['data' => $cardioChart], 200);
+
+    }
     public function storeRespiratory(RespiRatoryAssessmentRequest $request)
     {
          $data = $request->all();

@@ -20,7 +20,7 @@
             </button>
         </div>
 
-        <a href="/dashboard" class="brand-logo">
+        <a href="{{route('dashboard')}}" class="brand-logo">
             <img src="{{asset('images/fmc_logo.jpeg')}}" class="invert-dark" alt="" height="20">
         </a>
     </div>

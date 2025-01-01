@@ -1,4 +1,8 @@
-@extends('layout.default')
+@extends('layout.default', [
+  'appSidebarHide' => true,
+  'appTopNav' => true,
+  'appClass' => 'app-with-top-nav app-without-sidebar'
+])
 
 @section('title', 'Home')
 
@@ -18,12 +22,12 @@
                 <h5 class="text-muted my-0 text-teal-emphasis">Age: &nbsp;
                     {{ (int) $patient->date_of_birth->diffInYears() }} Years
                     {{ $patient->date_of_birth->diffInMonths() % 12 }} Months</h5>
-                <h5 class="text-muted my-0 text-gray-emphasis">Sex: &nbsp;{{ $patient->gender->name }}</h5>
-                <h5 class="text-muted my-0">Marital Status: &nbsp;{{ $patient->marital_status->name }}</h5>
+
             </div>
         </div>
         <div class="col-md-3 border-start border-2 border-primary bg-gray-200 rounded">
-
+             <h5 class="text-muted my-0 text-gray-emphasis">Sex: &nbsp;{{ $patient->gender->name }}</h5>
+                <h5 class="text-muted my-0">Marital Status: &nbsp;{{ $patient->marital_status->name }}</h5>
         </div>
         <div class="col-md-3 border-start border-2 border-primary">
 
