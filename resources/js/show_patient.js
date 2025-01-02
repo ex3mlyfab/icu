@@ -1,28 +1,4 @@
-@extends('layout.default', [
-  'appSidebarHide' => true,
-  'appClass' => 'app-content-full-width'
-])
-
-@section('title', 'patient_details')
-
-@push('css')
-    <link href="{{ asset('assets/plugins/bootstrap-timepicker/css/bootstrap-timepicker.min.css') }}" rel="stylesheet">
-
-    <!-- required js / css -->
-    <link href="{{ asset('assets/plugins/select-picker/dist/picker.min.css') }}" rel="stylesheet">
-    <link href="{{ asset('assets/plugins/summernote/dist/summernote-lite.css') }}" rel="stylesheet">
-@endpush
-
-@push('js')
-    <script src="{{ asset('assets/plugins/apexcharts/dist/apexcharts.min.js') }}"></script>
-
-    <script src="{{ asset('assets/plugins/summernote/dist/summernote-lite.min.js') }}"></script>
-    <script src="{{ asset('assets/plugins/select-picker/dist/picker.min.js') }}"></script>
-
-    <script src="{{ asset('assets/plugins/bootstrap-timepicker/js/bootstrap-timepicker.min.js') }}"></script>
-
-    <script>
-        $(document).ready(function() {
+$(document).ready(function() {
             let cardioCanvas;
             $('.summernote').summernote({
                 height: 200,
@@ -285,65 +261,83 @@
                         let myData = data.data;
                         if ($.isEmptyObject(myData)) {
 
-                            $("#table-cardio").html('<h2 class="text-center">No Cardio Data Found</h2>');
+                            $("#table-cardio").html('<h2 class="text-center">No data</h2>');
 
                         }else{
 
-                        var table = $('<table class="table table-bordered table-striped"></table>');
+                            var table = $('<table class="table table-bordered"></table>');
                         var headerIndicator = $('<thead></thead>');
                         // Create a table header row
                         var headerRow = $('<tr></tr>');
-                        cardioChart.label = myData.label;
-                        headerRow.append('<th class="bg-yellow-300">Recorded at</th>');
-                        for (var i = 0; i < data.label.length; i++) {
+                        cardioChart.label = myData.label
+                        headerRow.append('<th class="bg-yellow-300">label</th>');
+                        for (var i = 0; i < myData.label.length; i++) {
 
-                            headerRow.append('<th>' + data.label[i] + '</th>');
+                            headerRow.append('<th>' + myData.label[i] + '</th>');
                         }
                         headerIndicator.append(headerRow);
                         table.append(headerIndicator);
-                        console.log(myData);
-                        // Create table body rows that aligns with the column
-                        var row = $('<tr></tr>');
 
-
+                        // Create table body rows
                         for (var key in myData) {
                             if (key !== "label") {
+                                var row = $('<tr></tr>');
                                 let newArray = [];
-
+                                row.append('<th class="bg-yellow-300 ps-1">' + key + '</th>');
                                 for (var i = 0; i < myData[key].length; i++) {
+                                    row.append('<td class="text-center">' + myData[key][i] + '</td>');
                                     newArray.push(~~myData[key][i]);
                                 }
+                                table.append(row);
                                 cardioChart[key] = newArray
                             }
                         }
-                        // iterate and place the key in corresponding column
-                        // console.log(newDataArrange, "from eagle");
-                        var row1= [];
-                        var row2= [];
-                        $.each(myData, function(key, value){
-
-                               $.each(value, function(index, item){
-                                   if(index == 0){
-                                       row1.push(item);
-                                   }else{
-                                       row2.push(item);
-                                   }
-                               })
 
 
-                        });
-                        var row = $('<tr></tr>');
-                        $.each(row1, function(index, item){
-                            row.append('<th class="text-center border-1">' + item + '</th>');
-                        });
-                        table.append(row);
-                        var row = $('<tr></tr>');
-                        $.each(row2, function(index, item){
-                            row.append('<th class="text-center border-1">' + item + '</th>');
-                        });
-                        table.append(row);
+                         let cardioOptions = {
 
-                        // Append the table to the body
+                            series:[
+                                {
+                                    name: 'Heart Rate',
+                                    data: cardioChart['Heart Rate']
+
+                                },
+                                {
+                                    name: 'Respiratory Rate',
+                                    data: cardioChart['Respiratory Rate']
+                                },
+                                {
+                                    name: 'Systolic Blood Pressure',
+                                    data: cardioChart['Bp Systolic']
+                                },
+                                {
+                                    name: 'Diastolic Blood Pressure',
+                                    data: cardioChart['Bp Diastolic']
+                                },
+                                {
+                                    name: 'Oxygen Saturation',
+                                    data: cardioChart['Spo2']
+                                },
+                                {
+                                    name: 'Temperature',
+                                    data: cardioChart['Temperature']
+                                },
+                                {
+                                    name: 'Peripheral Pulse',
+                                    data: cardioChart['Peripheral pulses']
+                                },
+                                {
+                                    name: 'Rhythm',
+                                    data: cardioChart['Rhythm']
+                                }
+                            ],
+                            xaxis: {
+                                categories: cardioChart.label
+                            },
+
+                         };
+
+                        cardioCharting.updateOptions(cardioOptions, true)
 
                         $("#table-cardio").html(table);
 
@@ -999,14 +993,14 @@
                     success: function(response) {
 
                         console.log(response);
-                        getCardioData()
                         $('#toast-1 .toast-body').html(response.message);
                         $('#toast-1').toast('show');
                         $('#modalXl').modal('hide');
+
                         $('#cardio-form')[0].reset();
                         $('#cardio-save').prop('disabled', false);
                         $('#cardio-save-spinner').hide();
-
+                        getCardioData();
                     },
                     error: function(error) {
                         // Handle errors$
@@ -1547,462 +1541,3 @@
             });
 
         });
-    </script>
-@endpush
-
-@section('content')
-
-
-
-        <div class="card border-theme border-3 sticky-md-top" style="top:48px;">
-            <div class="card-body row gx-0 align-items-center shadow-lg">
-                <div class="col-md-12">
-                    <div class="row">
-                        <div class="col-md-3">
-                            <div class="d-flex flex-column">
-                                <h4 class="mb-0"> Name: <span
-                                        class=
-                                    "fw-bold text-gray-emphasis">{{ $patient->fullname }}</span>
-                                </h4>
-                                <h5 class="text-muted my-0 text-teal-emphasis">Age: &nbsp;
-                                    {{ (int) $patient->date_of_birth->diffInYears() }} Years
-                                    {{ $patient->date_of_birth->diffInMonths() % 12 }} Months</h5>
-                                <h5 class="text-muted my-0 text-gray-emphasis">Sex: &nbsp;{{ $patient->gender->name }}</h5>
-                                <h5 class="text-muted my-0">Marital Status: &nbsp;{{ $patient->marital_status->name }}</h5>
-                            </div>
-                        </div>
-                        <div class="col-md-3 border-start border-2 border-primary bg-gray-200 rounded">
-                            <h5 class="text-muted my-0 text-gray-emphasis">Bed-No: &nbsp;<span
-                                    class="fw-bold">{{ $patient->latestPatientCare->bedModel->name }} </span></h5>
-                            <h5 class="text-muted my-0 text-gray-emphasis">Admission-Date: &nbsp;<span
-                                    class="fw-bold">{{ $patient->latestPatientCare->admission_date->format('d/M/Y') }}</span>
-                            </h5>
-                            <h5 class="text-muted my-0 text-gray-emphasis">Diagnosis: &nbsp;<span
-                                    class="fw-bold">{{ $patient->latestPatientCare->diagnosis }}</span></h5>
-                            <h5 class="text-muted my-0 text-gray-emphasis"><span class="fw-bold">Admitted-From:
-                                    &nbsp;</span>{{ $patient->latestPatientCare->admitted_from }}</h5>
-                        </div>
-                        <div class="col-md-3 border-start border-2 border-primary">
-                            <h5 class="text-muted my-0 text-gray-emphasis"><span class="fw-bold">Condition: &nbsp;</span>
-                                {{ $patient->latestPatientCare->condition }}</h5>
-                            <h5 class="text-muted my-0 text-gray-emphasis"><span class="fw-bold">Consultant: &nbsp;</span>
-                                {{ $patient->latestPatientCare->icu_consultant }}
-                            </h5>
-                            <h5 class="text-muted my-0 text-gray-emphasis"><span class="fw-bold">Nurse Incharge:
-                                    &nbsp;</span>{{ $patient->latestPatientCare->nurse_incharge }}</h5>
-                            <h5 class="text-muted my-0 text-gray-emphasis"><span class="fw-bold">Next of Kin:
-                                    &nbsp;</span>{{ $patient->next_of_kin }}</h5>
-                        </div>
-                        <div class="col-md-3 border-start border-2 border-primary">
-                            <a href="{{ route('dashboard') }}" class="btn btn-outline-primary">DashBoard</a>
-                            <button type="button" class="btn btn-secondary" data-bs-toggle="modal" data-bs-target="#modal-discharge"> Discharge Patient</button>
-                            <div class="form-group row my-1 rounded bg-green-200 px-2 align-items-center">
-                                <label for="active-day" class="form-label fw-bold">Active Day</label>
-
-                                <select class="form-select form-select-lg mb-3" id="active-day">
-                                    @foreach ($dates as $key => $date)
-                                        <option value="{{ $date->format('Y-m-d') }}" @selected($date == today())>
-                                            {{ $date->format('d-m-y') }} - Day {{ $key + 1 }}</option>
-                                    @endforeach
-                                </select>
-
-                            </div>
-
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="row gy-2">
-            <div class="col-lg-12">
-                <div class="card h-100 mt-2">
-                    <div class="card-header bg-yellow-300 d-flex align-items-center">
-                        <div class="flex-grow-1">
-                            <h5 class="mb-1">Cardiovascular Assessment</h5>
-                        </div>
-                        <div class="d-flex gap-2 align-items-center">
-
-                            <i class="fa fa-plus" data-bs-toggle="modal" data-bs-target="#modalXl"></i>
-                            <a href="javascript:;" class="text-secondary"><i class="fa fa-redo"></i></a>
-                            <a href="#" data-toggle="card-expand"
-                                class="text-white text-opacity-50 text-decoration-none"><i
-                                    class="fa fa-fw fa-expand"></i></a>
-                        </div>
-                    </div>
-
-
-                    <!-- BEGIN card-body -->
-                    <div class="card-body">
-                        <div class="table-responsive mb-3" id="table-cardio">
-
-                        </div>
-
-
-                    </div>
-                    <!-- END card-body -->
-                </div>
-            </div>
-            <div class="col-lg-6" id="resp-card">
-                <div class="card h-100 mt-2">
-                    <div class="card-header  bg-dark d-flex align-items-center">
-                        <div class="flex-grow-1">
-                            <h5 class="mb-1 text-white">Respiratory Assessment</h5>
-                        </div>
-                        <div class="d-flex gap-2 align-items-center">
-
-                            <i class="fa fa-plus text-white" data-bs-toggle="modal" data-bs-target="#modal-resp"></i>
-                            <a href="javascript:;" class="text-secondary"><i
-                                    class="fa fa-redo"></i></a>
-                            <a href="#" data-toggle="card-expand"
-                                class="text-white text-opacity-20 text-decoration-none"><i
-                                    class="fa fa-fw fa-expand"></i></a>
-                        </div>
-                    </div>
-
-
-                    <!-- BEGIN card-body -->
-                    <div class="card-body">
-
-                                <div class="table-responsive mb-3" id="table-resp-table">
-
-                                </div>
-                                 <div id="chartRespiratory"></div>
-
-
-
-                    </div>
-                    <!-- END card-body -->
-
-                </div>
-            </div>
-            <div class="col-lg-6" id="fluid-card">
-                <div class="card h-100 mt-2">
-                    <!-- BEGIN card-body -->
-                    <div class="card-header bg-warning d-flex gap-2 align-items-center">
-
-                        <div class="flex-grow-1">
-                            <h5 class="mb-1">Fluid Balance</h5>
-
-                        </div>
-                        <i class="fa fa-plus" data-bs-toggle="modal" data-bs-target="#modal-fluid"></i>
-                        <a href="javascript:;" class="text-secondary"><i class="fa fa-redo"></i></a>
-                        <a href="#" data-toggle="card-expand"
-                            class="text-white text-opacity-20 text-decoration-none"><i class="fa fa-fw fa-expand"></i></a>
-
-                    </div>
-                    <div class="card-body">
-                        <div class="table-responsive mb-3" id="table-fluid">
-
-                        </div>
-                         <div id="chartFluid"></div>
-
-                    </div>
-                    <!-- END card-body -->
-                </div>
-            </div>
-            <div class="col-lg-6">
-                <div class="card h-100 mt-2">
-                    <div id="neuroChart"></div>
-                    <!-- BEGIN card-body -->
-                    <div class="card-header bg-danger d-flex gap-2 align-items-center">
-
-                        <div class="flex-grow-1">
-                            <h5 class="mb-1">Neurological Assessment</h5>
-
-                        </div>
-                        <i class="fa fa-plus" data-bs-toggle="modal" data-bs-target="#modal-neuro"></i>
-                        <a href="javascript:;" class="text-secondary"><i class="fa fa-redo"></i></a>
-                        <a href="#" data-toggle="card-expand"
-                            class="text-white text-opacity-20 text-decoration-none"><i class="fa fa-fw fa-expand"></i></a>
-
-                    </div>
-                    <div class="card-body">
-                        <div class="table-responsive" id="neuro-chart"></div>
-
-
-
-                    </div>
-                    <!-- END card-body -->
-                </div>
-            </div>
-            <div class="col-lg-6" id="med-card">
-                <div class="card h-100 mt-2">
-                    <!-- BEGIN card-body -->
-                    <div class="card-header bg-gradient bg-warning-400 d-flex gap-2 align-items-center">
-
-                        <div class="flex-grow-1">
-                            <h5 class="mb-1">Medications</h5>
-
-                        </div>
-                        <i class="fa fa-plus" data-bs-toggle="modal" data-bs-target="#modal-medication"></i>
-                        <a href="javascript:;" class="text-secondary"><i class="fa fa-redo"></i></a>
-                        <a href="#" data-toggle="card-expand"
-                            class="text-white text-opacity-20 text-decoration-none"><i class="fa fa-fw fa-expand"></i></a>
-
-                    </div>
-                    <div class="card-body">
-                        <div class="table-responsive" id="table-medication">
-
-                        </div>
-
-
-                    </div>
-                    <!-- END card-body -->
-                </div>
-            </div>
-            <div class="col-lg-6" id="lab-card">
-                <div class="card h-100 mt-2">
-                    <!-- BEGIN card-body -->
-                    <div class="card-header bg-gradient bg-gray-400 d-flex gap-2 align-items-center">
-
-                        <div class="flex-grow-1">
-                            <h5 class="mb-1">Investigations</h5>
-
-                        </div>
-                        <i class="fa fa-plus" data-bs-toggle="modal" data-bs-target="#modal-lab"></i>
-                        <a href="javascript:;" class="text-secondary"><i class="fa fa-redo"></i></a>
-                        <a href="#" data-toggle="card-expand"
-                            class="text-white text-opacity-20 text-decoration-none"><i class="fa fa-fw fa-expand"></i></a>
-
-                    </div>
-                    <div class="card-body">
-                        <div class="table-responsive" id="table-lab">
-
-                        </div>
-
-
-                    </div>
-                    <!-- END card-body -->
-                </div>
-            </div>
-            <div class="col-lg-6">
-                <div class="card h-100 mt-2">
-                    <!-- BEGIN card-body -->
-                    <div class="card-header bg-gradient bg-teal-400 d-flex gap-2 align-items-center">
-
-                        <div class="flex-grow-1">
-                            <h5 class="mb-1">Nutrition</h5>
-
-                        </div>
-                        <i class="fa fa-plus" data-bs-toggle="modal" data-bs-target="#modal-nutrition"></i>
-                        <a href="javascript:;" class="text-secondary"><i class="fa fa-redo"></i></a>
-                        <a href="#" data-toggle="card-expand"
-                            class="text-white text-opacity-20 text-decoration-none"><i class="fa fa-fw fa-expand"></i></a>
-
-                    </div>
-                    <div class="card-body">
-                        <div class="table-responsive" id="table-nutrition">
-
-                        </div>
-
-
-                    </div>
-                    <!-- END card-body -->
-                </div>
-            </div>
-            <div class="col-lg-6">
-                <div class="card h-100 mt-2">
-                    <!-- BEGIN card-body -->
-                    <div class="card-body">
-                        <div class="d-flex mb-3 gap-1">
-                            <div class="flex-grow-1">
-                                <h5 class="mb-1">Renal Assessment</h5>
-
-                            </div>
-
-                            <a href="javascript:;" class="text-secondary"><i class="fa fa-redo"></i></a>
-                        </div>
-                        <div id="table-renal" class="table-responsive"></div>
-                    </div>
-                    <!-- END card-body -->
-                </div>
-            </div>
-            <div class="col-lg-6" id="skin">
-                <div class="card h-100 mt-2">
-                    <!-- BEGIN card-body -->
-                    <div class="card-header bg-gradient bg-purple d-flex gap-2 align-items-center">
-
-                        <div class="flex-grow-1">
-                            <h5 class="mb-1 text-white">Skin and Wound Care</h5>
-
-                        </div>
-                        <i class="fa fa-plus" data-bs-toggle="modal" data-bs-target="#modal-skin"></i>
-                        <a href="javascript:;" class="text-secondary"><i class="fa fa-redo"></i></a>
-                        <a href="#" data-toggle="card-expand"
-                            class="text-white text-opacity-20 text-decoration-none"><i class="fa fa-fw fa-expand"></i></a>
-
-                    </div>
-                    <div class="card-body">
-                        <div class="table-responsive" id="table-skin">
-
-                        </div>
-
-
-                    </div>
-                    <!-- END card-body -->
-                </div>
-            </div>
-            <div class="col-lg-6" id="invasive">
-                <div class="card h-100 mt-2">
-                    <!-- BEGIN card-body -->
-                    <div class="card-header bg-gradient bg-dark d-flex gap-2 align-items-center">
-
-                        <div class="flex-grow-1">
-                            <h5 class="mb-1 text-white">Invasive Lines</h5>
-
-                        </div>
-                        <i class="fa fa-plus" data-bs-toggle="modal" data-bs-target="#modal-invasive"></i>
-                        <a href="javascript:;" class="text-secondary"><i class="fa fa-redo"></i></a>
-                        <a href="#" data-toggle="card-expand"
-                            class="text-white text-opacity-20 text-decoration-none"><i class="fa fa-fw fa-expand"></i></a>
-
-                    </div>
-                    <div class="card-body">
-                        <div class="table-responsive" id="table-invasive">
-
-                        </div>
-
-
-                    </div>
-                    <!-- END card-body -->
-                </div>
-            </div>
-            <div class="col-lg-6" id="progress">
-                <div class="card h-100 mt-2">
-                    <!-- BEGIN card-body -->
-                    <div class="card-header bg-gradient bg-gray-200 d-flex gap-2 align-items-center">
-
-                        <div class="flex-grow-1">
-                            <h5 class="mb-1">Progress Notes</h5>
-
-                        </div>
-                        <i class="fa fa-plus" data-bs-toggle="modal" data-bs-target="#modal-progress"></i>
-                        <a href="javascript:;" class="text-secondary"><i class="fa fa-redo"></i></a>
-                        <a href="#" data-toggle="card-expand"
-                            class="text-white text-opacity-20 text-decoration-none"><i class="fa fa-fw fa-expand"></i></a>
-
-                    </div>
-                    <div class="card-body">
-                        <div class="table-responsive" id="table-progress">
-
-                        </div>
-
-
-                    </div>
-                    <!-- END card-body -->
-                </div>
-            </div>
-            <div class="col-lg-6" id="seizure">
-                <div class="card h-100 mt-2">
-                    <!-- BEGIN card-body -->
-                    <div class="card-header bg-gradient bg-warning-200 d-flex gap-2 align-items-center">
-
-                        <div class="flex-grow-1">
-                            <h5 class="mb-1">Seizure Chart</h5>
-
-                        </div>
-                        <i class="fa fa-plus" data-bs-toggle="modal" data-bs-target="#modal-seizure"></i>
-                        <a href="javascript:;" class="text-secondary"><i class="fa fa-redo"></i></a>
-                        <a href="#" data-toggle="card-expand"
-                            class="text-white text-opacity-20 text-decoration-none"><i class="fa fa-fw fa-expand"></i></a>
-
-                    </div>
-                    <div class="card-body">
-                        <div class="table-responsive" id="table-seizure">
-
-                        </div>
-
-
-                    </div>
-                    <!-- END card-body -->
-                </div>
-            </div>
-            <div class="col-lg-6" id="nursing">
-                <div class="card h-100 mt-2">
-                    <!-- BEGIN card-body -->
-                    <div class="card-header bg-gradient bg-gray-100 d-flex gap-2 align-items-center">
-
-                        <div class="flex-grow-1">
-                            <h5 class="mb-1">Nursing Assessment</h5>
-
-                        </div>
-                        <i class="fa fa-plus" data-bs-toggle="modal" data-bs-target="#modal-daily"></i>
-                        <a href="javascript:;" class="text-secondary"><i class="fa fa-redo"></i></a>
-                        <a href="#" data-toggle="card-expand"
-                            class="text-white text-opacity-20 text-decoration-none"><i class="fa fa-fw fa-expand"></i></a>
-
-                    </div>
-                    <div class="card-body">
-                        <div class="table-responsive" id="table-daily">
-
-                        </div>
-
-
-                    </div>
-                    <!-- END card-body -->
-                </div>
-            </div>
-            <div class="col-lg-6" id="physician">
-                <div class="card h-100 mt-2">
-                    <!-- BEGIN card-body -->
-                    <div class="card-header bg-gradient bg-warning-500 d-flex gap-2 align-items-center">
-
-                        <div class="flex-grow-1">
-                            <h5 class="mb-1">Physician Order</h5>
-
-                        </div>
-                        <i class="fa fa-plus" data-bs-toggle="modal" data-bs-target="#modal-physician"></i>
-                        <a href="javascript:;" class="text-secondary"><i class="fa fa-redo"></i></a>
-                        <a href="#" data-toggle="card-expand"
-                            class="text-white text-opacity-20 text-decoration-none"><i class="fa fa-fw fa-expand"></i></a>
-
-                    </div>
-                    <div class="card-body">
-                        <div class="table-responsive" id="table-physician">
-
-                        </div>
-
-
-                    </div>
-                    <!-- END card-body -->
-                </div>
-            </div>
-
-
-        </div>
-
-
-@endsection
-@section('outter_content')
-     @include('recording.cardio-assessment')
-    @include('recording.respiratory-assessment')
-    @include('recording.neuro-assessment')
-    @include('recording.fluid-balance')
-    @include('recording.invasive-line')
-    @include('recording.lab-result')
-    @include('recording.renal')
-    @include('recording.skin')
-    @include('recording.daily-note')
-    @include('recording.medication')
-    @include('recording.nutrition')
-    @include('recording.physician-order')
-    @include('recording.progress')
-    @include('recording.result-modal')
-    @include('recording.seizure-chart')
-    @include('recording.discharge')
-    <div class="toasts-container">
-		<div class="toast fade hide mb-3" data-autohide="true" id="toast-1">
-			<div class="toast-header">
-				<i class="far fa-bell text-muted me-2"></i>
-				<strong class="me-auto">SUccess</strong>
-
-				<button type="button" class="btn-close" data-bs-dismiss="toast"></button>
-			</div>
-			<div class="toast-body">
-
-			</div>
-		</div>
-
-	</div>
-
-@endsection

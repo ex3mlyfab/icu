@@ -91,8 +91,8 @@
 
                          <div class="col-md-4 mb-3">
                              <div class="input-group bootstrap-timepicker timepicker">
-                                 <input id="timepicker-respiratoy" type="text" name="hour_taken"
-                                     class="form-control">
+                                 <input id="timepicker-respiratoy-respiratory" type="text" name="hour_taken"
+                                     class="form-control timepickerAcross">
                                  <span class="input-group-addon input-group-text">
                                      <i class="fa fa-clock"></i>
                                  </span>

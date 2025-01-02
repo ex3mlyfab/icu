@@ -129,7 +129,7 @@ class ReadingController extends Controller
     {
         $cardio_reading = CardioAssessment::where('patient_care_id', $patientCare->id)
         ->whereDate('created_at', Carbon::parse($active_day))
-        ->orderBy('hour_taken')
+        ->orderBy('created_at')
         ->get();
 
         $cardio_reading = $cardio_reading->groupBy(function (CardioAssessment $item) {
@@ -143,21 +143,24 @@ class ReadingController extends Controller
         foreach ($lastTwoGroups as $time => $readings) {
             foreach ($readings as $reading) {
                 $cardioChart['label'][] = $time;
-                $cardioChart['Heart Rate'][] = (float)$reading->heart_rate;
-                $cardioChart['Bp Systolic'][] = (int)$reading->blood_pressure_systolic;
-                $cardioChart['Bp Diastolic'][] = (int)$reading->blood_pressure_diastolic;
-                $cardioChart['Capillary Refill Time'][] = (int)$reading->capillary_refill_time;
+                $cardioChart['heart_rate'][] = (float)$reading->heart_rate;
+                $cardioChart['BpSystolic'][] = (int)$reading->blood_pressure_systolic;
+                $cardioChart['BpDiastolic'][] = (int)$reading->blood_pressure_diastolic;
+                $cardioChart['CapillaryRefillTime'][] = (int)$reading->capillary_refill_time;
                 $cardioChart['CVP'][] = (int)$reading->cvp;
                 $cardioChart['MAP'][] = (int)$reading->map;
-                $cardioChart['Peripheral pulses'][] = (int)$reading->peripheral_pulses;
+                $cardioChart['Peripheralpulses'][] = (int)$reading->peripheral_pulses;
                 $cardioChart['Rhythm'][] = (int)$reading->rhythm;
-                $cardioChart['Respiratory Rate'][] = (int)$reading->respiratory_rate;
+                $cardioChart['RespiratoryRate'][] = (int)$reading->respiratory_rate;
                 $cardioChart['Temperature'][] = (int)$reading->temperature;
                 $cardioChart['Spo2'][] = (int)$reading->spo2;
             }
         }
 
-        return response(['data' => $cardioChart], 200);
+        return response([
+            'data' => $cardioChart,
+            'label' => ['Heart Rate', 'Bp Systolic', 'Bp Diastolic', 'Capillary Refill Time', 'CVP', 'MAP', 'Peripheral Pulses', 'Rhythm', 'Respiratory Rate', 'Temperature', 'Sp02']
+                        ], 200);
 
     }
     public function storeRespiratory(RespiRatoryAssessmentRequest $request)
