@@ -20,4 +20,9 @@ class CardioAssessment extends Model
     {
         return $this->belongsTo(PatientCare::class);
     }
+
+    public function createdBy(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'created_by');
+    }
 }

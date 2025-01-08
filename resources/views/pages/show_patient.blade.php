@@ -83,7 +83,7 @@
                 }
             }
             var cardioCharting = new ApexCharts(document.querySelector("#chartCardio"), cardioOptions);
-            cardioCharting.render();
+            // cardioCharting.render();
             //respiratory Chart
             var respiratoryChart= {};
             var respiratoryOptions = {
@@ -115,7 +115,7 @@
                 }
             }
             var respiratoryCharting = new ApexCharts(document.querySelector("#chartRespiratory"), respiratoryOptions);
-            respiratoryCharting.render();
+            // respiratoryCharting.render();
                //fluid Chart
             var fluidChart= {};
             var fluidOptions = {
@@ -283,6 +283,7 @@
                     success: function(data) {
 
                         let myData = data.data;
+                        console.log(myData);
                         if ($.isEmptyObject(myData)) {
 
                             $("#table-cardio").html('<h2 class="text-center">No Cardio Data Found</h2>');
@@ -301,48 +302,34 @@
                         }
                         headerIndicator.append(headerRow);
                         table.append(headerIndicator);
-                        console.log(myData);
-                        // Create table body rows that aligns with the column
-                        var row = $('<tr></tr>');
 
-
-                        for (var key in myData) {
-                            if (key !== "label") {
-                                let newArray = [];
-
-                                for (var i = 0; i < myData[key].length; i++) {
-                                    newArray.push(~~myData[key][i]);
-                                }
-                                cardioChart[key] = newArray
-                            }
-                        }
-                        // iterate and place the key in corresponding column
-                        // console.log(newDataArrange, "from eagle");
-                        var row1= [];
-                        var row2= [];
+                        const tableRows = {};
+                        let numberOfRows = myData.label.length;
+                        // console.log(numberOfRows, 'from cardioData');
                         $.each(myData, function(key, value){
-
                                $.each(value, function(index, item){
-                                   if(index == 0){
-                                       row1.push(item);
-                                   }else{
-                                       row2.push(item);
-                                   }
+                                    for(let i=0; i<numberOfRows; i++){
+                                        if(!tableRows[i]){
+                                            tableRows[i] = [];
+                                        }
+                                        if(i === index){
+                                            tableRows[i].push(item);
+                                        }
+                                    }
                                })
 
 
                         });
-                        var row = $('<tr></tr>');
-                        $.each(row1, function(index, item){
-                            row.append('<th class="text-center border-1">' + item + '</th>');
-                        });
-                        table.append(row);
-                        var row = $('<tr></tr>');
-                        $.each(row2, function(index, item){
-                            row.append('<th class="text-center border-1">' + item + '</th>');
-                        });
-                        table.append(row);
 
+                        $.each(tableRows, function(key, value){
+                            var row = $('<tr></tr>');
+
+                            for (var i = 0; i < value.length; i++) {
+
+                                row.append('<td class="text-center border-1">' + value[i] + '</td>');
+                            }
+                            table.append(row);
+                        });
                         // Append the table to the body
 
                         $("#table-cardio").html(table);
@@ -364,59 +351,65 @@
             function getRespData() {
                 $.ajax({
                     type: 'GET', // or 'POST' if required
-                    url: `{{ URL::to('/') }}/show-patient/{{ $patient->latestPatientCare->id }}/resp-assessment/${activeDay}`,
+                    url: `{{ URL::to('/') }}/show/{{ $patient->latestPatientCare->id }}/${activeDay}`,
                     dataType: 'json', // Specify the expected data format (e.g., JSON)
                     success: function(data) {
 
-
                         // $('#chart-3').html(data.data);
                         let respData = data.data;
+                        console.log(respData);
+                        if ($.isEmptyObject(respData)) {
+
+                            $("#table-resp-table").html('<h2 class="text-center">No Respiratory Data Found</h2>');
+
+                        }else{
+
                         var table = $('<table class="table table-bordered"></table>');
                         var headerIndicator = $('<thead></thead>');
                         // Create a table header row
                         var headerRow = $('<tr></tr>');
-                        respiratoryChart.label = respData.label
-                        headerRow.append('<th class="bg-dark-300 text-light">label</th>');
-                        for (var i = 0; i < respData.label.length; i++) {
 
-                            headerRow.append('<th>' + respData.label[i] + '</th>');
+                        headerRow.append('<th class="bg-dark-300 text-light"> Recorded at</th>');
+                        for (var i = 0; i < data.label.length; i++) {
+
+                            headerRow.append('<th>' + data.label[i] + '</th>');
                         }
                         headerIndicator.append(headerRow);
                         table.append(headerIndicator);
+                        const tableRows = {};
+                        let numberOfRows = respData.label.length;
+                        // console.log(numberOfRows, 'from respData');
+                        $.each(respData, function(key, value){
+                            // console.log(key, "from eagle");
+                               $.each(value, function(index, item){
+                                    for(let i=0; i<numberOfRows; i++){
+                                        if(!tableRows[i]){
+                                            tableRows[i] = [];
+                                        }
+                                        if(i === index){
+                                            tableRows[i].push(item);
+                                        }
+                                    }
+                               });
+
+                        });
+                        console.log(tableRows, "from eagle");
+
+                        $.each(tableRows, function(key, value){
+                            var row = $('<tr></tr>');
+
+                            for (var i = 0; i < value.length; i++) {
+
+                                row.append('<td class="text-center border-1">' + value[i] + '</td>');
+                            }
+                            table.append(row);
+                        });
+                        // table.append(row);
+
 
                         // Create table body rows
-                        for (var key in respData) {
-                            if (key !== "label") {
-                                var row = $('<tr></tr>');
-                                let respArray = [];
-                                row.append('<th class="bg-dark-300 ps-2 text-white">' + key + '</th>');
-                                for (var i = 0; i < respData[key].length; i++) {
-
-                                    row.append('<td class="text-center">' + respData[key][i] + '</td>');
-                                    respArray.push(~~respData[key][i]);
-                                }
-                                table.append(row);
-                                respiratoryChart[key] = respArray
-                            }
-                        }
-
-                           let respOptions = {
-                            series: [
-                                {
-                                    name: "FiO2",
-                                    data:respiratoryChart["FiO2"]
-                                },
-                                {
-                                    name:"Respiratory Effort",
-                                    data: respiratoryChart["Respiratory Effort"]
-                                }
-                            ],
-                            xaxis: {
-                                categories: respiratoryChart.label
-                            },
-                        }
-                        respiratoryCharting.updateOptions(respOptions, true);
                         $("#table-resp-table").html(table);
+                    }
 
                     },
                     error: function(error) {
@@ -433,8 +426,13 @@
                     url: `{{ URL::to('/') }}/show-patient/{{ $patient->latestPatientCare->id }}/medication/${activeDay}`,
                     dataType: 'json', // Specify the expected data format (e.g., JSON)
                     success: function(data) {
-                        // $('#chart-3').html(data.data);
+                        // $('#chart-3').html(data.data);5
                         let medicationData = data.data;
+
+                        if ($.isEmptyObject(medicationData)) {
+                            $("#table-medication").html(
+                                '<h2 class="text-center">No Medication Data Found</h2>');
+                        } else {
                         var table = $('<table class="table table-bordered"></table>');
                         var headerIndicator = $('<thead></thead>');
                         // Create a table header row
@@ -461,6 +459,7 @@
                             }
                         }
                         $("#table-medication").html(table);
+                    }
 
                     },
                     error: function(error) {
@@ -1642,7 +1641,7 @@
                     <!-- END card-body -->
                 </div>
             </div>
-            <div class="col-lg-6" id="resp-card">
+            <div class="col-lg-12" id="resp-card">
                 <div class="card h-100 mt-2">
                     <div class="card-header  bg-dark d-flex align-items-center">
                         <div class="flex-grow-1">
@@ -1666,7 +1665,6 @@
                                 <div class="table-responsive mb-3" id="table-resp-table">
 
                                 </div>
-                                 <div id="chartRespiratory"></div>
 
 
 

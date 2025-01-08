@@ -154,12 +154,13 @@ class ReadingController extends Controller
                 $cardioChart['RespiratoryRate'][] = (int)$reading->respiratory_rate;
                 $cardioChart['Temperature'][] = (int)$reading->temperature;
                 $cardioChart['Spo2'][] = (int)$reading->spo2;
+                $cardioChart['Recordedby'][] = $reading->createdBy->fullname;
             }
         }
 
         return response([
             'data' => $cardioChart,
-            'label' => ['Heart Rate', 'Bp Systolic', 'Bp Diastolic', 'Capillary Refill Time', 'CVP', 'MAP', 'Peripheral Pulses', 'Rhythm', 'Respiratory Rate', 'Temperature', 'Sp02']
+            'label' => ['Heart Rate', 'Bp Systolic', 'Bp Diastolic', 'Capillary Refill Time', 'CVP', 'MAP', 'Peripheral Pulses', 'Rhythm', 'Respiratory Rate', 'Temperature', 'Sp02', 'Recorded by']
                         ], 200);
 
     }
@@ -220,7 +221,44 @@ class ReadingController extends Controller
             }
             return response(['data' => $resp_chart], 200);
     }
+    public function newShowRespiratory(PatientCare $patientCare, $active_day)
+    {
+         $resp_reading = RespiratoryAssessment::where('patient_care_id', $patientCare->id)
+                        ->whereDate('created_at', Carbon::parse($active_day))
+                        ->orderBy('created_by')
+                        ->get();
+        $resp_group = $resp_reading->groupBy(function(RespiratoryAssessment $item) {
+            return $item->created_at->format('d/m/Y h:i:s A');;
+        });
 
+        $resp_chart = [];
+
+        //select the last two grouping in $cardio_reading
+        $lastTwoGroups = $resp_group->slice(-2);
+
+        foreach($lastTwoGroups as $index => $values)
+        {
+            foreach($values as $value)
+            {
+                $resp_chart['label'][] = $index;
+                $resp_chart['ModeofVentilation'][] =$value->mode_of_ventilation ?? '--';
+                $resp_chart['IERation'][] = $value->i_e_ration ?? '--';
+                $resp_chart['FiO2'][] = $value->fi02 ?? '--';
+                $resp_chart['PEEP'][] = $value->peep ?? '--';
+                $resp_chart['TidalVolume'][] = $value->patient_tidal_volume ?? '--';
+                $resp_chart['VentilatorSetting'][] =$value->ventilator_set_rate ?? '--';
+                $resp_chart['RespiratoryEffort'][] = $value->respiratory_effort ?? '--';
+                $resp_chart['EndothrachealIntubation'][] = $value->endothracheal_intubation ?? '--';
+                $resp_chart['PressureSupport'][] = $value->pressure_support ?? '--';
+                $resp_chart['RecordedBy'][] = $value->createdBy->fullname ?? '--';
+            }
+        }
+
+        return response(['data' =>$resp_chart,
+                        'label' => ['Mode of Ventilation', 'I E Ration','FiO2','PEEP','Tidal Volume', 'Ventilator Setting', 'Respiratory Effort', 'Endothracheal Intubation','Pressure Support','Recorded By']
+    ], 200);
+
+    }
     public function storeFluid(FluidBalanceRequest $request)
     {
          $data = $request->all();
