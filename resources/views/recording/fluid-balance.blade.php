@@ -17,7 +17,7 @@
                             <div class="mb-3" >
                                 <label class="form-label">Select Fluid <span class="text-danger">*</span></label>
                                 <select class="form-select" id="select-fluid" name="fluid_select">
-                                    
+
                                 </select>
 
                             </div>
@@ -27,7 +27,7 @@
                     <div class="row" id="new-fluid">
                         <div class="col-md-6 mb-3">
                             <div class="input-group flex-nowrap">
-                                <span class="input-group-text" id="addon-wrapping1">Fluid Name</span>
+                                <span class="input-group-text" id="addon-wrappingFluid">Fluid Name</span>
                                 <input type="text" id="fluid_name" class="form-control" name="fluid_name"
                                     placeholder="Fluid Name">
 
@@ -35,8 +35,8 @@
                         </div>
                         <div class="col-md-6 mb-3">
                             <div class="input-group flex-nowrap">
-                                <span class="input-group-text" id="addon-2">Direction</span>
-                                <select class="form-select form-select-sm" name="direction">
+                                <span class="input-group-text" id="addon-2Fluid">Direction</span>
+                                <select class="form-select form-select-sm" name="direction" id="fluid_direction" onchange="">
                                     <option selected>Select Direction</option>
                                     <option value="input">Intake</option>
                                     <option value="output">Output</option>
@@ -54,18 +54,28 @@
 
                             </div>
                         </div>
+                        <div class="col-md-6">
+                            <button type="button" class="btn btn-primary" id="fluid-record-add"><i class="fa fa-plus"></i></button>
 
-                        <div class="col-md-6 mb-3">
-                            <div class="input-group bootstrap-timepicker timepicker">
-                                <span class="input-group-text" id="addon-wrapping">Hour Recorded</span>
-                                <input id="timepicker-default2" type="text" class="form-control timepickerAcross"
-                                    name="hour_taken">
-                                <span class="input-group-addon input-group-text">
-                                    <i class="fa fa-clock"></i>
-                                </span>
-                            </div>
                         </div>
 
+
+
+                    </div>
+                    <div class="table-responsive">
+                        <table class="table table-bordered" id="fluid-record-table">
+                            <thead id="fluid-table-header">
+                                <tr>
+                                    <th>Fluid Name</th>
+                                    <th>Volume(ml)</th>
+                                    <th>Direction</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+
+                            </tbody>
+                        </table>
                     </div>
                 </div>
                 <div class="modal-footer">

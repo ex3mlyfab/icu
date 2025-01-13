@@ -228,7 +228,7 @@ class ReadingController extends Controller
                         ->orderBy('created_by')
                         ->get();
         $resp_group = $resp_reading->groupBy(function(RespiratoryAssessment $item) {
-            return $item->created_at->format('d/m/Y h:i:s A');;
+            return $item->created_at->format('d/m/Y h:i:s A');
         });
 
         $resp_chart = [];
@@ -296,58 +296,45 @@ class ReadingController extends Controller
 
     public function showFluid(PatientCare $patientCare,$active_day)
     {
-        $intake = [];
-        $output = [];
-
-
         $fluid_reading = FluidBalance::where('patient_care_id', $patientCare->id)
-        ->whereDate('created_at', Carbon::parse($active_day))
-        ->orderBy('hour_taken')
-        ->get();
-
-        $fluid_group = $fluid_reading->groupBy(function(FluidBalance $item) {
-            return $item->hour_taken->format('H');
+                        ->whereDate('created_at', Carbon::parse($active_day))
+                        ->orderBy('created_at', 'desc')
+                        ->get();
+        $fluid_directions = $fluid_reading->groupBy(function(FluidBalance $item){
+            return $item->direction;
         });
-        $fluid_names = $patientCare->fluidBalances->unique('fluid')->pluck('fluid')->toArray();
-        //go through fluid balances and group them by fluid direction
-        $fluid_drections = $patientCare->fluidBalances->unique('fluid')->groupBy(function(FluidBalance $fluid){
-            return $fluid->direction;
-        });
+        $inputRow = $fluid_directions->unique('fliud')->count('input');
+        $outputRow = $fluid_directions->unique('fliud')->count('output');
 
-        $fluid_chart = [];
-
-        foreach($this->hours as $key=>$hour)
-        {
-             $fluid_chart['label'][] = $hour;
-
-
-            if(isset($fluid_group[$key]))
+        $fluid_chart_input = [];
+        $fluid_chart_output = [];
+        foreach($fluid_directions as $direction => $details){
+            if($direction == 'input')
             {
-                $targetFluids = $fluid_group[$key]->pluck('fluid')->toArray();
-                $targetDirections = $fluid_group[$key]->pluck('direction')->toArray();
-                $targetVolumes = $fluid_group[$key]->pluck('volume')->toArray();
-                $balanceFluids = array_diff($fluid_names, $targetFluids);
-                foreach($targetFluids as $targatFluid)
-                {
-                    $fluid_chart[$targatFluid][] = $targetVolumes[array_search($targatFluid, $targetFluids)];
-                    $fluid_chart['Direction'][] = $targetDirections[array_search($targatFluid, $targetFluids)];
+                foreach($details as $detail){
+                    $fluid_chart_input['label'][] = $direction;
+                    $fluid_chart_input['fluid_name'][] = $detail->fluid;
+                    $fluid_chart_input['volume'][] = $detail->volume;
+                    $fluid_chart_input['created_by'][] = $detail->createdBy->fullname;
+                    $fluid_chart_input['created_at'][] = $detail->created_at->format('d/m/Y h:i A');
                 }
-                foreach($balanceFluids as $balanceFluid){
-                    $fluid_chart[$balanceFluid][] = "--";
-                    $fluid_chart['Direction'][] = "--";
-                }
-            }else
-                {
-
-                    foreach($fluid_names as $name)
-                    {
-                        $fluid_chart[$name][] = "--";
-
-                    }
-
+            }else{
+                foreach($details as $detail){
+                    $fluid_chart_output['label'][] = $direction;
+                    $fluid_chart_output['fluid_name'][] = $detail->fluid;
+                    $fluid_chart_output['volume'][] = $detail->volume;
+                    $fluid_chart_output['created_by'][] = $detail->createdBy->fullname;
+                    $fluid_chart_output['created_at'][] = $detail->created_at->format('d/m/Y h:i A');
                 }
             }
-            return response(['data' => $fluid_chart, 'direction' => $fluid_drections], 200);
+
+        }
+
+        return response(['input' => $fluid_chart_input,
+                         'output' => $fluid_chart_output,
+                         'input_rows' => $inputRow,
+                         'output_rows' => $outputRow
+                        ], 200);
     }
 
     public function getFluid(PatientCare $patientCare)

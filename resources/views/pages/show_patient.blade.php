@@ -143,7 +143,7 @@
                 }
             }
             var fluidCharting = new ApexCharts(document.querySelector("#chartFluid"), fluidOptions);
-            fluidCharting.render();
+            // fluidCharting.render();
 
             function getFluidSelect() {
                 $.ajax({
@@ -154,11 +154,9 @@
                         $("#select-fluid").empty().append(
                             '<option value="others">Add New Fluid</option><option value="" selected>Select an option</option>'
                         );
-
                         // Populate with new options
                         $.each(data.data, function(index, option) {
-                            $("#select-fluid").prepend('<option value="' + option.fluid + '">' +
-                                option.fluid + '</option>');
+                            $("#select-fluid").prepend(`<option value="${option.fluid},${option.direction}">${option.fluid}</option>`);
                         });
                     }
                 });
@@ -210,26 +208,33 @@
                     url: `{{ URL::to('/') }}/show-patient/{{ $patient->latestPatientCare->id }}/fluid-assessment/${activeDay}`,
                     dataType: 'json', // Specify the expected data format (e.g., JSON)
                     success: function(data) {
-                        let fluidData = data.data;
-                        console.log(data.direction.input, "from input");
-                        // console.log()
-                        var table = $('<table class="table table-bordered"></table>');
-                        var headerIndicator = $('<thead></thead>');
-                        // Create a table header row
-                        fluidChart.label = fluidData.label
-                        var headerRow = $('<tr></tr>');
-                        headerRow.append('<th class="bg-yellow-300">label</th>');
-                        for (var i = 0; i < fluidData.label.length; i++) {
+                        let outputData = data.output;
+                        let inputData = data.input;
+                        // console.log('from fluid data', fluidData);
+                       if ($.isEmptyObject(inputData) && $.isEmptyObject(outputData)) {
 
-                            headerRow.append('<th>' + fluidData.label[i] + '</th>');
-                        }
-                        headerIndicator.append(headerRow);
-                        table.append(headerIndicator);
-                        table.append(`<tr id="fluidIntake">
-                            <td colspan="${fluidData.label.length}" class="text-center bg-gradient bg-danger text-white fw-bold">Intake
-                            </tr><tr id="fluidOutput">
-                            <td colspan="${fluidData.label.length}" class="text-center bg-gradient bg-danger text-white fw-bold">Output
-                            </tr>`);
+                            $("#table-fluid").html('<h2 class="text-center">No Fluid Data Found</h2>');
+
+                        }else{
+
+                            var table = $('<table class="table table-bordered"></table>');
+                            var headerIndicator = $('<thead></thead>');
+
+                            // Create a table header row
+                            let inputRowsHeader = data.input_rows + 2;
+                            var headerRow = $('<tr></tr>');
+                            headerRow.append(`<th class="bg-yellow-300" colspan="${inputRowsHeader}">Input</th>`);
+                            headerIndicator.append(headerRow);
+                            var headerRow = $('<tr></tr>');
+                            headerRow.append('<th class="bg-yellow-300">Recorded At</th>');
+                            $.each(inputData.label, function(index, value) {
+
+                                headerRow.append('<th>' + value + '</th>');
+                            });
+                            headerRow.append(`<th> Created By</th>`);
+
+                            headerIndicator.append(headerRow);
+                            table.append(headerIndicator);
 
                         // Create table body rows
                         for (var key in fluidData) {
@@ -262,9 +267,10 @@
                                 categories: fluidChart.label
                             },
                         }
-                        fluidCharting.updateOptions(fluidOptions, true);
+                        // fluidCharting.updateOptions(fluidOptions, true);
 
                         $('#table-fluid').html(table);
+                    }
                     },
                     error: function(error) {
                         // Handle errors
@@ -1041,15 +1047,7 @@
                     $('#new-mutrition').hide();
                 }
             });
-            $('#select-fluid').on('change', function() {
-                var selectVal = $(this).val();
-                console.log(selectVal);
-                if ($(this).val() == 'others') {
-                    $('#new-fluid').show();
-                } else {
-                    $('#new-fluid').hide();
-                }
-            });
+
 
             $('#new-lab').hide();
             $('#defaultothers').on('change', function() {
@@ -1146,6 +1144,40 @@
 
             });
             //fluid-balance form
+            //Adding fluid balance
+            var rowIdx = 0;
+            let fluid_name, fluid_volume,  fluid_direction;
+            const fluid_names = [];
+            const fluid_directions = [];
+            const fluid_volumes = [];
+             $('#select-fluid').on('change', function() {
+                if ($(this).val() == 'others') {
+                    $('#new-fluid').show();
+                } else {
+                    $('#new-fluid').hide();
+                    let fluid_array = $(this).val().split(',');
+                    let fluid_name = fluid_array[0];
+                    let fluid_direction = fluid_array[1];
+                }
+
+
+            });
+            $('#fluid-record-add').on('click', function() {
+                rowIdx++;
+                if(fluid_name && fluid_direction && fluid_volume){
+                    const row = `<tr id="row-${rowIdx}">
+                    <td>${fluid_name}</td>
+                    <td>${fluid_volume}</td>
+                    <td>${fluid_direction}</td>
+                    <td>
+                        <button type="button" class="btn btn-danger" onclick="removeFluidRecord(${rowIdx})">Remove</button>
+                    </td>
+                </tr>`;
+                $('#fluid-record-table tbody').append(row);
+                }
+
+
+            })
             $('#fluid-save-spinner').hide();
             $('#fluid-form').submit(function(event) {
                 event.preventDefault(); // Prevent default form submission
@@ -1171,7 +1203,7 @@
                         $('#fluid-save-spinner').hide();
                         $('#new-fluid').hide();
                         getFluidData();
-                        getMedicationSelect();
+                        getFluidSelect();
                         getRenalData();
                     },
                     error: function(error) {
@@ -1553,7 +1585,7 @@
 
 
 
-        <div class="card border-theme border-3 sticky-md-top" style="top:48px;">
+        <div class="card border-theme border-3 sticky-md-top" style="top:20px;">
             <div class="card-body row gx-0 align-items-center shadow-lg">
                 <div class="col-md-12">
                     <div class="row">
@@ -1612,357 +1644,487 @@
                 </div>
             </div>
         </div>
-        <div class="row gy-2">
-            <div class="col-lg-12">
-                <div class="card h-100 mt-2">
-                    <div class="card-header bg-yellow-300 d-flex align-items-center">
-                        <div class="flex-grow-1">
-                            <h5 class="mb-1">Cardiovascular Assessment</h5>
-                        </div>
-                        <div class="d-flex gap-2 align-items-center">
+        <div class="row mt-2">
+            <div class="accordion" id="accordionExample">
+                <div class="accordion-item">
+                    <h5 class="accordion-header bg-yellow-300" id="headingOne">
+                        <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne">
+                          <span class="fw-bold fs-5"> Cardiovascular Assessment </span>
+                        </button>
+                    </h5>
+                    <div id="collapseOne" class="accordion-collapse collapse show" data-bs-parent="#accordionExample">
+					    <div class="accordion-body">
+                            <div class="col-lg-12">
+                                <div class="card h-100 mt-2">
+                                    <div class="card-header bg-yellow-300 d-flex align-items-center">
+                                        <div class="flex-grow-1">
+                                            <h5 class="mb-1"></h5>
+                                        </div>
+                                        <div class="d-flex gap-2 align-items-center">
+                                            <button class="btn btn-sm btn-outline-dark"><i class="fa fa-plus" data-bs-toggle="modal" data-bs-target="#modalXl"></i></button>
 
-                            <i class="fa fa-plus" data-bs-toggle="modal" data-bs-target="#modalXl"></i>
-                            <a href="javascript:;" class="text-secondary"><i class="fa fa-redo"></i></a>
-                            <a href="#" data-toggle="card-expand"
-                                class="text-white text-opacity-50 text-decoration-none"><i
-                                    class="fa fa-fw fa-expand"></i></a>
+                                            <a href="javascript:;" class="text-secondary"><i class="fa fa-redo"></i></a>
+                                            <a href="#" data-toggle="card-expand"
+                                                class="text-white text-opacity-50 text-decoration-none"><i
+                                                    class="fa fa-fw fa-expand"></i></a>
+                                        </div>
+                                    </div>
+
+
+                                    <!-- BEGIN card-body -->
+                                    <div class="card-body">
+                                        <div class="table-responsive mb-3" id="table-cardio">
+
+                                        </div>
+
+
+                                    </div>
+                                    <!-- END card-body -->
+                                </div>
+                            </div>
                         </div>
                     </div>
-
-
-                    <!-- BEGIN card-body -->
-                    <div class="card-body">
-                        <div class="table-responsive mb-3" id="table-cardio">
-
-                        </div>
-
-
-                    </div>
-                    <!-- END card-body -->
                 </div>
-            </div>
-            <div class="col-lg-12" id="resp-card">
-                <div class="card h-100 mt-2">
-                    <div class="card-header  bg-dark d-flex align-items-center">
-                        <div class="flex-grow-1">
-                            <h5 class="mb-1 text-white">Respiratory Assessment</h5>
-                        </div>
-                        <div class="d-flex gap-2 align-items-center">
+                <div class="accordion-item">
+                    <h5 class="accordion-header bg-dark" id="headingTwo">
+                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTwo">
+                          <span class="fw-bold fs-5 text-danger"> Respiratory Assessment </span>
+                        </button>
+                    </h5>
+                    <div id="collapseTwo" class="accordion-collapse collapse" data-bs-parent="#accordionExample">
+                        <div class="col-lg-12" id="resp-card">
+                            <div class="card h-100 mt-2">
+                                <div class="card-header bg-dark d-flex align-items-center">
+                                    <div class="flex-grow-1">
+                                        <h5 class="mb-1 text-white"></h5>
+                                    </div>
+                                    <div class="d-flex gap-2 align-items-center">
 
-                            <i class="fa fa-plus text-white" data-bs-toggle="modal" data-bs-target="#modal-resp"></i>
-                            <a href="javascript:;" class="text-secondary"><i
-                                    class="fa fa-redo"></i></a>
-                            <a href="#" data-toggle="card-expand"
-                                class="text-white text-opacity-20 text-decoration-none"><i
-                                    class="fa fa-fw fa-expand"></i></a>
-                        </div>
-                    </div>
-
-
-                    <!-- BEGIN card-body -->
-                    <div class="card-body">
-
-                                <div class="table-responsive mb-3" id="table-resp-table">
-
+                                         <button class="btn btn-sm btn-outline-light"><i class="fa fa-plus text-white cursor-pointer" data-bs-toggle="modal" data-bs-target="#modal-resp"></i></button>
+                                        <a href="javascript:;" class="text-secondary"><i
+                                                class="fa fa-redo"></i></a>
+                                        <a href="#" data-toggle="card-expand"
+                                            class="text-white text-opacity-20 text-decoration-none"><i
+                                                class="fa fa-fw fa-expand"></i></a>
+                                    </div>
                                 </div>
 
 
+                                <!-- BEGIN card-body -->
+                                <div class="card-body">
 
-                    </div>
-                    <!-- END card-body -->
+                                            <div class="table-responsive mb-3" id="table-resp-table">
 
-                </div>
-            </div>
-            <div class="col-lg-6" id="fluid-card">
-                <div class="card h-100 mt-2">
-                    <!-- BEGIN card-body -->
-                    <div class="card-header bg-warning d-flex gap-2 align-items-center">
-
-                        <div class="flex-grow-1">
-                            <h5 class="mb-1">Fluid Balance</h5>
-
-                        </div>
-                        <i class="fa fa-plus" data-bs-toggle="modal" data-bs-target="#modal-fluid"></i>
-                        <a href="javascript:;" class="text-secondary"><i class="fa fa-redo"></i></a>
-                        <a href="#" data-toggle="card-expand"
-                            class="text-white text-opacity-20 text-decoration-none"><i class="fa fa-fw fa-expand"></i></a>
-
-                    </div>
-                    <div class="card-body">
-                        <div class="table-responsive mb-3" id="table-fluid">
-
-                        </div>
-                         <div id="chartFluid"></div>
-
-                    </div>
-                    <!-- END card-body -->
-                </div>
-            </div>
-            <div class="col-lg-6">
-                <div class="card h-100 mt-2">
-                    <div id="neuroChart"></div>
-                    <!-- BEGIN card-body -->
-                    <div class="card-header bg-danger d-flex gap-2 align-items-center">
-
-                        <div class="flex-grow-1">
-                            <h5 class="mb-1">Neurological Assessment</h5>
-
-                        </div>
-                        <i class="fa fa-plus" data-bs-toggle="modal" data-bs-target="#modal-neuro"></i>
-                        <a href="javascript:;" class="text-secondary"><i class="fa fa-redo"></i></a>
-                        <a href="#" data-toggle="card-expand"
-                            class="text-white text-opacity-20 text-decoration-none"><i class="fa fa-fw fa-expand"></i></a>
-
-                    </div>
-                    <div class="card-body">
-                        <div class="table-responsive" id="neuro-chart"></div>
+                                            </div>
 
 
 
-                    </div>
-                    <!-- END card-body -->
-                </div>
-            </div>
-            <div class="col-lg-6" id="med-card">
-                <div class="card h-100 mt-2">
-                    <!-- BEGIN card-body -->
-                    <div class="card-header bg-gradient bg-warning-400 d-flex gap-2 align-items-center">
-
-                        <div class="flex-grow-1">
-                            <h5 class="mb-1">Medications</h5>
-
-                        </div>
-                        <i class="fa fa-plus" data-bs-toggle="modal" data-bs-target="#modal-medication"></i>
-                        <a href="javascript:;" class="text-secondary"><i class="fa fa-redo"></i></a>
-                        <a href="#" data-toggle="card-expand"
-                            class="text-white text-opacity-20 text-decoration-none"><i class="fa fa-fw fa-expand"></i></a>
-
-                    </div>
-                    <div class="card-body">
-                        <div class="table-responsive" id="table-medication">
-
-                        </div>
-
-
-                    </div>
-                    <!-- END card-body -->
-                </div>
-            </div>
-            <div class="col-lg-6" id="lab-card">
-                <div class="card h-100 mt-2">
-                    <!-- BEGIN card-body -->
-                    <div class="card-header bg-gradient bg-gray-400 d-flex gap-2 align-items-center">
-
-                        <div class="flex-grow-1">
-                            <h5 class="mb-1">Investigations</h5>
-
-                        </div>
-                        <i class="fa fa-plus" data-bs-toggle="modal" data-bs-target="#modal-lab"></i>
-                        <a href="javascript:;" class="text-secondary"><i class="fa fa-redo"></i></a>
-                        <a href="#" data-toggle="card-expand"
-                            class="text-white text-opacity-20 text-decoration-none"><i class="fa fa-fw fa-expand"></i></a>
-
-                    </div>
-                    <div class="card-body">
-                        <div class="table-responsive" id="table-lab">
-
-                        </div>
-
-
-                    </div>
-                    <!-- END card-body -->
-                </div>
-            </div>
-            <div class="col-lg-6">
-                <div class="card h-100 mt-2">
-                    <!-- BEGIN card-body -->
-                    <div class="card-header bg-gradient bg-teal-400 d-flex gap-2 align-items-center">
-
-                        <div class="flex-grow-1">
-                            <h5 class="mb-1">Nutrition</h5>
-
-                        </div>
-                        <i class="fa fa-plus" data-bs-toggle="modal" data-bs-target="#modal-nutrition"></i>
-                        <a href="javascript:;" class="text-secondary"><i class="fa fa-redo"></i></a>
-                        <a href="#" data-toggle="card-expand"
-                            class="text-white text-opacity-20 text-decoration-none"><i class="fa fa-fw fa-expand"></i></a>
-
-                    </div>
-                    <div class="card-body">
-                        <div class="table-responsive" id="table-nutrition">
-
-                        </div>
-
-
-                    </div>
-                    <!-- END card-body -->
-                </div>
-            </div>
-            <div class="col-lg-6">
-                <div class="card h-100 mt-2">
-                    <!-- BEGIN card-body -->
-                    <div class="card-body">
-                        <div class="d-flex mb-3 gap-1">
-                            <div class="flex-grow-1">
-                                <h5 class="mb-1">Renal Assessment</h5>
+                                </div>
+                                <!-- END card-body -->
 
                             </div>
-
-                            <a href="javascript:;" class="text-secondary"><i class="fa fa-redo"></i></a>
                         </div>
-                        <div id="table-renal" class="table-responsive"></div>
                     </div>
-                    <!-- END card-body -->
                 </div>
-            </div>
-            <div class="col-lg-6" id="skin">
-                <div class="card h-100 mt-2">
-                    <!-- BEGIN card-body -->
-                    <div class="card-header bg-gradient bg-purple d-flex gap-2 align-items-center">
+                <div class="accordion-item">
+                    <h5 class="accordion-header" id="headingThree">
+                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseThree">
+                          <span class="fw-bold fs-5"> Fluid Balance </span>
+                        </button>
+                    </h5>
+                    <div id="collapseThree" class="accordion-collapse collapse" data-bs-parent="#accordionExample">
+                        <div class="col-lg-12" id="fluid-card">
+                            <div class="card h-100 mt-2">
+                                <!-- BEGIN card-body -->
+                                <div class="card-header bg-warning d-flex gap-2 align-items-center">
 
-                        <div class="flex-grow-1">
-                            <h5 class="mb-1 text-white">Skin and Wound Care</h5>
+                                    <div class="flex-grow-1">
+                                        <h5 class="mb-1">Fluid Balance</h5>
 
+                                    </div>
+                                    <i class="fa fa-plus cursor-pointer" data-bs-toggle="modal" data-bs-target="#modal-fluid"></i>
+                                    <a href="javascript:;" class="text-secondary"><i class="fa fa-redo"></i></a>
+                                    <a href="#" data-toggle="card-expand"
+                                        class="text-white text-opacity-20 text-decoration-none"><i class="fa fa-fw fa-expand"></i></a>
+
+                                </div>
+                                <div class="card-body">
+                                    <div class="table-responsive mb-3" id="table-fluid">
+
+                                    </div>
+                                    <div id="chartFluid"></div>
+
+                                </div>
+                                <!-- END card-body -->
+                            </div>
                         </div>
-                        <i class="fa fa-plus" data-bs-toggle="modal" data-bs-target="#modal-skin"></i>
-                        <a href="javascript:;" class="text-secondary"><i class="fa fa-redo"></i></a>
-                        <a href="#" data-toggle="card-expand"
-                            class="text-white text-opacity-20 text-decoration-none"><i class="fa fa-fw fa-expand"></i></a>
-
                     </div>
-                    <div class="card-body">
-                        <div class="table-responsive" id="table-skin">
-
-                        </div>
-
-
-                    </div>
-                    <!-- END card-body -->
                 </div>
-            </div>
-            <div class="col-lg-6" id="invasive">
-                <div class="card h-100 mt-2">
-                    <!-- BEGIN card-body -->
-                    <div class="card-header bg-gradient bg-dark d-flex gap-2 align-items-center">
+                <div class="accordion-item">
+                    <h5 class="accordion-header" id="headingFour">
+                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseFour">
+                          <span class="fw-bold fs-5"> Neurological Assessment </span>
+                        </button>
+                    </h5>
+                    <div id="collapseFour" class="accordion-collapse collapse" data-bs-parent="#accordionExample">
+                        <div class="col-lg-12">
+                            <div class="card h-100 mt-2">
+                                <div id="neuroChart"></div>
+                                <!-- BEGIN card-body -->
+                                <div class="card-header bg-danger d-flex gap-2 align-items-center">
 
-                        <div class="flex-grow-1">
-                            <h5 class="mb-1 text-white">Invasive Lines</h5>
+                                    <div class="flex-grow-1">
+                                        <h5 class="mb-1"></h5>
 
+                                    </div>
+                                    <i class="fa fa-plus cursor-pointer" data-bs-toggle="modal" data-bs-target="#modal-neuro"></i>
+                                    <a href="javascript:;" class="text-secondary"><i class="fa fa-redo"></i></a>
+                                    <a href="#" data-toggle="card-expand"
+                                        class="text-white text-opacity-20 text-decoration-none"><i class="fa fa-fw fa-expand"></i></a>
+
+                                </div>
+                                <div class="card-body">
+                                    <div class="table-responsive" id="neuro-chart"></div>
+
+
+
+                                </div>
+                                <!-- END card-body -->
+                            </div>
                         </div>
-                        <i class="fa fa-plus" data-bs-toggle="modal" data-bs-target="#modal-invasive"></i>
-                        <a href="javascript:;" class="text-secondary"><i class="fa fa-redo"></i></a>
-                        <a href="#" data-toggle="card-expand"
-                            class="text-white text-opacity-20 text-decoration-none"><i class="fa fa-fw fa-expand"></i></a>
-
                     </div>
-                    <div class="card-body">
-                        <div class="table-responsive" id="table-invasive">
-
-                        </div>
-
-
-                    </div>
-                    <!-- END card-body -->
                 </div>
-            </div>
-            <div class="col-lg-6" id="progress">
-                <div class="card h-100 mt-2">
-                    <!-- BEGIN card-body -->
-                    <div class="card-header bg-gradient bg-gray-200 d-flex gap-2 align-items-center">
+                <div class="accordion-item">
+                    <h5 class="accordion-header" id="headingFive">
+                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseFive">
+                          <span class="fw-bold fs-5"> Medications </span>
+                        </button>
+                    </h5>
+                    <div id="collapseFive" class="accordion-collapse collapse" data-bs-parent="#accordionExample">
+                        <div class="col-lg-12" id="med-card">
+                            <div class="card h-100 mt-2">
+                                <!-- BEGIN card-body -->
+                                <div class="card-header bg-gradient bg-warning-400 d-flex gap-2 align-items-center">
 
-                        <div class="flex-grow-1">
-                            <h5 class="mb-1">Progress Notes</h5>
+                                    <div class="flex-grow-1">
+                                        <h5 class="mb-1"></h5>
 
+                                    </div>
+                                    <i class="fa fa-plus" data-bs-toggle="modal" data-bs-target="#modal-medication"></i>
+                                    <a href="javascript:;" class="text-secondary"><i class="fa fa-redo"></i></a>
+                                    <a href="#" data-toggle="card-expand"
+                                        class="text-white text-opacity-20 text-decoration-none"><i class="fa fa-fw fa-expand"></i></a>
+
+                                </div>
+                                <div class="card-body">
+                                    <div class="table-responsive" id="table-medication">
+
+                                    </div>
+
+
+                                </div>
+                                <!-- END card-body -->
+                            </div>
                         </div>
-                        <i class="fa fa-plus" data-bs-toggle="modal" data-bs-target="#modal-progress"></i>
-                        <a href="javascript:;" class="text-secondary"><i class="fa fa-redo"></i></a>
-                        <a href="#" data-toggle="card-expand"
-                            class="text-white text-opacity-20 text-decoration-none"><i class="fa fa-fw fa-expand"></i></a>
-
                     </div>
-                    <div class="card-body">
-                        <div class="table-responsive" id="table-progress">
-
-                        </div>
-
-
-                    </div>
-                    <!-- END card-body -->
                 </div>
-            </div>
-            <div class="col-lg-6" id="seizure">
-                <div class="card h-100 mt-2">
-                    <!-- BEGIN card-body -->
-                    <div class="card-header bg-gradient bg-warning-200 d-flex gap-2 align-items-center">
+                <div class="accordion-item">
+                    <h5 class="accordion-header" id="headingSix">
+                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSix">
+                          <span class="fw-bold fs-5"> Investigations </span>
+                        </button>
+                    </h5>
+                    <div id="collapseSix" class="accordion-collapse collapse" data-bs-parent="#accordionExample">
+                        <div class="col-lg-12" id="lab-card">
+                            <div class="card h-100 mt-2">
+                                <!-- BEGIN card-body -->
+                                <div class="card-header bg-gradient bg-gray-400 d-flex gap-2 align-items-center">
 
-                        <div class="flex-grow-1">
-                            <h5 class="mb-1">Seizure Chart</h5>
+                                    <div class="flex-grow-1">
+                                        <h5 class="mb-1"></h5>
 
+                                    </div>
+                                    <i class="fa fa-plus" data-bs-toggle="modal" data-bs-target="#modal-lab"></i>
+                                    <a href="javascript:;" class="text-secondary"><i class="fa fa-redo"></i></a>
+                                    <a href="#" data-toggle="card-expand"
+                                        class="text-white text-opacity-20 text-decoration-none"><i class="fa fa-fw fa-expand"></i></a>
+
+                                </div>
+                                <div class="card-body">
+                                    <div class="table-responsive" id="table-lab">
+
+                                    </div>
+
+
+                                </div>
+                                <!-- END card-body -->
+                            </div>
                         </div>
-                        <i class="fa fa-plus" data-bs-toggle="modal" data-bs-target="#modal-seizure"></i>
-                        <a href="javascript:;" class="text-secondary"><i class="fa fa-redo"></i></a>
-                        <a href="#" data-toggle="card-expand"
-                            class="text-white text-opacity-20 text-decoration-none"><i class="fa fa-fw fa-expand"></i></a>
-
                     </div>
-                    <div class="card-body">
-                        <div class="table-responsive" id="table-seizure">
-
-                        </div>
-
-
-                    </div>
-                    <!-- END card-body -->
                 </div>
-            </div>
-            <div class="col-lg-6" id="nursing">
-                <div class="card h-100 mt-2">
-                    <!-- BEGIN card-body -->
-                    <div class="card-header bg-gradient bg-gray-100 d-flex gap-2 align-items-center">
+                <div class="accordion-item">
+                    <h5 class="accordion-header" id="headingSeven">
+                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSeven">
+                          <span class="fw-bold fs-5"> Nutrition </span>
+                        </button>
+                    </h5>
+                    <div id="collapseSeven" class="accordion-collapse collapse" data-bs-parent="#accordionExample">
+                        <div class="col-lg-12">
+                            <div class="card h-100 mt-2">
+                                <!-- BEGIN card-body -->
+                                <div class="card-header bg-gradient bg-teal-400 d-flex gap-2 align-items-center">
 
-                        <div class="flex-grow-1">
-                            <h5 class="mb-1">Nursing Assessment</h5>
+                                    <div class="flex-grow-1">
+                                        <h5 class="mb-1"></h5>
 
+                                    </div>
+                                    <i class="fa fa-plus" data-bs-toggle="modal" data-bs-target="#modal-nutrition"></i>
+                                    <a href="javascript:;" class="text-secondary"><i class="fa fa-redo"></i></a>
+                                    <a href="#" data-toggle="card-expand"
+                                        class="text-white text-opacity-20 text-decoration-none"><i class="fa fa-fw fa-expand"></i></a>
+
+                                </div>
+                                <div class="card-body">
+                                    <div class="table-responsive" id="table-nutrition">
+
+                                    </div>
+
+
+                                </div>
+                                <!-- END card-body -->
+                            </div>
                         </div>
-                        <i class="fa fa-plus" data-bs-toggle="modal" data-bs-target="#modal-daily"></i>
-                        <a href="javascript:;" class="text-secondary"><i class="fa fa-redo"></i></a>
-                        <a href="#" data-toggle="card-expand"
-                            class="text-white text-opacity-20 text-decoration-none"><i class="fa fa-fw fa-expand"></i></a>
-
                     </div>
-                    <div class="card-body">
-                        <div class="table-responsive" id="table-daily">
-
-                        </div>
-
-
-                    </div>
-                    <!-- END card-body -->
                 </div>
-            </div>
-            <div class="col-lg-6" id="physician">
-                <div class="card h-100 mt-2">
-                    <!-- BEGIN card-body -->
-                    <div class="card-header bg-gradient bg-warning-500 d-flex gap-2 align-items-center">
+                <div class="accordion-item">
+                    <h5 class="accordion-header" id="headingEight">
+                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseEight">
+                          <span class="fw-bold fs-5"> Renal Assessment </span>
+                        </button>
+                    </h5>
+                    <div id="collapseEight" class="accordion-collapse collapse" data-bs-parent="#accordionExample">
+                        <div class="col-lg-12">
+                            <div class="card h-100 mt-2">
+                                <!-- BEGIN card-body -->
+                                <div class="card-body">
+                                    <div class="d-flex mb-3 gap-1">
+                                        <div class="flex-grow-1">
+                                            <h5 class="mb-1"></h5>
 
-                        <div class="flex-grow-1">
-                            <h5 class="mb-1">Physician Order</h5>
+                                        </div>
 
+                                        <a href="javascript:;" class="text-secondary"><i class="fa fa-redo"></i></a>
+                                    </div>
+                                    <div id="table-renal" class="table-responsive"></div>
+                                </div>
+                                <!-- END card-body -->
+                            </div>
                         </div>
-                        <i class="fa fa-plus" data-bs-toggle="modal" data-bs-target="#modal-physician"></i>
-                        <a href="javascript:;" class="text-secondary"><i class="fa fa-redo"></i></a>
-                        <a href="#" data-toggle="card-expand"
-                            class="text-white text-opacity-20 text-decoration-none"><i class="fa fa-fw fa-expand"></i></a>
-
                     </div>
-                    <div class="card-body">
-                        <div class="table-responsive" id="table-physician">
+                </div>
+                <div class="accordion-item">
+                    <h5 class="accordion-header" id="headingNine">
+                        <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseNine">
+                          <span class="fw-bold fs-5"> Skin and Wound Care </span>
+                        </button>
+                    </h5>
+                    <div id="collapseNine" class="accordion-collapse collapse" data-bs-parent="#accordionExample">
+                        <div class="col-lg-12" id="skin">
+                            <div class="card h-100 mt-2">
+                                <!-- BEGIN card-body -->
+                                <div class="card-header bg-gradient bg-purple d-flex gap-2 align-items-center">
 
+                                    <div class="flex-grow-1">
+                                        <h5 class="mb-1 text-white"></h5>
+
+                                    </div>
+                                    <i class="fa fa-plus" data-bs-toggle="modal" data-bs-target="#modal-skin"></i>
+                                    <a href="javascript:;" class="text-secondary"><i class="fa fa-redo"></i></a>
+                                    <a href="#" data-toggle="card-expand"
+                                        class="text-white text-opacity-20 text-decoration-none"><i class="fa fa-fw fa-expand"></i></a>
+
+                                </div>
+                                <div class="card-body">
+                                    <div class="table-responsive" id="table-skin">
+
+                                    </div>
+
+
+                                </div>
+                                <!-- END card-body -->
+                            </div>
                         </div>
-
-
                     </div>
-                    <!-- END card-body -->
+                </div>
+                <div class="accordion-item">
+                    <h5 class="accordion-header" id="headingTen">
+                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTen">
+                          <span class="fw-bold fs-5"> Invasive Lines </span>
+                        </button>
+                    </h5>
+                    <div id="collapseTen" class="accordion-collapse collapse" data-bs-parent="#accordionExample">
+                        <div class="col-lg-12" id="invasive">
+                            <div class="card h-100 mt-2">
+                                <!-- BEGIN card-body -->
+                                <div class="card-header bg-gradient bg-dark d-flex gap-2 align-items-center">
+
+                                    <div class="flex-grow-1">
+                                        <h5 class="mb-1 text-white"></h5>
+
+                                    </div>
+                                    <i class="fa fa-plus" data-bs-toggle="modal" data-bs-target="#modal-invasive"></i>
+                                    <a href="javascript:;" class="text-secondary"><i class="fa fa-redo"></i></a>
+                                    <a href="#" data-toggle="card-expand"
+                                        class="text-white text-opacity-20 text-decoration-none"><i class="fa fa-fw fa-expand"></i></a>
+
+                                </div>
+                                <div class="card-body">
+                                    <div class="table-responsive" id="table-invasive">
+
+                                    </div>
+
+
+                                </div>
+                                <!-- END card-body -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="accordion-item">
+                    <h5 class="accordion-header" id="headingEleven">
+                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseEleven">
+                          <span class="fw-bold fs-5"> Progress Notes </span>
+                        </button>
+                    </h5>
+                    <div id="collapseEleven" class="accordion-collapse collapse" data-bs-parent="#accordionExample">
+                        <div class="col-lg-12" id="progress">
+                            <div class="card h-100 mt-2">
+                                <!-- BEGIN card-body -->
+                                <div class="card-header bg-gradient bg-gray-200 d-flex gap-2 align-items-center">
+
+                                    <div class="flex-grow-1">
+                                        <h5 class="mb-1"></h5>
+
+                                    </div>
+                                    <i class="fa fa-plus" data-bs-toggle="modal" data-bs-target="#modal-progress"></i>
+                                    <a href="javascript:;" class="text-secondary"><i class="fa fa-redo"></i></a>
+                                    <a href="#" data-toggle="card-expand"
+                                        class="text-white text-opacity-20 text-decoration-none"><i class="fa fa-fw fa-expand"></i></a>
+
+                                </div>
+                                <div class="card-body">
+                                    <div class="table-responsive" id="table-progress">
+
+                                    </div>
+
+
+                                </div>
+                                <!-- END card-body -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="accordion-item">
+                    <h5 class="accordion-header" id="headingTwelve">
+                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTwelve">
+                          <span class="fw-bold fs-5">Seizure Chart</span>
+                        </button>
+                    </h5>
+                    <div id="collapseTwelve" class="accordion-collapse collapse" data-bs-parent="#accordionExample">
+                        <div class="col-lg-12" id="seizure">
+                            <div class="card h-100 mt-2">
+                                <!-- BEGIN card-body -->
+                                <div class="card-header bg-gradient bg-warning-200 d-flex gap-2 align-items-center">
+
+                                    <div class="flex-grow-1">
+                                        <h5 class="mb-1"></h5>
+
+                                    </div>
+                                    <i class="fa fa-plus" data-bs-toggle="modal" data-bs-target="#modal-seizure"></i>
+                                    <a href="javascript:;" class="text-secondary"><i class="fa fa-redo"></i></a>
+                                    <a href="#" data-toggle="card-expand"
+                                        class="text-white text-opacity-20 text-decoration-none"><i class="fa fa-fw fa-expand"></i></a>
+
+                                </div>
+                                <div class="card-body">
+                                    <div class="table-responsive" id="table-seizure">
+
+                                    </div>
+
+
+                                </div>
+                                <!-- END card-body -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="accordion-item">
+                    <h5 class="accordion-header" id="headingThirteen">
+                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseThirteen">
+                          <span class="fw-bold fs-5"> Fluid Balance </span>
+                        </button>
+                    </h5>
+                    <div id="collapseThirteen" class="accordion-collapse collapse" data-bs-parent="#accordionExample">
+                        <div class="col-lg-12" id="nursing">
+                            <div class="card h-100 mt-2">
+                                <!-- BEGIN card-body -->
+                                <div class="card-header bg-gradient bg-gray-100 d-flex gap-2 align-items-center">
+
+                                    <div class="flex-grow-1">
+                                        <h5 class="mb-1">Nursing Assessment</h5>
+
+                                    </div>
+                                    <i class="fa fa-plus" data-bs-toggle="modal" data-bs-target="#modal-daily"></i>
+                                    <a href="javascript:;" class="text-secondary"><i class="fa fa-redo"></i></a>
+                                    <a href="#" data-toggle="card-expand"
+                                        class="text-white text-opacity-20 text-decoration-none"><i class="fa fa-fw fa-expand"></i></a>
+
+                                </div>
+                                <div class="card-body">
+                                    <div class="table-responsive" id="table-daily">
+
+                                    </div>
+
+
+                                </div>
+                                <!-- END card-body -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="accordion-item">
+                    <h5 class="accordion-header" id="headingFour">
+                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseFour">
+                          <span class="fw-bold fs-5"> Physician Order </span>
+                        </button>
+                    </h5>
+                    <div id="collapseFour" class="accordion-collapse collapse" data-bs-parent="#accordionExample">
+                        <div class="col-lg-12" id="physician">
+                            <div class="card h-100 mt-2">
+                                <!-- BEGIN card-body -->
+                                <div class="card-header bg-gradient bg-warning-500 d-flex gap-2 align-items-center">
+
+                                    <div class="flex-grow-1">
+                                        <h5 class="mb-1"></h5>
+
+                                    </div>
+                                    <i class="fa fa-plus" data-bs-toggle="modal" data-bs-target="#modal-physician"></i>
+                                    <a href="javascript:;" class="text-secondary"><i class="fa fa-redo"></i></a>
+                                    <a href="#" data-toggle="card-expand"
+                                        class="text-white text-opacity-20 text-decoration-none"><i class="fa fa-fw fa-expand"></i></a>
+
+                                </div>
+                                <div class="card-body">
+                                    <div class="table-responsive" id="table-physician">
+
+                                    </div>
+
+
+                                </div>
+                                <!-- END card-body -->
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
 

@@ -100,7 +100,7 @@
                         <div class="col-md-4 mb-3">
                             <div class="input-group bootstrap-timepicker timepicker">
                                 <span class="input-group-text" id="addon-wrapping">Hour Recorded</span>
-                                <input id="timepicker-default-cardio" type="text" class="form-control timepickerAcross" name="hour_taken">
+                                <input id="timepicker-default-cardio" type="text" class="form-control timepickerAcross" name="hour_taken" required>
                                 <span class="input-group-addon input-group-text">
                                     <i class="fa fa-clock"></i>
                                 </span>
