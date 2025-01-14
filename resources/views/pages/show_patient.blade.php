@@ -599,7 +599,7 @@
                                     '<button type="button" data-id="' + value.id +
                                     '"data-name="' + value.lab_test +
                                     '" class="result btn btn-primary btn-sm">Mark test as received</button>' :
-                                    '<i class="fas fa-check text-success"></i>';
+                                    '';
                                 let result_received = (value.result_received == 1) ?
                                     '<i class="fas fa-check text-success"></i>' :
                                     '<i class="fas fa-times text-danger"></i>';
@@ -941,7 +941,7 @@
             getProgressData();
             getPhysicianData();
             getSkinData();
-            $(document).on('click', '.result', function() {
+            $('#table-lab').on('click', '.result', function() {
                 let id = $(this).data('id');
 
                 $('#collectResult').val(id);
@@ -1150,34 +1150,73 @@
             const fluid_names = [];
             const fluid_directions = [];
             const fluid_volumes = [];
+
              $('#select-fluid').on('change', function() {
                 if ($(this).val() == 'others') {
                     $('#new-fluid').show();
                 } else {
                     $('#new-fluid').hide();
                     let fluid_array = $(this).val().split(',');
-                    let fluid_name = fluid_array[0];
-                    let fluid_direction = fluid_array[1];
+                    fluid_name = fluid_array[0];
+                    fluid_direction = fluid_array[1];
+
                 }
 
 
             });
+            $('#fluid-volume').on('blur', function() {
+                fluid_volume = $(this).val();
+            });
+            $('#fluid-type-name').on('blur', function() {
+                fluid_name = $(this).val();                
+            });
+            $('#fluid-type-direction').on('change', function() {
+                fluid_direction = $(this).val();
+                console.log(fluid_direction);                
+            });
             $('#fluid-record-add').on('click', function() {
+                
                 rowIdx++;
                 if(fluid_name && fluid_direction && fluid_volume){
+                    let occurence = fluidNameCount(fluid_names, fluid_name);
+                    if(occurence > 0){
+                        $('#toast-1 .toast-body').html('Fluid already added');
+                        $('#toast-1').toast('show');
+                        return;
+                    }
+                    fluid_names.push(fluid_name);
+                    fluid_directions.push(fluid_direction);
+                    fluid_volumes.push(fluid_volume);
                     const row = `<tr id="row-${rowIdx}">
                     <td>${fluid_name}</td>
                     <td>${fluid_volume}</td>
-                    <td>${fluid_direction}</td>
+                    <td>${fluid_direction}
+                        <input type="hidden" name="fluid_name[]" value="${fluid_name}">
+                        <input type="hidden" name="fluid_volume[]" value="${fluid_volume}">
+                        <input type="hidden" name="fluid_direction[]" value="${fluid_direction}">   
+                    </td>
+
                     <td>
                         <button type="button" class="btn btn-danger" onclick="removeFluidRecord(${rowIdx})">Remove</button>
                     </td>
                 </tr>`;
                 $('#fluid-record-table tbody').append(row);
+                }else{
+                    $('fluid-error').show();
+                    setTimeout(() => {
+                        $('fluid-error').hide();
+                    }, 3000);
                 }
+                console.log(fluid_name, fluid_direction, fluid_volume, rowIdx, 'fluid add record clicked');
 
 
-            })
+            });
+            function removeFluidRecord(rowId){
+                $(`#row-${rowId}`).remove();
+            }
+            function fluidNameCount(arr, element){
+                return arr.filter(item => item === element).length;
+            }
             $('#fluid-save-spinner').hide();
             $('#fluid-form').submit(function(event) {
                 event.preventDefault(); // Prevent default form submission
@@ -1688,40 +1727,42 @@
                 <div class="accordion-item">
                     <h5 class="accordion-header bg-dark" id="headingTwo">
                         <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTwo">
-                          <span class="fw-bold fs-5 text-danger"> Respiratory Assessment </span>
+                          <span class="fw-bold fs-5"> Respiratory Assessment </span>
                         </button>
                     </h5>
                     <div id="collapseTwo" class="accordion-collapse collapse" data-bs-parent="#accordionExample">
-                        <div class="col-lg-12" id="resp-card">
-                            <div class="card h-100 mt-2">
-                                <div class="card-header bg-dark d-flex align-items-center">
-                                    <div class="flex-grow-1">
-                                        <h5 class="mb-1 text-white"></h5>
+                        <div class="accordion-body">
+                            <div class="col-lg-12" id="resp-card">
+                                <div class="card h-100 mt-2">
+                                    <div class="card-header bg-dark d-flex align-items-center">
+                                        <div class="flex-grow-1">
+                                            <h5 class="mb-1 text-white"></h5>
+                                        </div>
+                                        <div class="d-flex gap-2 align-items-center">
+
+                                            <button class="btn btn-sm btn-outline-light"><i class="fa fa-plus text-white cursor-pointer" data-bs-toggle="modal" data-bs-target="#modal-resp"></i></button>
+                                            <a href="javascript:;" class="text-secondary"><i
+                                                    class="fa fa-redo"></i></a>
+                                            <a href="#" data-toggle="card-expand"
+                                                class="text-white text-opacity-20 text-decoration-none"><i
+                                                    class="fa fa-fw fa-expand"></i></a>
+                                        </div>
                                     </div>
-                                    <div class="d-flex gap-2 align-items-center">
 
-                                         <button class="btn btn-sm btn-outline-light"><i class="fa fa-plus text-white cursor-pointer" data-bs-toggle="modal" data-bs-target="#modal-resp"></i></button>
-                                        <a href="javascript:;" class="text-secondary"><i
-                                                class="fa fa-redo"></i></a>
-                                        <a href="#" data-toggle="card-expand"
-                                            class="text-white text-opacity-20 text-decoration-none"><i
-                                                class="fa fa-fw fa-expand"></i></a>
+
+                                    <!-- BEGIN card-body -->
+                                    <div class="card-body">
+
+                                                <div class="table-responsive mb-3" id="table-resp-table">
+
+                                                </div>
+
+
+
                                     </div>
-                                </div>
-
-
-                                <!-- BEGIN card-body -->
-                                <div class="card-body">
-
-                                            <div class="table-responsive mb-3" id="table-resp-table">
-
-                                            </div>
-
-
+                                    <!-- END card-body -->
 
                                 </div>
-                                <!-- END card-body -->
-
                             </div>
                         </div>
                     </div>
@@ -1924,7 +1965,7 @@
                 </div>
                 <div class="accordion-item">
                     <h5 class="accordion-header" id="headingNine">
-                        <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseNine">
+                        <button class="accordion-button collapse" type="button" data-bs-toggle="collapse" data-bs-target="#collapseNine">
                           <span class="fw-bold fs-5"> Skin and Wound Care </span>
                         </button>
                     </h5>
@@ -2061,7 +2102,7 @@
                 <div class="accordion-item">
                     <h5 class="accordion-header" id="headingThirteen">
                         <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseThirteen">
-                          <span class="fw-bold fs-5"> Fluid Balance </span>
+                          <span class="fw-bold fs-5"> Nursing Assessment </span>
                         </button>
                     </h5>
                     <div id="collapseThirteen" class="accordion-collapse collapse" data-bs-parent="#accordionExample">
@@ -2071,7 +2112,7 @@
                                 <div class="card-header bg-gradient bg-gray-100 d-flex gap-2 align-items-center">
 
                                     <div class="flex-grow-1">
-                                        <h5 class="mb-1">Nursing Assessment</h5>
+                                        <h5 class="mb-1"></h5>
 
                                     </div>
                                     <i class="fa fa-plus" data-bs-toggle="modal" data-bs-target="#modal-daily"></i>
@@ -2093,12 +2134,12 @@
                     </div>
                 </div>
                 <div class="accordion-item">
-                    <h5 class="accordion-header" id="headingFour">
-                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseFour">
+                    <h5 class="accordion-header" id="headingFourteen">
+                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseFourteen">
                           <span class="fw-bold fs-5"> Physician Order </span>
                         </button>
                     </h5>
-                    <div id="collapseFour" class="accordion-collapse collapse" data-bs-parent="#accordionExample">
+                    <div id="collapseFourteen" class="accordion-collapse collapse" data-bs-parent="#accordionExample">
                         <div class="col-lg-12" id="physician">
                             <div class="card h-100 mt-2">
                                 <!-- BEGIN card-body -->

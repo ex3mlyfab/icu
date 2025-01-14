@@ -14,7 +14,7 @@
                     <input type="hidden" name="patient_care_id" value="{{$patient->latestPatientCare->id}}" >
 
                     <div class="row">
-                        <div class="col-md-4 mb-3">
+                        <div class="col-md-12 col-lg-4 mb-3">
                             <div class="input-group flex-nowrap">
                                 <span class="input-group-text" id="addon-wrappingseizure">Description</span>
                                 <input type="text" id="seizure" class="form-control" name="description"
@@ -22,7 +22,7 @@
 
                             </div>
                         </div>
-                        <div class="col-md-4 mb-3">
+                        <div class="col-md-12 col-lg-4 mb-3">
                             <div class="input-group flex-nowrap">
                                 <span class="input-group-text" id="addon-intervention">Intervention</span>
                                 <input type="text" class="form-control" name="intervention"
@@ -30,7 +30,7 @@
 
                             </div>
                         </div>
-                        <div class="col-md-4 mb-3">
+                        <div class="col-md-12 col-lg-4 mb-3">
                             <div class="input-group flex-nowrap">
                                 <span class="input-group-text" id="addon-wrapping-duration">Duration</span>
                                 <input type="text" class="form-control" name="durations"
@@ -39,7 +39,7 @@
                             </div>
                         </div>
 
-                        <div class="col-md-4 mb-3">
+                        <div class="col-md-12 col-lg-4 mb-3">
                             <div class="input-group bootstrap-timepicker timepicker">
                                 <span class="input-group-text" id="addon-wrapping-time">Time Recorded</span>
                                 <input id="timepicker-default-seizure" type="text" class="form-control  timepickerAcross" name="hour_taken">

@@ -11,37 +11,38 @@
                 <div class="modal-body">
                     @csrf
                     <input type="hidden" name="patient_care_id" value="{{$patient->latestPatientCare->id }}">
+                    <div id="fluid-add">
+                        <div class="row">
+                            <div class="col-xl-6">
+                                <div class="mb-3" >
+                                    <label class="form-label">Select Fluid <span class="text-danger">*</span></label>
+                                    <select class="form-select" id="select-fluid" name="fluid_select">
 
-                    <div class="row">
-                        <div class="col-xl-6">
-                            <div class="mb-3" >
-                                <label class="form-label">Select Fluid <span class="text-danger">*</span></label>
-                                <select class="form-select" id="select-fluid" name="fluid_select">
+                                    </select>
 
-                                </select>
-
+                                </div>
                             </div>
                         </div>
-                    </div>
-                    <hr>
-                    <div class="row" id="new-fluid">
-                        <div class="col-md-6 mb-3">
-                            <div class="input-group flex-nowrap">
-                                <span class="input-group-text" id="addon-wrappingFluid">Fluid Name</span>
-                                <input type="text" id="fluid_name" class="form-control" name="fluid_name"
+                        <hr>
+                        <div class="row" id="new-fluid">
+                            <div class="col-md-6 mb-3">
+                                <div class="input-group flex-nowrap">
+                                    <span class="input-group-text" id="addon-wrappingFluid">Fluid Name</span>
+                                    <input type="text" id="fluid-type-name" class="form-control fluid-name" name="fluid_name"
                                     placeholder="Fluid Name">
 
+                                </div>
                             </div>
-                        </div>
-                        <div class="col-md-6 mb-3">
-                            <div class="input-group flex-nowrap">
-                                <span class="input-group-text" id="addon-2Fluid">Direction</span>
-                                <select class="form-select form-select-sm" name="direction" id="fluid_direction" onchange="">
-                                    <option selected>Select Direction</option>
-                                    <option value="input">Intake</option>
-                                    <option value="output">Output</option>
-								</select>
+                            <div class="col-md-6 mb-3">
+                                <div class="input-group flex-nowrap">
+                                    <span class="input-group-text" id="addon-2Fluid">Direction</span>
+                                    <select class="form-select form-select-sm fluid-direction" name="direction" id="fluid-type-direction">
+                                        <option selected>Select Direction</option>
+                                        <option value="input">Input</option>
+                                        <option value="output">Output</option>
+                                    </select>
 
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -50,12 +51,15 @@
                             <div class="input-group flex-nowrap">
                                 <span class="input-group-text" id="addon-wrapping">Volume(ml)</span>
                                 <input type="number" class="form-control" name="volume"
-                                    placeholder="Volume" required>
+                                    placeholder="Volume" id="fluid-volume">
 
                             </div>
                         </div>
                         <div class="col-md-6">
-                            <button type="button" class="btn btn-primary" id="fluid-record-add"><i class="fa fa-plus"></i></button>
+                            
+                            <button type="button" class="btn btn-primary" id="fluid-record-add"><i class="fa fa-plus"></i> Add Fluid Record</button>
+                            <div class="text-danger fw-bolder fs-5 invisible" id="fluid-error"> Select all fluid name, direction and Volume!!! </div>
+
 
                         </div>
 

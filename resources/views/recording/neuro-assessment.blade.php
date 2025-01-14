@@ -14,63 +14,63 @@
                     <input type="hidden" name="patient_care_id" value="{{$patient->latestPatientCare->id}}" >
 
                     <div class="row gx-2 align-items-center border rounded p-2">
-                        <div class="col-md-4 mb-3 ">
+                        <div class="col-md-12 col-lg-4 mb-3 ">
                             <div class="form-group mb-3">
                                     <label class="form-label d-block fw-bold">Eyes Open</label>
                                     @foreach (\App\Enums\EyesOpenEnum::cases() as $eyeOpen)
                                     <div class="form-check">
-                                        <input class="form-check-input" type="radio" value="{{$eyeOpen->value}}" id="defaultRadio{{$eyeOpen->value }}" name="eyes_open">
-                                        <label class="form-check-label" for="defaultRadio{{$eyeOpen->value}}">{{$eyeOpen->name}}</label>
+                                        <input class="form-check-input" type="radio" value="{{$eyeOpen->value}}" id="defaultRadio-{{$eyeOpen->value}}" name="eyes_open" required>
+                                        <label class="form-check-label" for="defaultRadio-eyes{{$eyeOpen->value}}">{{$eyeOpen->name}}</label>
                                     </div>
                                     @endforeach
 
                             </div>
                             <hr>
                             <div class="form-group row">
-                                <label class="form-label col-md-2 d-block fw-bolder">Sedated</label>
-                                <div class="col-md-10">
+                                <label class="form-label col-md-5 d-block fw-bolder">Sedated</label>
+                                <div class="col-md-7">
                                 <div class="form-check">
-                                        <input class="form-check-input" type="radio" value="1" id="defaultRadio-sedated" name="sedated">
+                                        <input class="form-check-input" type="radio" value="1" id="defaultRadio-sedated" name="sedated" required>
                                         <label class="form-check-label" for="defaultRadio-sedated">Yes</label>
                                 </div>
                                 <div class="form-check">
-                                        <input class="form-check-input" type="radio" value="0" id="defaultRadio-sedated_no" name="sedated" >
+                                        <input class="form-check-input" type="radio" value="0" id="defaultRadio-sedated_no" name="sedated" required >
                                         <label class="form-check-label" for="defaultRadio-sedated_no">No</label>
                                 </div>
                                 </div>
                             </div>
                         </div>
-                        <div class="col-md-4 mb-3 border-start ps-1">
+                        <div class="col-md-12 col-lg-4 mb-3 border-start ps-1">
                            <div class="form-group ">
                                     <label class="form-label d-block fw-bold">Best Verbal Response</label>
                                     @foreach (\App\Enums\VerbalResponseEnum::cases() as $verbalResponse)
                                     <div class="form-check">
-                                        <input class="form-check-input" type="radio" value="{{$verbalResponse->value}}" id="defaultRadio{{$verbalResponse->value }}" name="best_verbal_response">
-                                        <label class="form-check-label" for="defaultRadio{{$verbalResponse->value}}">{{$verbalResponse->name}}</label>
+                                        <input class="form-check-input" type="radio" value="{{$verbalResponse->value}}" id="defaultRadio-verbal{{$verbalResponse->value }}" name="best_verbal_response" required>
+                                        <label class="form-check-label" for="defaultRadio-verbal{{$verbalResponse->value}}">{{$verbalResponse->name}}</label>
                                         </div>
                                     @endforeach
                             </div>
                             <hr>
                             <div class="form-group row">
-                                <label class="form-label col-md-2 d-block fw-bolder">Intubated</label>
-                                <div class="col-md-10">
+                                <label class="form-label col-md-5 d-block fw-bolder">Intubated</label>
+                                <div class="col-md-7">
                                 <div class="form-check">
-                                        <input class="form-check-input" type="radio" value="1" id="defaultRadio-intubated" name="intubated">
+                                        <input class="form-check-input" type="radio" value="1" id="defaultRadio-intubated" name="intubated" required>
                                         <label class="form-check-label" for="defaultRadio-intubated">Yes</label>
                                 </div>
                                 <div class="form-check">
-                                        <input class="form-check-input" type="radio" value="0" id="defaultRadio-intubated_no" name="intubated" >
+                                        <input class="form-check-input" type="radio" value="0" id="defaultRadio-intubated_no" name="intubated" required>
                                         <label class="form-check-label" for="defaultRadio-intubated_no">No</label>
                                 </div>
                                 </div>
                             </div>
                         </div>
-                        <div class="col-md-4 mb-3 border-start ps-1">
+                        <div class="col-md-12 col-lg-4 mb-3 border-start ps-1">
                             <div class="form-group mb-3 ">
                                     <label class="form-label d-block fw-bold">Best Motor Response</label>
                                     @foreach (\App\Enums\MotorResponseEnum::cases() as $motor)
                                     <div class="form-check">
-                                        <input class="form-check-input" type="radio" value="{{$motor->value}}" id="defaultRadio{{$motor->value }}" name="best_motor_response">
+                                        <input class="form-check-input" type="radio" value="{{$motor->value}}" id="defaultRadio-motor{{$motor->value }}" name="best_motor_response" required>
                                         <label class="form-check-label" for="defaultRadio{{$motor->value}}">{{$motor->name}}</label>
                                         </div>
                                     @endforeach
@@ -79,7 +79,7 @@
                     </div>
                     <div class="row align-items-center  border rounded ps-2">
 
-                        <div class="col-md-4 mb-3 border-start pl-2">
+                        <div class="col-md-12 col-lg-4 mb-3 border-start pl-2">
                             <div class="form-group mb-3 rounded">
                                     <label class="form-label d-block fw-bold">Sedation Score(Ramsey)</label>
                                     @foreach (\App\Enums\SedationScoreEnum::cases() as $sedation)
@@ -90,7 +90,7 @@
                                     @endforeach
                             </div>
                         </div>
-                        <div class="col-md-4 mb-3 pl-2 border-start">
+                        <div class="col-md-12 col-lg-4 mb-3 pl-2 border-start">
                             <div class="form-group mb-3 rounded">
 
                                 <label class="form-label">Pupil Diameter <span class="text-danger">*</span></label>
@@ -101,7 +101,7 @@
                                                     <span class="range-indicator" id="value-pupil-diameter"></span>
                             </div>
                         </div>
-                         <div class="col-md-4 mb-3">
+                         <div class="col-md-12 col-lg-4 mb-3">
                             <div class="input-group bootstrap-timepicker timepicker">
                                 <span class="input-group-text" id="addon-wrapping">Hour Recorded</span>
                                 <input id="timepicker-default23" type="text" class="form-control timepickerAcross" name="hour_taken">

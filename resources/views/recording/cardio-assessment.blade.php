@@ -14,7 +14,7 @@
                     <input type="hidden" name="patient_care_id" value="{{$patient->latestPatientCare->id}}" >
 
                     <div class="row">
-                        <div class="col-md-4 mb-3">
+                        <div class="col-md-12 col-lg-6 mb-3">
                             <div class="input-group flex-nowrap">
                                 <span class="input-group-text" id="addon-wrapping1">Heart-Rate</span>
                                 <input type="number" id="heart_rate" class="form-control" name="heart_rate"
@@ -22,7 +22,7 @@
 
                             </div>
                         </div>
-                        <div class="col-md-4 mb-3">
+                        <div class="col-md-12 col-lg-6 mb-3">
                             <div class="input-group flex-nowrap">
                                 <span class="input-group-text" id="addon-2">BP-Systolic</span>
                                 <input type="number" class="form-control" name="blood_pressure_systolic"
@@ -30,7 +30,7 @@
 
                             </div>
                         </div>
-                        <div class="col-md-4 mb-3">
+                        <div class="col-md-12 col-lg-4 mb-3">
                             <div class="input-group flex-nowrap">
                                 <span class="input-group-text" id="addon-wrapping">BP-Diastolic</span>
                                 <input type="number" class="form-control" name="blood_pressure_diastolic"
@@ -38,14 +38,14 @@
 
                             </div>
                         </div>
-                        <div class="col-md-4 mb-3">
+                        <div class="col-md-12 col-lg-4 mb-3">
                             <div class="input-group flex-nowrap">
                                 <span class="input-group-text" id="addon-wrapping">Temperature <sup>0</sup>C</span>
                                 <input type="number" class="form-control" name="temperature" placeholder="temperature">
 
                             </div>
                         </div>
-                        <div class="col-md-4 mb-3">
+                        <div class="col-md-12 col-lg-4 mb-3">
                             <div class="input-group flex-nowrap">
                                 <span class="input-group-text" id="addon-wrapping">Respiratory Rate</span>
                                 <input type="number" class="form-control" name="respiratory_rate"
@@ -53,35 +53,35 @@
 
                             </div>
                         </div>
-                        <div class="col-md-4 mb-3">
+                        <div class="col-md-12 col-lg-4mb-3">
                             <div class="input-group flex-nowrap">
                                 <span class="input-group-text" id="addon-wrapping">SPO<sub>2</sub></span>
                                 <input type="number" class="form-control" name="spo2" placeholder="SPO2">
 
                             </div>
                         </div>
-                        <div class="col-md-4 mb-3">
+                        <div class="col-md-12 col-lg-4 mb-3">
                             <div class="input-group flex-nowrap">
                                 <span class="input-group-text" id="addon-wrapping">MAP</span>
                                 <input type="number" class="form-control" name="map" placeholder="MAP">
 
                             </div>
                         </div>
-                        <div class="col-md-4 mb-3">
+                        <div class="col-md-12 col-lg-4 mb-3">
                             <div class="input-group flex-nowrap">
                                 <span class="input-group-text" id="addon-wrapping">CVP</span>
                                 <input type="number" class="form-control" name="cvp" placeholder="CVP">
 
                             </div>
                         </div>
-                        <div class="col-md-4 mb-3">
+                        <div class="col-md-12 col-lg-4 mb-3">
                             <div class="input-group flex-nowrap">
                                 <span class="input-group-text" id="addon-wrapping">Rhythm</span>
                                 <input type="number" class="form-control" name="rhythm" placeholder="rhythm">
 
                             </div>
                         </div>
-                        <div class="col-md-4 mb-3">
+                        <div class="col-md-12 col-lg-4 mb-3">
                             <div class="input-group flex-nowrap">
                                 <span class="input-group-text" id="addon-wrapping">Peripheral Pulses</span>
                                 <input type="number" class="form-control" name="peripheral_pulses"
@@ -89,7 +89,7 @@
 
                             </div>
                         </div>
-                        <div class="col-md-4 mb-3">
+                        <div class="col-md-12 col-lg-4 mb-3">
                             <div class="input-group flex-nowrap">
                                 <span class="input-group-text" id="addon-wrapping">Capillary Refill Time</span>
                                 <input type="number" class="form-control" name="capillary_refill_time"
@@ -97,7 +97,7 @@
 
                             </div>
                         </div>
-                        <div class="col-md-4 mb-3">
+                        <div class="col-md-12 col-lg-4 mb-3">
                             <div class="input-group bootstrap-timepicker timepicker">
                                 <span class="input-group-text" id="addon-wrapping">Hour Recorded</span>
                                 <input id="timepicker-default-cardio" type="text" class="form-control timepickerAcross" name="hour_taken" required>

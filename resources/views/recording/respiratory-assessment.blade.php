@@ -10,7 +10,7 @@
                  <input type="hidden" name="patient_care_id" value="{{ $patient->latestPatientCare->id }}">
                  <div class="modal-body">
                      <div class="row">
-                         <div class="col-md-4 mb-3">
+                         <div class="col-md-12 col-lg-4 mb-3">
                              <div class="input-group flex-nowrap">
                                  <span class="input-group-text" id="addon-wrapping">Mode of Ventilation</span>
                                  <input type="text" class="form-control" name="mode_of_ventilation"
@@ -18,7 +18,7 @@
 
                              </div>
                          </div>
-                         <div class="col-md-4 mb-3">
+                         <div class="col-md-12 col-lg-4 mb-3">
                              <div class="input-group flex-nowrap">
                                  <span class="input-group-text" id="addon-wrapping">I.E Ration</span>
                                  <input type="text" class="form-control" name="i_e_ration"
@@ -26,14 +26,14 @@
 
                              </div>
                          </div>
-                         <div class="col-md-4 mb-3">
+                         <div class="col-md-12 col-lg-4 mb-3">
                              <div class="input-group flex-nowrap">
                                  <span class="input-group-text" id="addon-wrapping">fi02</span>
                                  <input type="number" class="form-control" name="fi02" placeholder="fi02">
 
                              </div>
                          </div>
-                         <div class="col-md-4 mb-3">
+                         <div class="col-md-12 col-lg-4 mb-3">
                              <div class="input-group flex-nowrap">
                                  <span class="input-group-text" id="addon-wrapping">Respiratory Effort</span>
                                  <input type="number" class="form-control" name="respiratory_effort"
@@ -41,14 +41,14 @@
 
                              </div>
                          </div>
-                         <div class="col-md-4 mb-3">
+                         <div class="col-md-12 col-lg-4 mb-3">
                              <div class="input-group flex-nowrap">
                                  <span class="input-group-text" id="addon-wrapping">PEEP</span>
                                  <input type="number" class="form-control" name="peep" placeholder="peep">
 
                              </div>
                          </div>
-                         <div class="col-md-4 mb-3">
+                         <div class="col-md-12 col-lg-4 mb-3">
                              <div class="input-group flex-nowrap">
                                  <span class="input-group-text" id="addon-wrapping">Patient Tidal Volume</span>
                                  <input type="number" class="form-control" name="patient_tidal_volume"
@@ -56,7 +56,7 @@
 
                              </div>
                          </div>
-                         <div class="col-md-4 mb-3">
+                         <div class="col-md-12 col-lg-4 mb-3">
                              <div class="input-group flex-nowrap">
                                  <span class="input-group-text" id="addon-wrapping">Ventilator Set Rate</span>
                                  <input type="number" class="form-control" name="ventilator_set_rate"
@@ -64,7 +64,7 @@
 
                              </div>
                          </div>
-                         <div class="col-md-4 mb-3">
+                         <div class="col-md-12 col-lg-4 mb-3">
                              <div class="input-group flex-nowrap">
                                  <span class="input-group-text" id="addon-wrapping">Endothracheal Intubation</span>
                                  <input type="number" class="form-control" name="endothracheal_intubation"
@@ -72,7 +72,7 @@
 
                              </div>
                          </div>
-                         <div class="col-md-4 mb-3">
+                         <div class="col-md-12 col-lg-4 mb-3">
                              <div class="input-group flex-nowrap">
                                  <span class="input-group-text" id="addon-wrapping">Pressure Support</span>
                                  <input type="string" class="form-control" name="pressure_support"
@@ -80,7 +80,7 @@
 
                              </div>
                          </div>
-                         <div class="col-md-4 mb-3">
+                         <div class="col-md-12 col-lg-4 mb-3">
                              <div class="input-group flex-nowrap">
                                  <span class="input-group-text" id="addon-wrapping">total_expired_volume</span>
                                  <input type="number" class="form-control" name="total_expired_volume"
@@ -89,7 +89,7 @@
                              </div>
                          </div>
 
-                         <div class="col-md-4 mb-3">
+                         <div class="col-md-12 col-lg-4 mb-3">
                              <div class="input-group bootstrap-timepicker timepicker">
                                  <input id="timepicker-respiratoy-respiratory" type="text" name="hour_taken"
                                      class="form-control timepickerAcross">
