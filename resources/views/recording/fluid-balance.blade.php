@@ -58,7 +58,7 @@
                         <div class="col-md-6">
                             
                             <button type="button" class="btn btn-primary" id="fluid-record-add"><i class="fa fa-plus"></i> Add Fluid Record</button>
-                            <div class="text-danger fw-bolder fs-5 invisible" id="fluid-error"> Select all fluid name, direction and Volume!!! </div>
+                            <div class="text-danger fs-5" id="fluid-error"> Select all fluid name, direction and Volume </div>
 
 
                         </div>

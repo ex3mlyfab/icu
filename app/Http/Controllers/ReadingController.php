@@ -1,7 +1,7 @@
 <?php
 
 namespace App\Http\Controllers;
-
+use Illuminate\Support\Arr;
 use App\Enums\EyesOpenEnum;
 use App\Enums\MotorResponseEnum;
 use App\Enums\SedationScoreEnum;
@@ -21,6 +21,7 @@ use App\Models\NeuroAssessment;
 use App\Models\Nutrition;
 use App\Models\PatientCare;
 use App\Models\RespiratoryAssessment;
+use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -259,36 +260,24 @@ class ReadingController extends Controller
     ], 200);
 
     }
-    public function storeFluid(FluidBalanceRequest $request)
+    public function storeFluid(Request $request)
     {
          $data = $request->all();
-        //  dd($data);
+         // dd($data);
+         $created_at = now();
+        foreach($data['fluid_name'] as $key => $fluid)
+        {
+            $fluidRecord = FluidBalance::create([
+                'patient_care_id' => $data['patient_care_id'],
+                'fluid' => $data["fluid_name"][$key],
+                'volume' => $data['fluid_volume'][$key],
+                'direction' => $data['fluid_direction'][$key],
+                'hour_taken' =>$created_at,
+                'created_by' => Auth::user()->id,
+                'time_of_fluid_balance' => $created_at,
+            ]);
+        }
 
-       if($data['fluid_select'] == 'others')
-       {
-           $fluidRecord = FluidBalance::create([
-            'patient_care_id' => $data['patient_care_id'],
-            'fluid' => $data['fluid_name'],
-            'volume' => $data['volume'],
-            'direction' => $data['direction'],
-            'hour_taken' => $data['hour_taken'],
-            'created_by' => Auth::user()->id,
-            'time_of_fluid_balance' => now(),
-           ]);
-       }else{
-            $fluidBefore = FluidBalance::where('patient_care_id', $data['patient_care_id'])
-                            ->where('fluid', $data['fluid_select'])->first();
-            // dump($fluidBefore);
-            $newrecord = FluidBalance::create([
-            'patient_care_id' => $data['patient_care_id'],
-            'fluid' => $fluidBefore->fluid,
-            'volume' => $data['volume'],
-            'direction' => $fluidBefore->direction,
-            'hour_taken' => $data['hour_taken'],
-            'created_by' => Auth::user()->id,
-            'time_of_fluid_balance' => now(),
-           ]);
-       }
 
 
         return response(['message'=> 'Fluid Reading Added successfully'], 200);
@@ -296,45 +285,91 @@ class ReadingController extends Controller
 
     public function showFluid(PatientCare $patientCare,$active_day)
     {
-        $fluid_reading = FluidBalance::where('patient_care_id', $patientCare->id)
+
+        $groupedFluid = FluidBalance::where('patient_care_id', $patientCare->id)
                         ->whereDate('created_at', Carbon::parse($active_day))
-                        ->orderBy('created_at', 'desc')
+                        ->orderBy('hour_taken')
                         ->get();
-        $fluid_directions = $fluid_reading->groupBy(function(FluidBalance $item){
-            return $item->direction;
-        });
-        $inputRow = $fluid_directions->unique('fliud')->count('input');
-        $outputRow = $fluid_directions->unique('fliud')->count('output');
 
-        $fluid_chart_input = [];
-        $fluid_chart_output = [];
-        foreach($fluid_directions as $direction => $details){
-            if($direction == 'input')
-            {
-                foreach($details as $detail){
-                    $fluid_chart_input['label'][] = $direction;
-                    $fluid_chart_input['fluid_name'][] = $detail->fluid;
-                    $fluid_chart_input['volume'][] = $detail->volume;
-                    $fluid_chart_input['created_by'][] = $detail->createdBy->fullname;
-                    $fluid_chart_input['created_at'][] = $detail->created_at->format('d/m/Y h:i A');
-                }
-            }else{
-                foreach($details as $detail){
-                    $fluid_chart_output['label'][] = $direction;
-                    $fluid_chart_output['fluid_name'][] = $detail->fluid;
-                    $fluid_chart_output['volume'][] = $detail->volume;
-                    $fluid_chart_output['created_by'][] = $detail->createdBy->fullname;
-                    $fluid_chart_output['created_at'][] = $detail->created_at->format('d/m/Y h:i A');
-                }
-            }
+        $groupedInputFluid = $groupedFluid
+                        ->where('direction', 'input')
+                        ->groupBy(function(FluidBalance $item) {
+                            return $item->hour_taken->format('H:i A');
+                        });
+        $groupedOutputFluid = $groupedFluid->where('direction', 'output')
+                        ->groupBy(function(FluidBalance $item) {
+                            return $item->hour_taken->format('H:i A');
+                        });
+        $allfluids = FluidBalance::where('patient_care_id', $patientCare->id)
+                        ->get();
+        $inputNumbers = $allfluids->where('direction', 'input')->unique('fluid')->count();
+        $outputNumbers = $allfluids->where('direction', 'output')->unique('fluid')->count();
+        $outputFluids = $allfluids->where('direction', 'output')->unique('fluid')->pluck('fluid')->toArray();
+        $inputFluids = $allfluids->where('direction', 'input')->unique('fluid')->pluck('fluid');
 
+       // To use the grouped users array:
+       $results = [];
+       foreach($groupedInputFluid as $key => $value)
+       {
+              $results['label'][] = $key;
+
+                // $results['fluids'][] = $value->pluck('volume')->toArray();
+                $presentFluids = $value->pluck('fluid')->toArray();
+                $presntVolumes = $value->pluck('volume')->toArray();
+                $inputFluidsVol =[];
+                foreach($inputFluids as $key=>$inputFluid)
+                {
+                    if(in_array($inputFluid, $presentFluids))
+                    {
+                        $inputFluidsVol[] = $presntVolumes[array_search($inputFluid, $presentFluids)];
+                    }else{
+                        $inputFluidsVol[] = 0;
+                    }
+
+                }
+                $results['fluids'][] =Arr::flatten($inputFluidsVol);
+                // Arr::map($inputFluidsVol, function($value, $key) use (&$results){
+                //     $results['fluids'][] = $value;
+                // });
+                $results['created_by'][] = $value[0]->createdBy->fullname;
+        }
+        $resultsOutput = [];
+        foreach($groupedOutputFluid as $key => $value)
+        {
+              $resultsOutput['label'][] = $key;
+
+                // $results['fluids'][] = $value->pluck('volume')->toArray();
+                $presentFluids = $value->pluck('fluid')->toArray();
+                $presntVolumes = $value->pluck('volume')->toArray();
+                $outputFluidsVol =[];
+                foreach($outputFluids as $key=>$outputFluid)
+                {
+                    if(in_array($outputFluid, $presentFluids))
+                    {
+                        $outputFluidsVol[] = $presntVolumes[array_search($outputFluid, $presentFluids)];
+                    }else{
+                        $outputFluidsVol[] = 0;
+                    }
+
+                }
+                Arr::map($outputFluidsVol, function($value, $key) use(&$resultOutput){
+                    $resultOutput['fluids'][] = $value;
+                });
+                $resultOutput['cretead_by'][] = $value[0]->createdBy->fullname;
         }
 
-        return response(['input' => $fluid_chart_input,
-                         'output' => $fluid_chart_output,
-                         'input_rows' => $inputRow,
-                         'output_rows' => $outputRow
+
+
+
+        return response(['data' => $results,
+                        'outputData' => $resultsOutput,
+                        'outputFluids' => $outputFluids,
+                        'inputFluids' => $inputFluids,
+                        'outputNumbers' => $outputNumbers,
+                        'inputNumbers' => $inputNumbers
                         ], 200);
+
+
     }
 
     public function getFluid(PatientCare $patientCare)
@@ -537,7 +572,9 @@ class ReadingController extends Controller
             $neuro_chart['Best Verbal Response'][] = $this->processVerbalCommandEnum($reading->best_verbal_response->value);
             $neuro_chart['sedation_score'][] = $this->processSwdationScoreEnum($reading->sedation_score);
             $neuro_chart['pupil_diameter'][] = $reading->pupil_diameter;
-            $neuro_chart['hour_taken'][] = $reading->hour_taken->format('H');
+            $neuro_chart['hour_taken'][] = $reading->hour_taken->format('H:i a');
+            $neuro_chart['Created by'][] = $reading->createdBy->fullname;
+
         }
         return response($neuro_chart, 200);
     }

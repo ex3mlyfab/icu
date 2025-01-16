@@ -25,9 +25,9 @@ class FluidBalanceRequest extends FormRequest
             'fluid_select'=> 'required',
             'patient_care_id' => 'required',
             'fluid_name' => 'required_if:fluid_select,others',
-            'volume' => 'required|numeric',
+            // 'volume' => 'required|numeric',
             'direction' => 'required_if:fluid_select,others',
-            'hour_taken' => 'required',
+
         ];
     }
 }
