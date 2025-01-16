@@ -323,10 +323,10 @@
                                         }
                                     })
                                 });
-
+                                console.log(outputData, 'from outputData');
                                 $.each(tableRows, function(key, value) {
                                     var row = $('<tr></tr>');
-                                    value.splice(1, 0, ...inputData.fluids[key]);
+                                    value.splice(1, 0, ...outputData.fluids[key]);
                                     for (var i = 0; i < value.length; i++) {
 
                                         row.append('<td class="text-center border-1">' + value[

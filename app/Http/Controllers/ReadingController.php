@@ -334,13 +334,13 @@ class ReadingController extends Controller
                 $results['created_by'][] = $value[0]->createdBy->fullname;
         }
         $resultsOutput = [];
-        foreach($groupedOutputFluid as $key => $value)
+        foreach($groupedOutputFluid as $key => $outputvalue)
         {
               $resultsOutput['label'][] = $key;
 
                 // $results['fluids'][] = $value->pluck('volume')->toArray();
-                $presentFluids = $value->pluck('fluid')->toArray();
-                $presntVolumes = $value->pluck('volume')->toArray();
+                $presentFluids = $outputvalue->pluck('fluid')->toArray();
+                $presntVolumes = $outputvalue->pluck('volume')->toArray();
                 $outputFluidsVol =[];
                 foreach($outputFluids as $key=>$outputFluid)
                 {
@@ -352,10 +352,8 @@ class ReadingController extends Controller
                     }
 
                 }
-                Arr::map($outputFluidsVol, function($value, $key) use(&$resultOutput){
-                    $resultOutput['fluids'][] = $value;
-                });
-                $resultOutput['cretead_by'][] = $value[0]->createdBy->fullname;
+                $resultsOutput['fluids'][] =Arr::flatten($outputFluidsVol);
+                $resultsOutput['cretead_by'][] = $value[0]->createdBy->fullname;
         }
 
 
