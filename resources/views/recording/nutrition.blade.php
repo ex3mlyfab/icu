@@ -46,14 +46,24 @@
                         </div>
 
                         <div class="col-md-6 mb-3">
-                            <div class="input-group bootstrap-timepicker timepicker">
-                                <span class="input-group-text" id="addon-wrapping">Hour Recorded</span>
-                                <input id="timepicker-default23" type="text" class="form-control timepickerAcross" name="hour_taken">
-                                <span class="input-group-addon input-group-text">
-                                    <i class="fa fa-clock"></i>
-                                </span>
-                            </div>
+                            <button type="button" class="btn btn-primary" id="nutrition-record-add"><i class="fa fa-plus"></i> Add Nutrition Record</button>
+                            <div class="text-danger fs-5" id="nutrition-error"> </div>
                         </div>
+                    </div>
+                     <div class="table-responsive">
+                        <table class="table table-bordered" id="nutrition-record-table">
+                            <thead id="nutrition-table-header">
+                                <tr>
+                                    <th>Nutrition Name</th>
+                                    <th>Calorific Intake</th>
+
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+
+                            </tbody>
+                        </table>
                     </div>
 
 

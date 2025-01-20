@@ -43,15 +43,27 @@
                             </div>
                         </div>
 
-                        <div class="col-md-6 mb-3">
-                            <div class="input-group bootstrap-timepicker timepicker">
-                                <span class="input-group-text" id="addon-wrapping">Hour Recorded</span>
-                                <input id="timepicker-default23" type="text" class="form-control timepickerAcross" name="hour_taken">
-                                <span class="input-group-addon input-group-text">
-                                    <i class="fa fa-clock"></i>
-                                </span>
-                            </div>
+                        <div class="col-md-6 mb-3  d-flex align-items-center justify-content-around">
+                            <div class="text-danger fs-5" id="medication-error"> </div>
+                            <button type="button" class="btn btn-primary" id="medication-record-add"><i class="fa fa-plus"></i> Add medication Record</button>
+
+
                         </div>
+                    </div>
+                    <div class="table-responsive">
+                        <table class="table table-bordered" id="medication-record-table">
+                            <thead id="medication-table-header">
+                                <tr>
+                                    <th>Medication Name</th>
+                                    <th>Dosasage</th>
+
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+
+                            </tbody>
+                        </table>
                     </div>
 
 

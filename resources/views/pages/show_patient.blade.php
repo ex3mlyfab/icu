@@ -220,7 +220,7 @@
                         let countOutput = data.outputNumbers;
 
                         // let inputData = data.input;
-                        console.log('from fluid data', inputData, 'countlength', countOutput);
+                        // console.log('from fluid data', inputData, 'countlength', countOutput);
                         if ($.isEmptyObject(inputData) && $.isEmptyObject(outputData)) {
 
                             $("#table-fluid").html('<h2 class="text-center">No Fluid Data Found</h2>');
@@ -248,9 +248,9 @@
                                 headerRow.append(`<th class="text-center"> Created By </th>`);
 
                                 headerIndicator.append(headerRow);
-                               +  inputtable.append(headerIndicator);
+                                inputtable.append(headerIndicator);
                                 // Create a table body rows
-                                var tablebody = $('<tbody></tbody>');
+
                                 const tableRows = {};
                                 let numberOfInputRows = inputData.label.length;
 
@@ -269,8 +269,7 @@
                                         }
                                     })
                                 });
-                                const newArray = inputData.fluids[0];
-                                console.log(newArray, 'from tableRows');
+
                                 $.each(tableRows, function(key, value) {
 
                                     var row = $('<tr></tr>');
@@ -278,7 +277,7 @@
                                     value.splice(1, 0, ...inputData.fluids[key]);
                                     for (var i = 0; i < value.length; i++) {
 
-                                        row.append('<td class="text-center border-1">' + value[
+                                        row.append('<td class="border-1">' + value[
                                             i] + '</td>');
                                     }
                                     inputtable.append(row);
@@ -507,7 +506,7 @@
                     success: function(data) {
                         // $('#chart-3').html(data.data);5
                         let medicationData = data.data;
-
+                        console.log(medicationData);
                         if ($.isEmptyObject(medicationData)) {
                             $("#table-medication").html(
                                 '<h2 class="text-center">No Medication Data Found</h2>');
@@ -516,28 +515,40 @@
                             var headerIndicator = $('<thead></thead>');
                             // Create a table header row
                             var headerRow = $('<tr></tr>');
-                            headerRow.append('<th class="bg-dark-300 text-light">label</th>');
-                            for (var i = 0; i < medicationData.label.length; i++) {
-
-                                headerRow.append('<th>' + medicationData.label[i] + '</th>');
-                            }
+                            headerRow.append('<th class="bg-dark-300 text-light">Recorded at</th>');
+                            $.each(data.medication_names, function(index, value) {
+                                headerRow.append('<th>' + value + '</th>');
+                            });
+                            headerRow.append(`<th class="text-center">Recorded by</th>`);
                             headerIndicator.append(headerRow);
                             table.append(headerIndicator);
-
-                            // Create table body rows
-                            for (var key in medicationData) {
-                                if (key !== "label") {
-                                    var row = $('<tr></tr>');
-                                    row.append('<th class="bg-dark-300 ps-2 text-white">' + key +
-                                        '</th>');
-                                    for (var i = 0; i < medicationData[key].length; i++) {
-
-                                        row.append('<td class="text-center">' + medicationData[key][i] +
-                                            '</td>');
+                            let tableBody = $('<tbody></tbody>');
+                            let tableRows = {};
+                            let numberOfRows = medicationData.label.length;
+                            $.each(medicationData, function(key, value) {
+                                $.each(value, function(index, item) {
+                                    for (let i = 0; i < numberOfRows; i++) {
+                                        if (!tableRows[i]) {
+                                            tableRows[i] = [];
+                                        }
+                                        if (i === index) {
+                                            if (key != "medications") {
+                                            tableRows[i].push(item);
+                                            }
+                                        }
                                     }
-                                    table.append(row);
+                                });
+
+                            });
+                            $.each(tableRows, function(key, value) {
+                                var row = $('<tr></tr>');
+                                value.splice(1, 0, ...medicationData.medications[key]);
+                                for (var i = 0; i < value.length; i++) {
+                                    row.append('<td class="border-1">' + value[i] + '</td>');
                                 }
-                            }
+                                table.append(row);
+                            });
+
                             $("#table-medication").html(table);
                         }
 
@@ -558,32 +569,51 @@
                     success: function(data) {
                         // $('#chart-3').html(data.data);
                         let nutritionData = data.data;
+
+                        if ($.isEmptyObject(nutritionData)) {
+                            $("#table-nutrition").html(
+                                '<h2 class="text-center">No Nutrition Data Found</h2>');
+                        } else {
                         var table = $('<table class="table table-bordered"></table>');
                         var headerIndicator = $('<thead></thead>');
                         // Create a table header row
                         var headerRow = $('<tr></tr>');
-                        headerRow.append('<th class="bg-dark-300 text-light">label</th>');
-                        for (var i = 0; i < nutritionData.label.length; i++) {
-
-                            headerRow.append('<th>' + nutritionData.label[i] + '</th>');
-                        }
+                        headerRow.append('<th class="bg-dark-300 text-light">Recorded at</th>');
+                            $.each(data.nutrition_names, function(index, value) {
+                                headerRow.append('<th>' + value + '</th>');
+                            });
+                        headerRow.append(`<th class="text-center">Recorded by</th>`);
                         headerIndicator.append(headerRow);
                         table.append(headerIndicator);
 
-                        // Create table body rows
-                        for (var key in nutritionData) {
-                            if (key !== "label") {
-                                var row = $('<tr></tr>');
-                                row.append('<th class="ps-2">' + key + '</th>');
-                                for (var i = 0; i < nutritionData[key].length; i++) {
-
-                                    row.append('<td class="text-center">' + nutritionData[key][i] +
-                                        '</td>');
+                        // Create table body 
+                        const tableRows ={};
+                        let numberOfRows = nutritionData.label.length;
+                        $.each(nutritionData, function(key, value) {
+                            $.each(value, function(index, item) {
+                                for (let i = 0; i < numberOfRows; i++) {
+                                    if (!tableRows[i]) {
+                                        tableRows[i] = [];
+                                    }
+                                    if (i === index) {
+                                        if (key != "nutrition") {
+                                        tableRows[i].push(item);
+                                        }
+                                    }
                                 }
-                                table.append(row);
+                            });
+                        });
+                        $.each(tableRows, function(key, value) {
+                            var row = $('<tr></tr>');
+                            value.splice(1, 0, ...nutritionData.nutrition[key]);
+                            for (var i = 0; i < value.length; i++) {
+                                row.append('<td class="border-1">' + value[i] + '</td>');
                             }
-                        }
+                            table.append(row);
+                        });
+
                         $("#table-nutrition").html(table);
+                    }
 
                     },
                     error: function(error) {
@@ -1110,27 +1140,8 @@
                     }
                 });
             });
-            $('#new-fluid').hide();
-            $('#new-medication').hide();
-            $('#select-medication').on('change', function() {
-                var selectVal = $(this).val();
-                console.log(selectVal);
-                if ($(this).val() == 'others') {
-                    $('#new-medication').show();
-                } else {
-                    $('#new-medication').hide();
-                }
-            });
-            $('#new-nutrition').hide();
-            $('#select-nutrition').on('change', function() {
-                var selectVal = $(this).val();
-                console.log(selectVal);
-                if ($(this).val() == 'others') {
-                    $('#new-nutrition').show();
-                } else {
-                    $('#new-mutrition').hide();
-                }
-            });
+
+
 
 
             $('#new-lab').hide();
@@ -1229,6 +1240,7 @@
             });
             //fluid-balance form
             //Adding fluid balance
+            $('#new-fluid').hide();
             var rowIdx = 0;
             let fluid_name, fluid_volume, fluid_direction;
             const fluid_names = [];
@@ -1243,9 +1255,7 @@
                     let fluid_array = $(this).val().split(',');
                     fluid_name = fluid_array[0];
                     fluid_direction = fluid_array[1];
-
                 }
-
 
             });
             $('#fluid-error').hide();
@@ -1269,6 +1279,8 @@
                         fluid_name = '';
                         fluid_direction = '';
                         fluid_volume = '';
+
+                        $('#fluid-error').text('Fluid already added');
                         $('#fluid-error').show();
                         setTimeout(() => {
                             $('#fluid-error').hide();
@@ -1292,7 +1304,7 @@
                 </tr>`;
                     $('#fluid-record-table tbody').append(row);
                 } else {
-                    $('#fluid-error').show();
+                    $('#fluid-error').text('select all fields').show();
                     setTimeout(() => {
                         $('#fluid-error').hide();
                     }, 3000);
@@ -1307,18 +1319,17 @@
                 let rowId = $(this).closest('tr').attr('id');
                 $(this).closest('tr').remove();;
                 fluid_names.splice($(`#row-${rowId}>td`).html(), 1);
-
-
             })
 
             function fluidNameCount(arr, element) {
                 return arr.filter(item => item === element).length;
             }
+            //fluid balance form
             $('#fluid-save-spinner').hide();
             $('#fluid-form').submit(function(event) {
                 event.preventDefault(); // Prevent default form submission
                 if (fluid_names.length < 1) {
-                    $('#fluid-error').show();
+                    $('#fluid-error').text('No fluid and volume added').show();
                     setTimeout(() => {
                         $('#fluid-error').hide();
                     }, 3000);
@@ -1363,13 +1374,90 @@
                     }
                 });
             });
+            let medRowIdx = 0;
+            let medication_name, medication_dose;
+            const medication_names = [];
             //medication form
+
+            $('#new-medication').hide();
+            $('#select-medication').on('change', function() {
+                var selectVal = $(this).val();
+                console.log(selectVal);
+                if ($(this).val() == 'others') {
+                    $('#new-medication').show();
+                } else {
+                    $('#new-medication').hide();
+                    medication_name = $(this).val();
+                }
+            });
+            $('#medication-error').hide();
+            $('#medication_name').on('blur', function() {
+                medication_name = $(this).val();
+            });
+            $('#medication_dosage').on('blur', function() {
+                medication_dose = $(this).val();
+
+            });
+            function medicationNameCount(arr, element) {
+                return arr.filter(item => item === element).length;
+            }
+            $('#medication-record-add').on('click', function() {
+                console.log(medication_name, medication_dose);
+                if (medication_name && medication_dose) {
+                    medRowIdx++;
+                    let occurence = medicationNameCount(medication_names, medication_name);
+                    if (occurence > 0) {
+                        medication_name = '';
+                        medication_dose = '';
+                        $('#medication-error').text('Medication already added').show();
+                        setTimeout(() => {
+                            $('#medication-error').hide();
+                        }, 3000);
+                        return;
+                    }
+                    medication_names.push(medication_name);
+                    const row = `<tr id="row-${medRowIdx}">
+                    <td>${medication_name}</td>
+                    <td>${medication_dose}
+                        <input type="hidden" name="medication_name[]" value="${medication_name}">
+                        <input type="hidden" name="medication_dose[]" value="${medication_dose}">
+                    </td>
+
+                    <td>
+                        <button type="button" class="btn btn-danger removeMedication">Remove</button>
+                    </td>
+                </tr>`;
+
+                    $('#medication-record-table tbody').append(row);
+                } else {
+                    $('#medication-error').text('select all fields').show();
+                    setTimeout(() => {
+                        $('#medication-error').hide();
+                    }, 3000);
+                }
+                $('#medication_name').val('');
+                $('#medication_dosage').val('');
+                medication_name = '';
+                medication_dose = '';
+            });
+            $('#medication-record-table tbody').on('click', '.removeMedication', function() {
+                let rowId = $(this).closest('tr').attr('id');
+                $(this).closest('tr').remove();
+                medication_names.splice($(`#row-${rowId}>td`).html(), 1);
+            })
+
+
             $('#medication-save-spinner').hide();
             $('#medication-form').submit(function(event) {
                 event.preventDefault(); // Prevent default form submission
-
+                if (medication_names.length < 1) {
+                    $('#medication-error').text('kindly fill all fields').show();
+                    setTimeout(() => {
+                        $('#medication-error').hide();
+                    }, 3000);
+                    return;
+                }
                 var medicationData = $(this).serialize(); // Serialize form data
-
                 $('#medication-save').prop('disabled', true);
                 $('#medication-save-spinner').show();
 
@@ -1380,6 +1468,7 @@
                     success: function(response) {
 
                         console.log(response);
+                        $('#medication-record-table tbody').html('');
                         $('#toast-1 .toast-body').html(response.message);
                         $('#toast-1').toast('show');
                         $('#modal-medication').modal('hide');
@@ -1406,6 +1495,75 @@
 
             });
             //nutrition form
+            let nutritionRowIdx = 0;
+            let nutrition_name, nutrition_dose;
+            const nutrition_names = [];
+            $('#new-nutrition').hide();
+            $('#select-nutrition').on('change', function() {
+                var selectVal = $(this).val();
+                console.log(selectVal);
+                if ($(this).val() == 'others') {
+                    $('#new-nutrition').show();
+                } else {
+                    $('#new-nutrition').hide();
+                    nutrition_name = $(this).val();
+                }
+            });
+            $('#nutrition-error').hide();
+            $('#nutrition_name').on('blur', function() {
+                nutrition_name = $(this).val();
+            });
+            $('#nutrition_dosage').on('blur', function() {
+                nutrition_dose = $(this).val();
+
+            });
+            function nutritionNameCount(arr, element) {
+                return arr.filter(item => item === element).length;
+            }
+            $('#nutrition-record-add').on('click', function() {
+
+                if (nutrition_name && nutrition_dose) {
+                    nutritionRowIdx++;
+                    let occurence = nutritionNameCount(nutrition_names, nutrition_name);
+                    if (occurence > 0) {
+                        nutrition_name = '';
+                        nutrition_dose = '';
+                        $('#nutrition-error').text('Nutrition already added').show();
+                        setTimeout(() => {
+                            $('#nutrition-error').hide();
+                        }, 3000);
+                        return;
+                    }
+                    nutrition_names.push(nutrition_name);
+                    const row = `<tr id="row-${nutritionRowIdx}">
+                    <td>${nutrition_name}</td>
+                    <td>${nutrition_dose}
+                        <input type="hidden" name="nutrition_name[]" value="${nutrition_name}">
+                        <input type="hidden" name="nutrition_dose[]" value="${nutrition_dose}">
+                    </td>
+
+                    <td>
+                        <button type="button" class="btn btn-danger removeNutrition">Remove</button>
+                    </td>
+                </tr>`;
+
+                    $('#nutrition-record-table tbody').append(row);
+                } else {
+                    $('#nutrition-error').text('select all fields').show();
+                    setTimeout(() => {
+                        $('#nutrition-error').hide();
+                    }, 3000);
+                }
+                $('#nutrition_name').val('');
+                $('#nutrition_dosage').val('');
+                nutrition_name = '';
+                nutrition_dose = '';
+            });
+            $('#nutrition-record-table tbody').on('click', '.removeNutrition', function() {
+                let rowId = $(this).closest('tr').attr('id');
+                $(this).closest('tr').remove();
+                nutrition_names.splice($(`#row-${rowId}>td`).html(), 1);
+            })
             $('#nutrition-save-spinner').hide();
             $('#nutrition-form').submit(function(event) {
                 event.preventDefault(); // Prevent default form submission
@@ -1884,31 +2042,33 @@
                     </button>
                 </h5>
                 <div id="collapseThree" class="accordion-collapse collapse" data-bs-parent="#accordionExample">
-                    <div class="col-lg-12" id="fluid-card">
-                        <div class="card h-100 mt-2">
-                            <!-- BEGIN card-body -->
-                            <div class="card-header bg-warning d-flex gap-2 align-items-center">
+                    <div class="accordion-body">
+                        <div class="col-lg-12" id="fluid-card">
+                            <div class="card h-100 mt-2">
+                                <!-- BEGIN card-body -->
+                                <div class="card-header bg-warning d-flex gap-2 align-items-center">
 
-                                <div class="flex-grow-1">
-                                    <h5 class="mb-1">Fluid Balance</h5>
+                                    <div class="flex-grow-1">
+                                        <h5 class="mb-1">Fluid Balance</h5>
 
-                                </div>
-                                <i class="fa fa-plus cursor-pointer" data-bs-toggle="modal"
-                                    data-bs-target="#modal-fluid"></i>
-                                <a href="javascript:;" class="text-secondary"><i class="fa fa-redo"></i></a>
-                                <a href="#" data-toggle="card-expand"
-                                    class="text-white text-opacity-20 text-decoration-none"><i
-                                        class="fa fa-fw fa-expand"></i></a>
-
-                            </div>
-                            <div class="card-body">
-                                <div class="table-responsive mb-3" id="table-fluid">
+                                    </div>
+                                    <i class="fa fa-plus cursor-pointer" data-bs-toggle="modal"
+                                        data-bs-target="#modal-fluid"></i>
+                                    <a href="javascript:;" class="text-secondary"><i class="fa fa-redo"></i></a>
+                                    <a href="#" data-toggle="card-expand"
+                                        class="text-white text-opacity-20 text-decoration-none"><i
+                                            class="fa fa-fw fa-expand"></i></a>
 
                                 </div>
-                                <div id="chartFluid"></div>
+                                <div class="card-body">
+                                    <div class="table-responsive mb-3" id="table-fluid">
 
+                                    </div>
+                                    <div id="chartFluid"></div>
+
+                                </div>
+                                <!-- END card-body -->
                             </div>
-                            <!-- END card-body -->
                         </div>
                     </div>
                 </div>
@@ -1921,31 +2081,33 @@
                     </button>
                 </h5>
                 <div id="collapseFour" class="accordion-collapse collapse" data-bs-parent="#accordionExample">
-                    <div class="col-lg-12">
-                        <div class="card h-100 mt-2">
-                            <div id="neuroChart"></div>
-                            <!-- BEGIN card-body -->
-                            <div class="card-header bg-danger d-flex gap-2 align-items-center">
+                    <div class="accordion-body">
+                        <div class="col-lg-12">
+                            <div class="card h-100 mt-2">
+                                <div id="neuroChart"></div>
+                                <!-- BEGIN card-body -->
+                                <div class="card-header bg-danger d-flex gap-2 align-items-center">
 
-                                <div class="flex-grow-1">
-                                    <h5 class="mb-1"></h5>
+                                    <div class="flex-grow-1">
+                                        <h5 class="mb-1"></h5>
+
+                                    </div>
+                                    <i class="fa fa-plus cursor-pointer" data-bs-toggle="modal"
+                                        data-bs-target="#modal-neuro"></i>
+                                    <a href="javascript:;" class="text-secondary"><i class="fa fa-redo"></i></a>
+                                    <a href="#" data-toggle="card-expand"
+                                        class="text-white text-opacity-20 text-decoration-none"><i
+                                            class="fa fa-fw fa-expand"></i></a>
 
                                 </div>
-                                <i class="fa fa-plus cursor-pointer" data-bs-toggle="modal"
-                                    data-bs-target="#modal-neuro"></i>
-                                <a href="javascript:;" class="text-secondary"><i class="fa fa-redo"></i></a>
-                                <a href="#" data-toggle="card-expand"
-                                    class="text-white text-opacity-20 text-decoration-none"><i
-                                        class="fa fa-fw fa-expand"></i></a>
+                                <div class="card-body">
+                                    <div class="table-responsive" id="neuro-chart"></div>
 
+
+
+                                </div>
+                                <!-- END card-body -->
                             </div>
-                            <div class="card-body">
-                                <div class="table-responsive" id="neuro-chart"></div>
-
-
-
-                            </div>
-                            <!-- END card-body -->
                         </div>
                     </div>
                 </div>
@@ -1958,30 +2120,32 @@
                     </button>
                 </h5>
                 <div id="collapseFive" class="accordion-collapse collapse" data-bs-parent="#accordionExample">
-                    <div class="col-lg-12" id="med-card">
-                        <div class="card h-100 mt-2">
-                            <!-- BEGIN card-body -->
-                            <div class="card-header bg-gradient bg-warning-400 d-flex gap-2 align-items-center">
+                    <div class="accordion-body">
+                        <div class="col-lg-12" id="med-card">
+                            <div class="card h-100 mt-2">
+                                <!-- BEGIN card-body -->
+                                <div class="card-header bg-gradient bg-warning-400 d-flex gap-2 align-items-center">
 
-                                <div class="flex-grow-1">
-                                    <h5 class="mb-1"></h5>
+                                    <div class="flex-grow-1">
+                                        <h5 class="mb-1"></h5>
 
-                                </div>
-                                <i class="fa fa-plus" data-bs-toggle="modal" data-bs-target="#modal-medication"></i>
-                                <a href="javascript:;" class="text-secondary"><i class="fa fa-redo"></i></a>
-                                <a href="#" data-toggle="card-expand"
-                                    class="text-white text-opacity-20 text-decoration-none"><i
-                                        class="fa fa-fw fa-expand"></i></a>
-
-                            </div>
-                            <div class="card-body">
-                                <div class="table-responsive" id="table-medication">
+                                    </div>
+                                    <i class="fa fa-plus" data-bs-toggle="modal" data-bs-target="#modal-medication"></i>
+                                    <a href="javascript:;" class="text-secondary"><i class="fa fa-redo"></i></a>
+                                    <a href="#" data-toggle="card-expand"
+                                        class="text-white text-opacity-20 text-decoration-none"><i
+                                            class="fa fa-fw fa-expand"></i></a>
 
                                 </div>
+                                <div class="card-body">
+                                    <div class="table-responsive" id="table-medication">
+
+                                    </div>
 
 
+                                </div>
+                                <!-- END card-body -->
                             </div>
-                            <!-- END card-body -->
                         </div>
                     </div>
                 </div>
@@ -1994,30 +2158,32 @@
                     </button>
                 </h5>
                 <div id="collapseSix" class="accordion-collapse collapse" data-bs-parent="#accordionExample">
-                    <div class="col-lg-12" id="lab-card">
-                        <div class="card h-100 mt-2">
-                            <!-- BEGIN card-body -->
-                            <div class="card-header bg-gradient bg-gray-400 d-flex gap-2 align-items-center">
+                    <div class="accordion-body">
+                        <div class="col-lg-12" id="lab-card">
+                            <div class="card h-100 mt-2">
+                                <!-- BEGIN card-body -->
+                                <div class="card-header bg-gradient bg-gray-400 d-flex gap-2 align-items-center">
 
-                                <div class="flex-grow-1">
-                                    <h5 class="mb-1"></h5>
+                                    <div class="flex-grow-1">
+                                        <h5 class="mb-1"></h5>
 
-                                </div>
-                                <i class="fa fa-plus" data-bs-toggle="modal" data-bs-target="#modal-lab"></i>
-                                <a href="javascript:;" class="text-secondary"><i class="fa fa-redo"></i></a>
-                                <a href="#" data-toggle="card-expand"
-                                    class="text-white text-opacity-20 text-decoration-none"><i
-                                        class="fa fa-fw fa-expand"></i></a>
-
-                            </div>
-                            <div class="card-body">
-                                <div class="table-responsive" id="table-lab">
+                                    </div>
+                                    <i class="fa fa-plus" data-bs-toggle="modal" data-bs-target="#modal-lab"></i>
+                                    <a href="javascript:;" class="text-secondary"><i class="fa fa-redo"></i></a>
+                                    <a href="#" data-toggle="card-expand"
+                                        class="text-white text-opacity-20 text-decoration-none"><i
+                                            class="fa fa-fw fa-expand"></i></a>
 
                                 </div>
+                                <div class="card-body">
+                                    <div class="table-responsive" id="table-lab">
+
+                                    </div>
 
 
+                                </div>
+                                <!-- END card-body -->
                             </div>
-                            <!-- END card-body -->
                         </div>
                     </div>
                 </div>
@@ -2030,6 +2196,7 @@
                     </button>
                 </h5>
                 <div id="collapseSeven" class="accordion-collapse collapse" data-bs-parent="#accordionExample">
+                    <div class="accordion-body">
                     <div class="col-lg-12">
                         <div class="card h-100 mt-2">
                             <!-- BEGIN card-body -->
@@ -2056,6 +2223,7 @@
                             <!-- END card-body -->
                         </div>
                     </div>
+                    </div>
                 </div>
             </div>
             <div class="accordion-item">
@@ -2066,6 +2234,7 @@
                     </button>
                 </h5>
                 <div id="collapseEight" class="accordion-collapse collapse" data-bs-parent="#accordionExample">
+                    <div class="accordion-body">
                     <div class="col-lg-12">
                         <div class="card h-100 mt-2">
                             <!-- BEGIN card-body -->
@@ -2083,6 +2252,7 @@
                             <!-- END card-body -->
                         </div>
                     </div>
+                    </div>
                 </div>
             </div>
             <div class="accordion-item">
@@ -2093,32 +2263,35 @@
                     </button>
                 </h5>
                 <div id="collapseNine" class="accordion-collapse collapse" data-bs-parent="#accordionExample">
-                    <div class="col-lg-12" id="skin">
-                        <div class="card h-100 mt-2">
-                            <!-- BEGIN card-body -->
-                            <div class="card-header bg-gradient bg-purple d-flex gap-2 align-items-center">
+                    <div class="accordion-body">
+                        <div class="col-lg-12" id="skin">
+                            <div class="card h-100 mt-2">
+                                <!-- BEGIN card-body -->
+                                <div class="card-header bg-gradient bg-purple d-flex gap-2 align-items-center">
 
-                                <div class="flex-grow-1">
-                                    <h5 class="mb-1 text-white"></h5>
+                                    <div class="flex-grow-1">
+                                        <h5 class="mb-1 text-white"></h5>
 
-                                </div>
-                                <i class="fa fa-plus" data-bs-toggle="modal" data-bs-target="#modal-skin"></i>
-                                <a href="javascript:;" class="text-secondary"><i class="fa fa-redo"></i></a>
-                                <a href="#" data-toggle="card-expand"
-                                    class="text-white text-opacity-20 text-decoration-none"><i
-                                        class="fa fa-fw fa-expand"></i></a>
-
-                            </div>
-                            <div class="card-body">
-                                <div class="table-responsive" id="table-skin">
+                                    </div>
+                                    <i class="fa fa-plus" data-bs-toggle="modal" data-bs-target="#modal-skin"></i>
+                                    <a href="javascript:;" class="text-secondary"><i class="fa fa-redo"></i></a>
+                                    <a href="#" data-toggle="card-expand"
+                                        class="text-white text-opacity-20 text-decoration-none"><i
+                                            class="fa fa-fw fa-expand"></i></a>
 
                                 </div>
+                                <div class="card-body">
+                                    <div class="table-responsive" id="table-skin">
+
+                                    </div>
 
 
+                                </div>
+                                <!-- END card-body -->
                             </div>
-                            <!-- END card-body -->
                         </div>
                     </div>
+                    
                 </div>
             </div>
             <div class="accordion-item">
@@ -2129,6 +2302,7 @@
                     </button>
                 </h5>
                 <div id="collapseTen" class="accordion-collapse collapse" data-bs-parent="#accordionExample">
+                    <div class="accordion-body">
                     <div class="col-lg-12" id="invasive">
                         <div class="card h-100 mt-2">
                             <!-- BEGIN card-body -->
@@ -2155,6 +2329,7 @@
                             <!-- END card-body -->
                         </div>
                     </div>
+                    </div>
                 </div>
             </div>
             <div class="accordion-item">
@@ -2165,6 +2340,7 @@
                     </button>
                 </h5>
                 <div id="collapseEleven" class="accordion-collapse collapse" data-bs-parent="#accordionExample">
+                    <div class="accordion-body">
                     <div class="col-lg-12" id="progress">
                         <div class="card h-100 mt-2">
                             <!-- BEGIN card-body -->
@@ -2191,6 +2367,7 @@
                             <!-- END card-body -->
                         </div>
                     </div>
+                    </div>
                 </div>
             </div>
             <div class="accordion-item">
@@ -2201,6 +2378,7 @@
                     </button>
                 </h5>
                 <div id="collapseTwelve" class="accordion-collapse collapse" data-bs-parent="#accordionExample">
+                    <div class="accordion-body">
                     <div class="col-lg-12" id="seizure">
                         <div class="card h-100 mt-2">
                             <!-- BEGIN card-body -->
@@ -2227,6 +2405,7 @@
                             <!-- END card-body -->
                         </div>
                     </div>
+                    </div>
                 </div>
             </div>
             <div class="accordion-item">
@@ -2237,6 +2416,7 @@
                     </button>
                 </h5>
                 <div id="collapseThirteen" class="accordion-collapse collapse" data-bs-parent="#accordionExample">
+                    <div class="accordion-body">
                     <div class="col-lg-12" id="nursing">
                         <div class="card h-100 mt-2">
                             <!-- BEGIN card-body -->
@@ -2263,6 +2443,7 @@
                             <!-- END card-body -->
                         </div>
                     </div>
+                    </div>
                 </div>
             </div>
             <div class="accordion-item">
@@ -2273,6 +2454,7 @@
                     </button>
                 </h5>
                 <div id="collapseFourteen" class="accordion-collapse collapse" data-bs-parent="#accordionExample">
+                    <div class="accordion-body">
                     <div class="col-lg-12" id="physician">
                         <div class="card h-100 mt-2">
                             <!-- BEGIN card-body -->
@@ -2298,6 +2480,7 @@
                             </div>
                             <!-- END card-body -->
                         </div>
+                    </div>
                     </div>
                 </div>
             </div>

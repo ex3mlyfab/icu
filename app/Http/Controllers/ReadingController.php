@@ -68,12 +68,6 @@ class ReadingController extends Controller
     }
     public function showCardio(PatientCare $patientCare,$active_day)
     {
-        // dump(Carbon::parse($active_day));
-    //    $cardio_reading = CardioAssessment::selectRaw('strftime("%H",hour_taken) as Hour, heart_rate, blood_pressure_systolic, blood_pressure_diastolic, temperature, respiratory_rate, weight, map, cvp, rhythm, peripheral_pulses, capillary_refill_time')
-    //         ->where('patient_care_id', $patientCare->id)
-    //         ->where('created_at', 'like', Carbon::parse($active_day))
-    //         ->groupBy('Hour')
-    //         ->get();
 
     $cardio_reading = CardioAssessment::where('patient_care_id', $patientCare->id)
         ->whereDate('created_at', Carbon::parse($active_day))
@@ -387,74 +381,57 @@ class ReadingController extends Controller
                         ->orderBy('hour_taken')
                         ->get();
         $medication_group = $medication_reading->groupBy(function(Medication $item) {
-            return $item->hour_taken->format('H');
+            return $item->hour_taken->format('H:i A');
         });
         $medication_names = $patientCare->medications->unique('medication')->pluck('medication')->toArray();
+        $medication_count = count($medication_names);
         // dump($fluid_names);
         $medication_chart = [];
-
-        foreach($this->hours as $key=>$hour)
+        foreach($medication_group as $key => $value)
         {
-            $medication_chart['label'][] = $hour;
-
-
-            if(isset($medication_group[$key]))
+            $medication_chart['label'][] = $key;
+            $presentMedications = $value->pluck('medication')->toArray();
+            $presentDosages = $value->pluck('dosage')->toArray();
+            $medication_dosages = [];
+            foreach($medication_names as $medication_name)
             {
-                $targetMeds= $medication_group[$key]->pluck('medication')->toArray();
-                $targetDosage= $medication_group[$key]->pluck('dosage')->toArray();
-                $absentmeds = array_diff($medication_names, $targetMeds);
-                foreach($targetMeds as $targetmed)
+                if(in_array($medication_name, $presentMedications))
                 {
-                    $medication_chart[$targetmed][] = $targetDosage[array_search($targetmed, $targetMeds)];
-                }
-                foreach($absentmeds as $absetMed){
-                    $medication_chart[$absetMed][]= "--";
-                }
-
-            }else
-                {
-
-                    foreach($medication_names as $name)
-                    {
-                        $medication_chart[$name][] = "--";
-
-                    }
-
+                    $medication_dosages[] = $presentDosages[array_search($medication_name, $presentMedications)];
+                }else{
+                    $medication_dosages[] = 0;
                 }
             }
-            return response(['data' => $medication_chart], 200);
+            $medication_chart['medications'][] = Arr::flatten($medication_dosages);
+            $medication_chart['created_by'][] = $value[0]->createdBy->fullname;
+        }
+
+
+        return response(['data' => $medication_chart,
+                        'medication_names' => $medication_names,
+                        'medication_count' => $medication_count
+                        ], 200);
 
     }
-    public function storeMedication(MedicationRequest $request)
+    public function storeMedication(Request $request)
     {
         $data= $request->all();
-         if($data['medication_select'] == 'others')
-         {
-             $medicationRecord = Medication::create([
+         $created_at = now();
+       foreach($data['medication_name'] as $key => $medication)
+       {
+                 $medicationRecord = Medication::create([
                 'patient_care_id' => $data['patient_care_id'],
-                'medication' => $data['medication_name'],
-                'dosage' => $data['dosage'],
+                'medication' => $data['medication_name'][$key],
+                'dosage' => $data['medication_dose'][$key],
                 'frequency' => $data['frequency'],
                 'created_by' => Auth::user()->id,
-                'hour_taken' => $data['hour_taken'],
+                'hour_taken' => $created_at,
                 'time_of_medication' => now(),
              ]);
-         }else{
-            $medicationBefore = Medication::where('patient_care_id', $data['patient_care_id'])
-                            ->where('medication', $data['medication_select'])->first();
-            // dump($fluidBefore);
-            $newrecord = Medication::create([
-            'patient_care_id' => $data['patient_care_id'],
-            'medication' => $medicationBefore->medication,
-            'dosage' => $data['dosage'],
-            'frequency' => $medicationBefore->frequency,
-            'created_by' => Auth::user()->id,
-            'hour_taken' => $data['hour_taken'],
-            'time_of_medication' => now(),
-        ]);
-         }
+       }
 
-         return response(['message'=> 'Medication Added successfully'], 200);
+
+        return response(['message'=> 'Medication Added successfully'], 200);
     }
     public function getNutrition(PatientCare $patientCare)
     {
@@ -468,72 +445,56 @@ class ReadingController extends Controller
                         ->orderBy('hour_taken')
                         ->get();
         $nutrition_group = $nutrition_reading->groupBy(function(Nutrition $item) {
-            return $item->hour_taken->format('H');
+            return $item->hour_taken->format('H:i A');
         });
         $nutrition_names = $patientCare->nutritions->unique('feeding_route')->pluck('feeding_route')->toArray();
         // dump($nutrition_names);
+        $nutrition_count = count($nutrition_names);
+
         $nutrition_chart = [];
-        // dump($nutrition_group);
-
-        foreach($this->hours as $key=>$hour)
+        foreach($nutrition_group as $key => $value)
         {
-            $nutrition_chart['label'][] = $hour;
-
-            if(isset($nutrition_group[$key]))
+            $nutrition_chart['label'][] = $key;
+            $presentNutritions = $value->pluck('feeding_route')->toArray();
+            $presentCalories = $value->pluck('caloric_intake')->toArray();
+            $nutrition_calories = [];
+            foreach($nutrition_names as $nutrition_name)
             {
-                // $number_of_occurrences = array_count_values()
-                $targetnames = $nutrition_group[$key]->pluck('feeding_route')->toArray();
-                $calorifices = $nutrition_group[$key]->pluck('caloric_intake')->toArray();
-                $absentname = array_diff($nutrition_names, $targetnames);
-                foreach($targetnames as $targetname){
-
-                    $nutrition_chart[$targetname][] = $calorifices[array_search($targetname, $targetnames)];
-                }
-                foreach($absentname as $absent){
-                    $nutrition_chart[$absent][] = "--";
-                }
-            }else
+                if(in_array($nutrition_name, $presentNutritions))
                 {
-                    foreach($nutrition_names as $name)
-                    {
-                       // $nutrition_chart['label'][] = $hour;
-                        $nutrition_chart[$name][] = "--";
-
-                    }
-
+                    $nutrition_calories[] = $presentCalories[array_search($nutrition_name, $presentNutritions)];
+                }else{
+                    $nutrition_calories[] = 0;
                 }
             }
-            return response(['data' => $nutrition_chart], 200);
+            $nutrition_chart['nutrition'][] = Arr::flatten($nutrition_calories);
+            $nutrition_chart['created_by'][] = $value[0]->createdBy->fullname;
+        }
+        // dump($nutrition_group);
+
+
+            return response(['data' => $nutrition_chart,
+                            'nutrition_names' => $nutrition_names,
+                            'nutrition_count' => $nutrition_count
+                            ], 200);
 
     }
-    public function storeNutrition(NutritionRequest $request)
+    public function storeNutrition(Request $request)
     {
         $data= $request->all();
-         if($data['nutrition_select'] == 'others')
+        $created_at = now();
+        foreach($data['nutrition_name'] as $key => $nutrition)
          {
              $medicationRecord = Nutrition::create([
                 'patient_care_id' => $data['patient_care_id'],
-                'feeding_route' => $data['nutrition_name'],
-                'caloric_intake' => $data['caloric_intake'],
+                'feeding_route' => $data['nutrition_name'][$key],
+                'caloric_intake' => $data['nutrition_dose'][$key],
 
                 'created_by' => Auth::user()->id,
-                'hour_taken' => $data['hour_taken'],
+                'hour_taken' => $created_at,
                 'time_of_nutrition' => now(),
              ]);
-         }else{
-            $medicationBefore = Nutrition::where('patient_care_id', $data['patient_care_id'])
-                            ->where('medication', $data['nutrition_select'])->first();
-            // dump($fluidBefore);
-            $newrecord = Nutrition::create([
-            'patient_care_id' => $data['patient_care_id'],
-            'feeding_route' => $medicationBefore->feeding_route,
-            'caloric_intake' => $data['caloric_intake'],
-            'created_by' => Auth::user()->id,
-            'hour_taken' => $data['hour_taken'],
-            'time_of_nutrition' => now(),
-        ]);
          }
-
          return response(['message'=> 'Nutrition Added successfully'], 200);
     }
     public function storeNeuro(NeuroAssessmentRequest $request)
