@@ -53,7 +53,7 @@
 
                             </div>
                         </div>
-                        <div class="col-md-12 col-lg-4mb-3">
+                        <div class="col-md-12 col-lg-4 mb-3">
                             <div class="input-group flex-nowrap">
                                 <span class="input-group-text" id="addon-wrapping">SPO<sub>2</sub></span>
                                 <input type="number" class="form-control" name="spo2" placeholder="SPO2">

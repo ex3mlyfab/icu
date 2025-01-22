@@ -62,27 +62,27 @@ Route::middleware('auth')->group(function () {
 
     //cardio assessment routes
     Route::get('/show-patient/{patientCare}/cardio-assessment/{active_day}', [ReadingController::class, 'showCardio'])->name('cardio.show');
-    Route::get('/show-cardio/{patientCare}/{active_day}', [ReadingController::class, 'newCardioShow'])->name('cardio.newShow');
+    Route::get('/show-cardio/{patientCare}/{active_day}/{viewtype}', [ReadingController::class, 'newCardioShow'])->name('cardio.newShow');
     Route::post('/store-cardio-assessment', [ReadingController::class, 'storeCardio'])->name('cardio.store');
     //respiratory Assessment Route
     Route::get('/show-patient/{patientCare}/resp-assessment/{active_day}', [ReadingController::class, 'showRespiratory'])->name('resp.show');
-    Route::get('/show/{patientCare}/{active_day}', [ReadingController::class, 'newShowRespiratory'])->name('resp.newShow');
+    Route::get('/show/{patientCare}/{active_day}/{viewtype}', [ReadingController::class, 'newShowRespiratory'])->name('resp.newShow');
     Route::post('/store-respiratory-assessment', [ReadingController::class,'storeRespiratory'])->name('resp.store');
     //fluid balance routes
     Route::get('/get-patient-fluids/{patientCare}/select', [ReadingController::class, 'getFluid'])->name('fluid.get');
-    Route::get('/show-patient/{patientCare}/fluid-assessment/{active_day}', [ReadingController::class, 'showFluid'])->name('fluid.show');
+    Route::get('/show-patient/{patientCare}/fluid-assessment/{active_day}/{viewtype}', [ReadingController::class, 'showFluid'])->name('fluid.show');
     Route::post('/store-fluid-assessment', [ReadingController::class, 'storeFluid'])->name('fluid.store');
     //medication routes
-    Route::get('/show-patient/{patientCare}/medication/{active_day}', [ReadingController::class, 'showMedication'])->name('medication.show');
+    Route::get('/show-patient/{patientCare}/medication/{active_day}/{viewtype}', [ReadingController::class, 'showMedication'])->name('medication.show');
     Route::post('/store-medication', [ReadingController::class, 'storeMedication'])->name('medication.store');
     Route::get('/get-patient-medications/{patientCare}/select', [ReadingController::class, 'getMedication'])->name('medication.get');
 
     //neuro Assessment routes
-    Route::get('/show-patient/{patientCare}/neuro-assessment/{active_day}', [ReadingController::class, 'showNeuro'])->name('neuro.show');
+    Route::get('/show-patient/{patientCare}/neuro-assessment/{active_day}/{viewtype}', [ReadingController::class, 'showNeuro'])->name('neuro.show');
     Route::post('/store-neuro-assessment', [ReadingController::class, 'storeNeuro'])->name('neuro.store');
 
     //nutritions routes
-    Route::get('/show-patient/{patientCare}/nutritions/{active_day}', [ReadingController::class, 'showNutrition'])->name('nutrition.show');
+    Route::get('/show-patient/{patientCare}/nutritions/{active_day}/{viewtype}', [ReadingController::class, 'showNutrition'])->name('nutrition.show');
     Route::post('/store-nutritions', [ReadingController::class, 'storeNutrition'])->name('nutrition.store');
     Route::get('/get-patient-nutritions/{patientCare}/select', [ReadingController::class, 'getNutrition'])->name('nutrition.get');
 
@@ -98,13 +98,13 @@ Route::middleware('auth')->group(function () {
     Route::get('/show-patient/{patientCare}/invasive-line', [Reading2Controller::class, 'showInvasiveLine'])->name('invasive.show');
     Route::post('/store-invasive-line', [Reading2Controller::class, 'storeInvasiveLine'])->name('invasive.store');
     //dailynotes
-    Route::get('/show-patient/{patientCare}/dailynotes/{active_day}', [Reading2Controller::class, 'showDailyNote'])->name('dailynotes.show');
+    Route::get('/show-patient/{patientCare}/dailynotes/{active_day}/{viewtype}', [Reading2Controller::class, 'showDailyNote'])->name('dailynotes.show');
     Route::post('/store-dailynotes', [Reading2Controller::class, 'storeDailyNote'])->name('dailynotes.store');
     //physician order
-    Route::get('/show-patient/{patientCare}/physician-order/{active_day}', [Reading2Controller::class, 'showPhysicianNote'])->name('physician.show');
+    Route::get('/show-patient/{patientCare}/physician-order/{active_day}/{viewtype}', [Reading2Controller::class, 'showPhysicianNote'])->name('physician.show');
     Route::post('/store-physician-order', [Reading2Controller::class, 'storePhysicianNote'])->name('physician.store');
     //skin care Route
-    Route::get('/show-patient/{patientCare}/skin-care/{active_day}', [Reading2Controller::class, 'showSkinCare'])->name('skin.show');
+    Route::get('/show-patient/{patientCare}/skin-care/{active_day}/{viewtype}', [Reading2Controller::class, 'showSkinCare'])->name('skin.show');
     Route::post('/store-skin-care', [Reading2Controller::class, 'storeSkinCare'])->name('skin.store');
     //renal fluids
     Route::get('/show-patient/{patientCare}/renal-fluids/{active_day}', [Reading2Controller::class, 'renalFluid'])->name('renal.show');

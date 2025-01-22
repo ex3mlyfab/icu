@@ -78,6 +78,7 @@ class Reading2Controller extends Controller
         $labs = $labs->map(function($item) {
             $item->time = $item->date->format('H:i');
             $item->new_date = $item->date->format('Y-m-d');
+            $item->recorded_by = $item->createdBy->fullname;
             return $item;
         });
         return response($labs, 200);
@@ -103,6 +104,7 @@ class Reading2Controller extends Controller
         $labs = $labs->map(function($item) {
             $item->time = $item->time_of_invasive_lines->format('H:i');
             $item->new_date = $item->time_of_invasive_lines->format('Y-m-d');
+            $item->recorded_by = $item->createdBy->fullname;
             return $item;
         });
         return response($labs, 200);
@@ -145,7 +147,7 @@ class Reading2Controller extends Controller
         return response(['message'=> 'Daily Note Added successfully'], 200);
     }
 
-    public function showDailyNote(PatientCare $patientCare, $active_day)
+    public function showDailyNote(PatientCare $patientCare, $active_day, $viewtype)
     {
         $labs = DailyNote::where('patient_care_id', $patientCare->id)
         ->whereDate('created_at', Carbon::parse($active_day))
@@ -196,14 +198,14 @@ class Reading2Controller extends Controller
         return response(['message'=> 'Physician Note Added successfully'], 200);
     }
 
-    public function showPhysicianNote(PatientCare $patientCare, $active_day)
+    public function showPhysicianNote(PatientCare $patientCare, $active_day, $viewtype)
     {
         $labs = PhysicianOrder::where('patient_care_id', $patientCare->id)
         ->whereDate('created_at', Carbon::parse($active_day))
         ->get();
 
          $labs = $labs->map(function($item) {
-
+            $item->new_date = $item->created_at->format('h:i a');
             $item->recorded_by = $item->createdBy->fullname;
             return $item;
         });

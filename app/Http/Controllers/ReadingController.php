@@ -120,7 +120,7 @@ class ReadingController extends Controller
         }
         return response(['data' => $cardio_chart], 200);
     }
-    public function newCardioShow(PatientCare $patientCare, $active_day)
+    public function newCardioShow(PatientCare $patientCare, $active_day, $viewtype)
     {
         $cardio_reading = CardioAssessment::where('patient_care_id', $patientCare->id)
         ->whereDate('created_at', Carbon::parse($active_day))
@@ -128,14 +128,16 @@ class ReadingController extends Controller
         ->get();
 
         $cardio_reading = $cardio_reading->groupBy(function (CardioAssessment $item) {
-            return $item->created_at->format('d/m/Y h:i:s A');
+            return $item->created_at->format('h:i A');
         });
         $cardioChart = [];
 
         //select the last two grouping in $cardio_reading
-        $lastTwoGroups = $cardio_reading->slice(-2);
+        if($viewtype == 'summary'){
+            $cardio_reading = $cardio_reading->slice(-2);
+        }
 
-        foreach ($lastTwoGroups as $time => $readings) {
+        foreach ($cardio_reading as $time => $readings) {
             foreach ($readings as $reading) {
                 $cardioChart['label'][] = $time;
                 $cardioChart['heart_rate'][] = (float)$reading->heart_rate;
@@ -177,7 +179,7 @@ class ReadingController extends Controller
         ->orderBy('hour_taken')
         ->get();
         $resp_group = $resp_reading->groupBy(function(RespiratoryAssessment $item) {
-            return $item->hour_taken->format('H');
+            return $item->hour_taken->format('h:i A');
         });
 
         $resp_chart = [];
@@ -216,22 +218,25 @@ class ReadingController extends Controller
             }
             return response(['data' => $resp_chart], 200);
     }
-    public function newShowRespiratory(PatientCare $patientCare, $active_day)
+    public function newShowRespiratory(PatientCare $patientCare, $active_day, $viewtype)
     {
          $resp_reading = RespiratoryAssessment::where('patient_care_id', $patientCare->id)
                         ->whereDate('created_at', Carbon::parse($active_day))
                         ->orderBy('created_by')
                         ->get();
         $resp_group = $resp_reading->groupBy(function(RespiratoryAssessment $item) {
-            return $item->created_at->format('d/m/Y h:i:s A');
+            return $item->created_at->format('h:i A');
         });
 
         $resp_chart = [];
 
         //select the last two grouping in $cardio_reading
-        $lastTwoGroups = $resp_group->slice(-2);
+        if($viewtype == 'summary'){
+            $resp_group = $resp_group->slice(-2);
+        }
 
-        foreach($lastTwoGroups as $index => $values)
+
+        foreach($resp_group as $index => $values)
         {
             foreach($values as $value)
             {
@@ -277,7 +282,7 @@ class ReadingController extends Controller
         return response(['message'=> 'Fluid Reading Added successfully'], 200);
     }
 
-    public function showFluid(PatientCare $patientCare,$active_day)
+    public function showFluid(PatientCare $patientCare,$active_day, $viewtype)
     {
 
         $groupedFluid = FluidBalance::where('patient_care_id', $patientCare->id)
@@ -290,6 +295,7 @@ class ReadingController extends Controller
                         ->groupBy(function(FluidBalance $item) {
                             return $item->hour_taken->format('H:i A');
                         });
+
         $groupedOutputFluid = $groupedFluid->where('direction', 'output')
                         ->groupBy(function(FluidBalance $item) {
                             return $item->hour_taken->format('H:i A');
@@ -298,7 +304,7 @@ class ReadingController extends Controller
                         ->get();
         $inputNumbers = $allfluids->where('direction', 'input')->unique('fluid')->count();
         $outputNumbers = $allfluids->where('direction', 'output')->unique('fluid')->count();
-        $outputFluids = $allfluids->where('direction', 'output')->unique('fluid')->pluck('fluid')->toArray();
+        $outputFluids = $allfluids->where('direction', 'output')->unique('fluid')->pluck('fluid');
         $inputFluids = $allfluids->where('direction', 'input')->unique('fluid')->pluck('fluid');
 
        // To use the grouped users array:
@@ -515,7 +521,7 @@ class ReadingController extends Controller
          ]);
          return response(['message'=> 'Neuro Added successfully'], 200);
     }
-    public function showNeuro(PatientCare $patientCare, $active_day)
+    public function showNeuro(PatientCare $patientCare, $active_day, $viewtype)
     {
         $neuro_reading = NeuroAssessment::where('patient_care_id', $patientCare->id)
                         ->whereDate('created_at', Carbon::parse($active_day))

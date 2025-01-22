@@ -23,7 +23,28 @@
 
     <script>
         $(document).ready(function() {
+
+            $('#patient-info-2').hide();
+
+            $(window).scroll(function() {
+                if ($(window).scrollTop() > 150) {
+
+                    $('#patient-info').hide();
+                } else {
+                    $('#patient-info-2').fadeIn();
+                }
+            });
+
+            $('#patient-info-full').click(function() {
+                $('#patient-info').fadeIn();
+                $('#patient-info-2').hide();
+            });
+            $('#patient-info-summary').click(function() {
+                $('#patient-info-2').fadeIn();
+                $('#patient-info').hide();
+            });
             let cardioCanvas;
+            let viewtype = "summary";
             $('.summernote').summernote({
                 height: 200,
 
@@ -54,37 +75,7 @@
                 minuteStep: 1
             });
             var cardioChart = {};
-            var cardioOptions = {
-                chart: {
-                    type: 'line',
-                    height: 350,
-                    toolbar: {
-                        show: true
-                    }
-                },
-                stroke: {
-                    curve: 'straight'
-                },
-                grid: {
-                    padding: {
-                        right: 30,
-                        left: 20
-                    }
-                },
-                dataLabels: {
-                    enabled: false
-                },
-                series: [],
-                title: {
-                    text: 'CardioVascular Assessment Chart',
-                },
-                noData: {
-                    text: 'Loading...'
-                }
-            }
-            var cardioCharting = new ApexCharts(document.querySelector("#chartCardio"), cardioOptions);
-            // cardioCharting.render();
-            //respiratory Chart
+
             var respiratoryChart = {};
             var respiratoryOptions = {
                 chart: {
@@ -160,7 +151,7 @@
                         $.each(data.data, function(index, option) {
                             $("#select-fluid").prepend(
                                 `<option value="${option.fluid},${option.direction}">${option.fluid}</option>`
-                                );
+                            );
                         });
                     }
                 });
@@ -209,7 +200,7 @@
             function getFluidData() {
                 $.ajax({
                     type: 'GET',
-                    url: `{{ URL::to('/') }}/show-patient/{{ $patient->latestPatientCare->id }}/fluid-assessment/${activeDay}`,
+                    url: `{{ URL::to('/') }}/show-patient/{{ $patient->latestPatientCare->id }}/fluid-assessment/${activeDay}/${viewtype}`,
                     dataType: 'json', // Specify the expected data format (e.g., JSON)
                     success: function(data) {
                         let inputData = data.data;
@@ -236,7 +227,7 @@
                                 var headerRow = $('<tr></tr>');
                                 headerRow.append(
                                     `<th class="bg-yellow-300 fw-bold text-center" colspan="${inputRowsHeader}">Input</th>`
-                                    );
+                                );
                                 headerIndicator.append(headerRow);
                                 var headerRow = $('<tr></tr>');
                                 headerRow.append('<th class="bg-yellow-300">Recorded At</th>');
@@ -277,7 +268,7 @@
                                     value.splice(1, 0, ...inputData.fluids[key]);
                                     for (var i = 0; i < value.length; i++) {
 
-                                        row.append('<td class="border-1">' + value[
+                                        row.append('<td class="border-1 mx-1">' + value[
                                             i] + '</td>');
                                     }
                                     inputtable.append(row);
@@ -291,7 +282,7 @@
                                 var headerRow = $('<tr></tr>');
                                 headerRow.append(
                                     `<th class="bg-danger-300 fw-bold text-center" colspan="${outputRowsHeader}">Output</th>`
-                                    );
+                                );
                                 headerIndicator.append(headerRow);
                                 var headerRow = $('<tr></tr>');
                                 headerRow.append('<th class="bg-yellow-300">Recorded At</th>');
@@ -328,7 +319,7 @@
                                     value.splice(1, 0, ...outputData.fluids[key]);
                                     for (var i = 0; i < value.length; i++) {
 
-                                        row.append('<td class="text-center border-1">' + value[
+                                        row.append('<td class="mx-1 border-1">' + value[
                                             i] + '</td>');
                                     }
 
@@ -352,7 +343,7 @@
             function getCardioData() {
                 $.ajax({
                     type: 'GET', // or 'POST' if required
-                    url: `{{ url('/') }}/show-cardio/{{ $patient->latestPatientCare->id }}/${activeDay}`,
+                    url: `{{ url('/') }}/show-cardio/{{ $patient->latestPatientCare->id }}/${activeDay}/${viewtype}`,
                     dataType: 'json', // Specify the expected data format (e.g., JSON)
                     success: function(data) {
 
@@ -361,7 +352,7 @@
                         if ($.isEmptyObject(myData)) {
 
                             $("#table-cardio").html(
-                            '<h2 class="text-center">No Cardio Data Found</h2>');
+                                '<h2 class="text-center">No Cardio Data Found</h2>');
 
                         } else {
 
@@ -401,7 +392,7 @@
 
                                 for (var i = 0; i < value.length; i++) {
 
-                                    row.append('<td class="text-center border-1">' + value[i] +
+                                    row.append('<td class="m-1 border-1">' + value[i] +
                                         '</td>');
                                 }
                                 table.append(row);
@@ -427,7 +418,8 @@
             function getRespData() {
                 $.ajax({
                     type: 'GET', // or 'POST' if required
-                    url: `{{ URL::to('/') }}/show/{{ $patient->latestPatientCare->id }}/${activeDay}`,
+                    url: `{{ URL::to('/') }}/show/{{ $patient->latestPatientCare->id }}/${activeDay}/${
+                        viewtype}`,
                     dataType: 'json', // Specify the expected data format (e.g., JSON)
                     success: function(data) {
 
@@ -477,7 +469,7 @@
 
                                 for (var i = 0; i < value.length; i++) {
 
-                                    row.append('<td class="text-center border-1">' + value[i] +
+                                    row.append('<td class="m-1 border-1">' + value[i] +
                                         '</td>');
                                 }
                                 table.append(row);
@@ -501,7 +493,7 @@
             function getMedicationData() {
                 $.ajax({
                     type: 'GET', // or 'POST' if required
-                    url: `{{ URL::to('/') }}/show-patient/{{ $patient->latestPatientCare->id }}/medication/${activeDay}`,
+                    url: `{{ URL::to('/') }}/show-patient/{{ $patient->latestPatientCare->id }}/medication/${activeDay}/${viewtype}`,
                     dataType: 'json', // Specify the expected data format (e.g., JSON)
                     success: function(data) {
                         // $('#chart-3').html(data.data);5
@@ -533,7 +525,7 @@
                                         }
                                         if (i === index) {
                                             if (key != "medications") {
-                                            tableRows[i].push(item);
+                                                tableRows[i].push(item);
                                             }
                                         }
                                     }
@@ -544,7 +536,8 @@
                                 var row = $('<tr></tr>');
                                 value.splice(1, 0, ...medicationData.medications[key]);
                                 for (var i = 0; i < value.length; i++) {
-                                    row.append('<td class="border-1">' + value[i] + '</td>');
+                                    row.append('<td class="mx-1 border-1">' + value[i] +
+                                        '</td>');
                                 }
                                 table.append(row);
                             });
@@ -564,7 +557,7 @@
             function getNutritionData() {
                 $.ajax({
                     type: 'GET', // or 'POST' if required
-                    url: `{{ URL::to('/') }}/show-patient/{{ $patient->latestPatientCare->id }}/nutritions/${activeDay}`,
+                    url: `{{ URL::to('/') }}/show-patient/{{ $patient->latestPatientCare->id }}/nutritions/${activeDay}/${viewtype}`,
                     dataType: 'json', // Specify the expected data format (e.g., JSON)
                     success: function(data) {
                         // $('#chart-3').html(data.data);
@@ -574,46 +567,47 @@
                             $("#table-nutrition").html(
                                 '<h2 class="text-center">No Nutrition Data Found</h2>');
                         } else {
-                        var table = $('<table class="table table-bordered"></table>');
-                        var headerIndicator = $('<thead></thead>');
-                        // Create a table header row
-                        var headerRow = $('<tr></tr>');
-                        headerRow.append('<th class="bg-dark-300 text-light">Recorded at</th>');
+                            var table = $('<table class="table table-bordered"></table>');
+                            var headerIndicator = $('<thead></thead>');
+                            // Create a table header row
+                            var headerRow = $('<tr></tr>');
+                            headerRow.append('<th class="bg-dark-300 text-light">Recorded at</th>');
                             $.each(data.nutrition_names, function(index, value) {
                                 headerRow.append('<th>' + value + '</th>');
                             });
-                        headerRow.append(`<th class="text-center">Recorded by</th>`);
-                        headerIndicator.append(headerRow);
-                        table.append(headerIndicator);
+                            headerRow.append(`<th class="text-center">Recorded by</th>`);
+                            headerIndicator.append(headerRow);
+                            table.append(headerIndicator);
 
-                        // Create table body 
-                        const tableRows ={};
-                        let numberOfRows = nutritionData.label.length;
-                        $.each(nutritionData, function(key, value) {
-                            $.each(value, function(index, item) {
-                                for (let i = 0; i < numberOfRows; i++) {
-                                    if (!tableRows[i]) {
-                                        tableRows[i] = [];
-                                    }
-                                    if (i === index) {
-                                        if (key != "nutrition") {
-                                        tableRows[i].push(item);
+                            // Create table body
+                            const tableRows = {};
+                            let numberOfRows = nutritionData.label.length;
+                            $.each(nutritionData, function(key, value) {
+                                $.each(value, function(index, item) {
+                                    for (let i = 0; i < numberOfRows; i++) {
+                                        if (!tableRows[i]) {
+                                            tableRows[i] = [];
+                                        }
+                                        if (i === index) {
+                                            if (key != "nutrition") {
+                                                tableRows[i].push(item);
+                                            }
                                         }
                                     }
-                                }
+                                });
                             });
-                        });
-                        $.each(tableRows, function(key, value) {
-                            var row = $('<tr></tr>');
-                            value.splice(1, 0, ...nutritionData.nutrition[key]);
-                            for (var i = 0; i < value.length; i++) {
-                                row.append('<td class="border-1">' + value[i] + '</td>');
-                            }
-                            table.append(row);
-                        });
+                            $.each(tableRows, function(key, value) {
+                                var row = $('<tr></tr>');
+                                value.splice(1, 0, ...nutritionData.nutrition[key]);
+                                for (var i = 0; i < value.length; i++) {
+                                    row.append('<td class="border-1 mx-1">' + value[i] +
+                                        '</td>');
+                                }
+                                table.append(row);
+                            });
 
-                        $("#table-nutrition").html(table);
-                    }
+                            $("#table-nutrition").html(table);
+                        }
 
                     },
                     error: function(error) {
@@ -627,7 +621,7 @@
             function getNeuroData() {
                 $.ajax({
                     type: 'GET', // or 'POST' if required
-                    url: `{{ URL::to('/') }}/show-patient/{{ $patient->latestPatientCare->id }}/neuro-assessment/${activeDay}`,
+                    url: `{{ URL::to('/') }}/show-patient/{{ $patient->latestPatientCare->id }}/neuro-assessment/${activeDay}/${viewtype}`,
                     dataType: 'json', // Specify the expected data format (e.g., JSON)
                     success: function(data) {
 
@@ -732,7 +726,7 @@
             function getSkinData() {
                 $.ajax({
                     type: 'GET', // or 'POST' if required
-                    url: `{{ URL::to('/') }}/show-patient/{{ $patient->latestPatientCare->id }}/skin-care/${activeDay}`,
+                    url: `{{ URL::to('/') }}/show-patient/{{ $patient->latestPatientCare->id }}/skin-care/${activeDay}/${viewtype}`,
                     dataType: 'json', // Specify the expected data format (e.g., JSON)
                     success: function(data) {
                         // $('#chart-3').html(data.data);
@@ -748,14 +742,14 @@
                             headerRow.append(
                                 `<th class="bg-dark-300 text-light">date</th>
                     <th class="text-center">Wound Dressings</th><th class="text-center">Drain Output</th><th>Skin Integrity</th><th>Recorded by</th>`
-                                );
+                            );
                             headerIndicator.append(headerRow);
                             table.append(headerIndicator);
                             $.each(skinData, function(key, value) {
                                 var row = $('<tr class="text-center"></tr>');
                                 row.append('<th class="ps-2">' + value.new_date + '</th><th>' +
                                     ((value.wound_dressings) ? value.wound_dressings :
-                                    '-') + '</th><th>' + ((value.drain_output) ? value
+                                        '-') + '</th><th>' + ((value.drain_output) ? value
                                         .drain_output : '-') +
                                     '</th><th>' + ((value.skin_integrity) ? value
                                         .skin_integrity : '-') + '</th><th>' + ((value
@@ -792,7 +786,7 @@
                             // Create a table header row
                             var headerRow = $('<tr class="bg-warning-600"></tr>');
                             headerRow.append(`<th>Date</th>
-                      <th>Time</th><th>Description</th><th>Duration</th><th>Intervention</th>`);
+                      <th>Time</th><th>Description</th><th>Duration</th><th>Intervention</th><th>Recorded By</th>`);
                             table.append(headerRow);
                             $.each(seizureData, function(key, value) {
                                 table.append(`<tr>
@@ -800,7 +794,9 @@
                                 <td class="text-center px-1">${value.time}</td>
                                 <td class="text-center px-1">${value.description}</td>
                                 <td class="text-center px-1">${value.durations}</td>
-                                <td class="text-center px-1">${value.intervention}`);
+                                <td class="text-center px-1">${value.intervention}</td>
+                                <td class="text-center px-1">${value.recorded_by}</td>
+                                </tr>`);
                             });
                             $('#table-seizure').html(table)
                         }
@@ -816,7 +812,7 @@
             function getDailyData() {
                 $.ajax({
                     type: 'GET', // or 'POST' if required
-                    url: `{{ url('/') }}/show-patient/{{ $patient->latestPatientCare->id }}/dailynotes/${activeDay}`,
+                    url: `{{ url('/') }}/show-patient/{{ $patient->latestPatientCare->id }}/dailynotes/${activeDay}/${viewtype}`,
                     dataType: 'json', // Specify the expected data format (e.g., JSON)
                     success: function(data) {
                         // $('#chart-3').html(data.data);
@@ -824,7 +820,7 @@
                         console.log(dailyData, 'hello from daily data');
                         if ($.isEmptyObject(dailyData)) {
                             $("#table-daily").html(
-                                '<h2 class="text-center">No Daily Notes Recorded</h2>');
+                                '<h2 class="text-center">No Handover Notes Recorded</h2>');
                         } else {
                             var table = $(
                                 '<table class="table table-bordered" id="form-table-daily"></table>'
@@ -832,22 +828,21 @@
                             var headerIndicator = $('<thead></thead>');
                             // Create a table header row
                             var headerRow = $('<tr></tr>');
-                            headerRow.append(`<th class="bg-dark-300 text-light">Daily Notes</th>
+                            headerRow.append(`<th class="bg-dark-300 text-light">Created at</th>
+                    <th class="bg-dark-300 text-light">Duty</th><th class="bg-dark-300 text-light">Details</th>
+                    <th class="bg-dark-300 text-light">Recorded By</th>
                    `);
                             headerIndicator.append(headerRow);
                             table.append(headerIndicator);
                             $.each(dailyData, function(key, value) {
-                                var row = $(`<tr class="bg-danger-subtle text-center">
-                                    <td>${value.duty_period}</td></tr>
+                                var row = $(`
                                     <tr>
-                                        <td class="text-center">${value.daily_notes}</td>
+                                        <td class="text-center border-1">${value.new_date}</td>
+                                        <td class="text-center border-1">${value.duty_period}</td>
+                                      <td class="ps-2 border-1">${value.daily_notes}</td>
+                                        <td class="text-center border-1">${value.recorded_by}</td>
                                     </tr>
-                                    <tr>
-                                        <td class="text-center">
-                                          <span class="badge bg-info p-1">Recorded By: ${value.recorded_by}
-                                            </span>
-                                        </td>
-                                    </tr>`);
+                                   `);
 
                                 table.append(row);
                             });
@@ -882,7 +877,7 @@
                             // Create a table header row
                             var headerRow = $('<tr></tr>');
                             headerRow.append(`<th class="bg-dark-300 text-light">Invasive Line</th>
-                    <th class="bg-dark-300 text-light">Date Inserted</th>
+                    <th class="bg-dark-300 text-light">Date Inserted</th><th class="bg-dark-300 text-light">Recorded By</th>
                    `);
                             headerIndicator.append(headerRow);
                             table.append(headerIndicator);
@@ -890,6 +885,7 @@
                                 var row = $('<tr></tr>');
                                 row.append(`<th class="ps-2">${value.invasive_lines}</th>
                     <td class="text-center">${value.new_date}</td>
+                    <td class="text-center">${value.recorded_by}</td>
                    `);
                                 table.append(row);
                             });
@@ -998,11 +994,11 @@
             function getPhysicianData() {
                 $.ajax({
                     type: 'GET', // or 'POST' if required
-                    url: `{{ url('/') }}/show-patient/{{ $patient->latestPatientCare->id }}/physician-order/${activeDay}`,
+                    url: `{{ url('/') }}/show-patient/{{ $patient->latestPatientCare->id }}/physician-order/${activeDay}/${viewtype}`,
                     dataType: 'json', // Specify the expected data format (e.g., JSON)
                     success: function(data) {
                         let physicianData = data;
-                        console.log(physicianData, 'physicianData');
+
                         if ($.isEmptyObject(physicianData)) {
                             $('#table-physician').html(
                                 `<h1 class="text-center"> No Physician Note </h1>`)
@@ -1013,19 +1009,19 @@
                             var headerIndicator = $('<thead></thead>');
                             // Create a table header row
                             var headerRow = $('<tr></tr>');
-                            headerRow.append(`<th class="bg-dark-300 text-light">Physician Notes</th>`);
+                            headerRow.append(`<th>created at</th><th class="bg-dark-300 text-light">Physician Notes</th><th>Recorded By</th>`);
                             headerIndicator.append(headerRow);
                             table.append(headerIndicator);
                             $.each(physicianData, function(key, value) {
                                 var row = $(`<tr>
+                                    <td class="text-center">${value.new_date}</td>
                                     <td>
                                     ${value.content}</td>
-                                    </tr>
-                                    <tr>
-                                        <td class="text-center">
-                                           <span class="badge bg-gradient bg-info-subtle"> Recorded By: ${value.recorded_by} </span>
+                                    <td class="text-center">
+                                           <span class="badge bg-gradient bg-info-subtle">  ${value.recorded_by} </span>
                                         </td>
-                                    </tr>`);
+                                    </tr>
+                                  `);
 
                                 table.append(row);
                             });
@@ -1040,21 +1036,42 @@
 
                 });
             }
+            function summaryView(){
+                getCardioData();
+                getRespData();
+                getFluidData();
+                getMedicationData();
+                getNutritionData();
+                getNeuroData();
+                getLabData();
+                getSeizureData();
+                getInvasiveData();
+                getDailyData();
+                getRenalData();
+                getProgressData();
+                getPhysicianData();
+                getSkinData();
+            }
 
-            getCardioData();
-            getRespData();
-            getFluidData();
-            getMedicationData();
-            getNutritionData();
-            getNeuroData();
-            getLabData();
-            getSeizureData();
-            getInvasiveData();
-            getDailyData();
-            getRenalData();
-            getProgressData();
-            getPhysicianData();
-            getSkinData();
+            summaryView();
+            $('#summary-view').on('click', function() {
+                summaryView();
+                $('#summary-view').removeClass('btn-outline-primary');
+                $('#summary-view').addClass('btn-primary');
+
+            });
+            $('#details-view').on('click', function() {
+                viewtype = 'details'
+                summaryView();
+                $('#summary-view').removeClass('btn-primary');
+                $('#summary-view').addClass('btn-outline-primary');
+            });
+            $('#chart-view').on('click', function() {
+                chartView();
+                $('#summary-view').removeClass('btn-primary');
+                $('#summary-view').addClass('btn-outline-primary');
+            });
+            $('#summary-')
             $('#table-lab').on('click', '.result', function() {
                 let id = $(this).data('id');
 
@@ -1398,6 +1415,7 @@
                 medication_dose = $(this).val();
 
             });
+
             function medicationNameCount(arr, element) {
                 return arr.filter(item => item === element).length;
             }
@@ -1517,6 +1535,7 @@
                 nutrition_dose = $(this).val();
 
             });
+
             function nutritionNameCount(arr, element) {
                 return arr.filter(item => item === element).length;
             }
@@ -1887,10 +1906,10 @@
 
 
 
-    <div class="card border-theme border-3 sticky-md-top" style="top:20px;">
-        <div class="card-body row gx-0 align-items-center shadow-lg">
+    <div class="card border-theme border-3 sticky-md-top mb-1" style="top:10px;">
+        <div class="card-body row align-items-center shadow-lg">
             <div class="col-md-12">
-                <div class="row">
+                <div class="row" id="patient-info">
                     <div class="col-md-3">
                         <div class="d-flex flex-column">
                             <h4 class="mb-0"> Name: <span
@@ -1941,8 +1960,42 @@
                             </select>
 
                         </div>
+                        <div class="bottom-0 mt-2">
+                            <button class="btn btn-sm btn-teal" id="patient-info-summary">view patient limited information</button>
+                        </div>
 
                     </div>
+                </div>
+                <div class="row" id="patient-info-2">
+                    <div class="col-sm-6 col-md-6">
+                        <h4 class="mb-0"> Name: <span
+                                    class=
+                                    "fw-bold text-gray-emphasis">{{ $patient->fullname }}</span>
+                        </h4>
+                    </div>
+                    <div class="col-sm-6 col-md-3">
+                        <h5 class="text-muted my-0 text-gray-emphasis">Diagnosis: &nbsp;<span
+                                class="fw-bold">{{ $patient->latestPatientCare->diagnosis }}</span></h5>
+                    </div>
+                    <div class="col-sm-6 col-md-3">
+                        <h5 class="text-muted my-0 text-gray-emphasis"><span class="fw-bold">Next of Kin:
+                                &nbsp;</span>{{ $patient->next_of_kin }}</h5>
+                        <div class="bottom-0 mt-2">
+                            <button class="btn btn-sm btn-teal" id="patient-info-full">view full patient information</button>
+                        </div>
+                    </div>
+
+                </div>
+                <div class="row bottom-0 mt-2 rounded border-top border-2 border-primary" id="details-view">
+                    <div class="col-md-6">
+                       <h5> View Type: </h5>
+                        <div class="d-flex justify-content-center align-items-center">
+                         <button type="button" class="btn btn-primary mx-2" id="summary-view">Summary view</button>
+                         <button type="button" class="btn btn-outline-purple mx-2" id="details-view">Details view</button>
+                         <button type="button" class="btn btn-outline-info mx-2" id="chart-view">Chart view</button>
+                        </div>
+                    </div>
+                    <div class="col-md-6"></div>
                 </div>
             </div>
         </div>
@@ -2197,32 +2250,70 @@
                 </h5>
                 <div id="collapseSeven" class="accordion-collapse collapse" data-bs-parent="#accordionExample">
                     <div class="accordion-body">
-                    <div class="col-lg-12">
-                        <div class="card h-100 mt-2">
-                            <!-- BEGIN card-body -->
-                            <div class="card-header bg-gradient bg-teal-400 d-flex gap-2 align-items-center">
+                        <div class="col-lg-12">
+                            <div class="card h-100 mt-2">
+                                <!-- BEGIN card-body -->
+                                <div class="card-header bg-gradient bg-teal-400 d-flex gap-2 align-items-center">
 
-                                <div class="flex-grow-1">
-                                    <h5 class="mb-1"></h5>
+                                    <div class="flex-grow-1">
+                                        <h5 class="mb-1"></h5>
 
-                                </div>
-                                <i class="fa fa-plus" data-bs-toggle="modal" data-bs-target="#modal-nutrition"></i>
-                                <a href="javascript:;" class="text-secondary"><i class="fa fa-redo"></i></a>
-                                <a href="#" data-toggle="card-expand"
-                                    class="text-white text-opacity-20 text-decoration-none"><i
-                                        class="fa fa-fw fa-expand"></i></a>
-
-                            </div>
-                            <div class="card-body">
-                                <div class="table-responsive" id="table-nutrition">
+                                    </div>
+                                    <i class="fa fa-plus" data-bs-toggle="modal" data-bs-target="#modal-nutrition"></i>
+                                    <a href="javascript:;" class="text-secondary"><i class="fa fa-redo"></i></a>
+                                    <a href="#" data-toggle="card-expand"
+                                        class="text-white text-opacity-20 text-decoration-none"><i
+                                            class="fa fa-fw fa-expand"></i></a>
 
                                 </div>
+                                <div class="card-body">
+                                    <div class="table-responsive" id="table-nutrition">
+
+                                    </div>
 
 
+                                </div>
+                                <!-- END card-body -->
                             </div>
-                            <!-- END card-body -->
                         </div>
                     </div>
+                </div>
+            </div>
+            <div class="accordion-item">
+                <h5 class="accordion-header" id="headingEighty">
+                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+                        data-bs-target="#collapseEighty">
+                        <span class="fw-bold fs-5"> Skin and Wound Care</span>
+                    </button>
+                </h5>
+                <div id="collapseEighty" class="accordion-collapse collapse" data-bs-parent="#accordionExample">
+                    <div class="accordion-body">
+                        <div class="col-lg-12">
+                            <div class="card h-100 mt-2">
+                                <!-- BEGIN card-body -->
+
+                                    <div class="card-header bg-gradient bg-dark d-flex gap-2 align-items-center">
+                                        <div class="d-flex mb-3 gap-1">
+                                            <div class="flex-grow-1">
+                                                <h5 class="mb-1"></h5>
+
+                                            </div>
+
+                                        <i class="fa fa-plus" data-bs-toggle="modal" data-bs-target="#modal-skin"></i>
+                                        <a href="javascript:;" class="text-secondary"><i class="fa fa-redo"></i></a>
+                                        <a href="#" data-toggle="card-expand"
+                                            class="text-white text-opacity-20 text-decoration-none"><i
+                                                class="fa fa-fw fa-expand"></i></a>
+                                        </div>
+                                    </div>
+                                    <div class="card-body">
+                                     <div class="table-responsive" id="table-skin">
+
+                                    </div>
+                                </div>
+                                <!-- END card-body -->
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -2235,63 +2326,24 @@
                 </h5>
                 <div id="collapseEight" class="accordion-collapse collapse" data-bs-parent="#accordionExample">
                     <div class="accordion-body">
-                    <div class="col-lg-12">
-                        <div class="card h-100 mt-2">
-                            <!-- BEGIN card-body -->
-                            <div class="card-body">
-                                <div class="d-flex mb-3 gap-1">
-                                    <div class="flex-grow-1">
-                                        <h5 class="mb-1"></h5>
-
-                                    </div>
-
-                                    <a href="javascript:;" class="text-secondary"><i class="fa fa-redo"></i></a>
-                                </div>
-                                <div id="table-renal" class="table-responsive"></div>
-                            </div>
-                            <!-- END card-body -->
-                        </div>
-                    </div>
-                    </div>
-                </div>
-            </div>
-            <div class="accordion-item">
-                <h5 class="accordion-header" id="headingNine">
-                    <button class="accordion-button collapse" type="button" data-bs-toggle="collapse"
-                        data-bs-target="#collapseNine">
-                        <span class="fw-bold fs-5"> Skin and Wound Care </span>
-                    </button>
-                </h5>
-                <div id="collapseNine" class="accordion-collapse collapse" data-bs-parent="#accordionExample">
-                    <div class="accordion-body">
-                        <div class="col-lg-12" id="skin">
+                        <div class="col-lg-12">
                             <div class="card h-100 mt-2">
                                 <!-- BEGIN card-body -->
-                                <div class="card-header bg-gradient bg-purple d-flex gap-2 align-items-center">
-
-                                    <div class="flex-grow-1">
-                                        <h5 class="mb-1 text-white"></h5>
-
-                                    </div>
-                                    <i class="fa fa-plus" data-bs-toggle="modal" data-bs-target="#modal-skin"></i>
-                                    <a href="javascript:;" class="text-secondary"><i class="fa fa-redo"></i></a>
-                                    <a href="#" data-toggle="card-expand"
-                                        class="text-white text-opacity-20 text-decoration-none"><i
-                                            class="fa fa-fw fa-expand"></i></a>
-
-                                </div>
                                 <div class="card-body">
-                                    <div class="table-responsive" id="table-skin">
+                                    <div class="d-flex mb-3 gap-1">
+                                        <div class="flex-grow-1">
+                                            <h5 class="mb-1"></h5>
 
+                                        </div>
+
+                                        <a href="javascript:;" class="text-secondary"><i class="fa fa-redo"></i></a>
                                     </div>
-
-
+                                    <div id="table-renal" class="table-responsive"></div>
                                 </div>
                                 <!-- END card-body -->
                             </div>
                         </div>
                     </div>
-                    
                 </div>
             </div>
             <div class="accordion-item">
@@ -2303,32 +2355,32 @@
                 </h5>
                 <div id="collapseTen" class="accordion-collapse collapse" data-bs-parent="#accordionExample">
                     <div class="accordion-body">
-                    <div class="col-lg-12" id="invasive">
-                        <div class="card h-100 mt-2">
-                            <!-- BEGIN card-body -->
-                            <div class="card-header bg-gradient bg-dark d-flex gap-2 align-items-center">
+                        <div class="col-lg-12" id="invasive">
+                            <div class="card h-100 mt-2">
+                                <!-- BEGIN card-body -->
+                                <div class="card-header bg-gradient bg-dark d-flex gap-2 align-items-center">
 
-                                <div class="flex-grow-1">
-                                    <h5 class="mb-1 text-white"></h5>
+                                    <div class="flex-grow-1">
+                                        <h5 class="mb-1 text-white"></h5>
 
-                                </div>
-                                <i class="fa fa-plus" data-bs-toggle="modal" data-bs-target="#modal-invasive"></i>
-                                <a href="javascript:;" class="text-secondary"><i class="fa fa-redo"></i></a>
-                                <a href="#" data-toggle="card-expand"
-                                    class="text-white text-opacity-20 text-decoration-none"><i
-                                        class="fa fa-fw fa-expand"></i></a>
-
-                            </div>
-                            <div class="card-body">
-                                <div class="table-responsive" id="table-invasive">
+                                    </div>
+                                    <i class="fa fa-plus" data-bs-toggle="modal" data-bs-target="#modal-invasive"></i>
+                                    <a href="javascript:;" class="text-secondary"><i class="fa fa-redo"></i></a>
+                                    <a href="#" data-toggle="card-expand"
+                                        class="text-white text-opacity-20 text-decoration-none"><i
+                                            class="fa fa-fw fa-expand"></i></a>
 
                                 </div>
+                                <div class="card-body">
+                                    <div class="table-responsive" id="table-invasive">
+
+                                    </div>
 
 
+                                </div>
+                                <!-- END card-body -->
                             </div>
-                            <!-- END card-body -->
                         </div>
-                    </div>
                     </div>
                 </div>
             </div>
@@ -2336,37 +2388,37 @@
                 <h5 class="accordion-header" id="headingEleven">
                     <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
                         data-bs-target="#collapseEleven">
-                        <span class="fw-bold fs-5"> Progress Notes </span>
+                        <span class="fw-bold fs-5"> Daily Problems /Intervention </span>
                     </button>
                 </h5>
                 <div id="collapseEleven" class="accordion-collapse collapse" data-bs-parent="#accordionExample">
                     <div class="accordion-body">
-                    <div class="col-lg-12" id="progress">
-                        <div class="card h-100 mt-2">
-                            <!-- BEGIN card-body -->
-                            <div class="card-header bg-gradient bg-gray-200 d-flex gap-2 align-items-center">
+                        <div class="col-lg-12" id="progress">
+                            <div class="card h-100 mt-2">
+                                <!-- BEGIN card-body -->
+                                <div class="card-header bg-gradient bg-gray-200 d-flex gap-2 align-items-center">
 
-                                <div class="flex-grow-1">
-                                    <h5 class="mb-1"></h5>
+                                    <div class="flex-grow-1">
+                                        <h5 class="mb-1"></h5>
 
-                                </div>
-                                <i class="fa fa-plus" data-bs-toggle="modal" data-bs-target="#modal-progress"></i>
-                                <a href="javascript:;" class="text-secondary"><i class="fa fa-redo"></i></a>
-                                <a href="#" data-toggle="card-expand"
-                                    class="text-white text-opacity-20 text-decoration-none"><i
-                                        class="fa fa-fw fa-expand"></i></a>
-
-                            </div>
-                            <div class="card-body">
-                                <div class="table-responsive" id="table-progress">
+                                    </div>
+                                    <i class="fa fa-plus" data-bs-toggle="modal" data-bs-target="#modal-progress"></i>
+                                    <a href="javascript:;" class="text-secondary"><i class="fa fa-redo"></i></a>
+                                    <a href="#" data-toggle="card-expand"
+                                        class="text-white text-opacity-20 text-decoration-none"><i
+                                            class="fa fa-fw fa-expand"></i></a>
 
                                 </div>
+                                <div class="card-body">
+                                    <div class="table-responsive" id="table-progress">
+
+                                    </div>
 
 
+                                </div>
+                                <!-- END card-body -->
                             </div>
-                            <!-- END card-body -->
                         </div>
-                    </div>
                     </div>
                 </div>
             </div>
@@ -2379,32 +2431,32 @@
                 </h5>
                 <div id="collapseTwelve" class="accordion-collapse collapse" data-bs-parent="#accordionExample">
                     <div class="accordion-body">
-                    <div class="col-lg-12" id="seizure">
-                        <div class="card h-100 mt-2">
-                            <!-- BEGIN card-body -->
-                            <div class="card-header bg-gradient bg-warning-200 d-flex gap-2 align-items-center">
+                        <div class="col-lg-12" id="seizure">
+                            <div class="card h-100 mt-2">
+                                <!-- BEGIN card-body -->
+                                <div class="card-header bg-gradient bg-warning-200 d-flex gap-2 align-items-center">
 
-                                <div class="flex-grow-1">
-                                    <h5 class="mb-1"></h5>
+                                    <div class="flex-grow-1">
+                                        <h5 class="mb-1"></h5>
 
-                                </div>
-                                <i class="fa fa-plus" data-bs-toggle="modal" data-bs-target="#modal-seizure"></i>
-                                <a href="javascript:;" class="text-secondary"><i class="fa fa-redo"></i></a>
-                                <a href="#" data-toggle="card-expand"
-                                    class="text-white text-opacity-20 text-decoration-none"><i
-                                        class="fa fa-fw fa-expand"></i></a>
-
-                            </div>
-                            <div class="card-body">
-                                <div class="table-responsive" id="table-seizure">
+                                    </div>
+                                    <i class="fa fa-plus" data-bs-toggle="modal" data-bs-target="#modal-seizure"></i>
+                                    <a href="javascript:;" class="text-secondary"><i class="fa fa-redo"></i></a>
+                                    <a href="#" data-toggle="card-expand"
+                                        class="text-white text-opacity-20 text-decoration-none"><i
+                                            class="fa fa-fw fa-expand"></i></a>
 
                                 </div>
+                                <div class="card-body">
+                                    <div class="table-responsive" id="table-seizure">
+
+                                    </div>
 
 
+                                </div>
+                                <!-- END card-body -->
                             </div>
-                            <!-- END card-body -->
                         </div>
-                    </div>
                     </div>
                 </div>
             </div>
@@ -2412,37 +2464,37 @@
                 <h5 class="accordion-header" id="headingThirteen">
                     <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
                         data-bs-target="#collapseThirteen">
-                        <span class="fw-bold fs-5"> Nursing Assessment </span>
+                        <span class="fw-bold fs-5"> Nursing Handover Notes </span>
                     </button>
                 </h5>
                 <div id="collapseThirteen" class="accordion-collapse collapse" data-bs-parent="#accordionExample">
                     <div class="accordion-body">
-                    <div class="col-lg-12" id="nursing">
-                        <div class="card h-100 mt-2">
-                            <!-- BEGIN card-body -->
-                            <div class="card-header bg-gradient bg-gray-100 d-flex gap-2 align-items-center">
+                        <div class="col-lg-12" id="nursing">
+                            <div class="card h-100 mt-2">
+                                <!-- BEGIN card-body -->
+                                <div class="card-header bg-gradient bg-gray-100 d-flex gap-2 align-items-center">
 
-                                <div class="flex-grow-1">
-                                    <h5 class="mb-1"></h5>
+                                    <div class="flex-grow-1">
+                                        <h5 class="mb-1"></h5>
 
-                                </div>
-                                <i class="fa fa-plus" data-bs-toggle="modal" data-bs-target="#modal-daily"></i>
-                                <a href="javascript:;" class="text-secondary"><i class="fa fa-redo"></i></a>
-                                <a href="#" data-toggle="card-expand"
-                                    class="text-white text-opacity-20 text-decoration-none"><i
-                                        class="fa fa-fw fa-expand"></i></a>
-
-                            </div>
-                            <div class="card-body">
-                                <div class="table-responsive" id="table-daily">
+                                    </div>
+                                    <i class="fa fa-plus" data-bs-toggle="modal" data-bs-target="#modal-daily"></i>
+                                    <a href="javascript:;" class="text-secondary"><i class="fa fa-redo"></i></a>
+                                    <a href="#" data-toggle="card-expand"
+                                        class="text-white text-opacity-20 text-decoration-none"><i
+                                            class="fa fa-fw fa-expand"></i></a>
 
                                 </div>
+                                <div class="card-body">
+                                    <div class="table-responsive" id="table-daily">
+
+                                    </div>
 
 
+                                </div>
+                                <!-- END card-body -->
                             </div>
-                            <!-- END card-body -->
                         </div>
-                    </div>
                     </div>
                 </div>
             </div>
@@ -2455,35 +2507,36 @@
                 </h5>
                 <div id="collapseFourteen" class="accordion-collapse collapse" data-bs-parent="#accordionExample">
                     <div class="accordion-body">
-                    <div class="col-lg-12" id="physician">
-                        <div class="card h-100 mt-2">
-                            <!-- BEGIN card-body -->
-                            <div class="card-header bg-gradient bg-warning-500 d-flex gap-2 align-items-center">
+                        <div class="col-lg-12" id="physician">
+                            <div class="card h-100 mt-2">
+                                <!-- BEGIN card-body -->
+                                <div class="card-header bg-gradient bg-warning-500 d-flex gap-2 align-items-center">
 
-                                <div class="flex-grow-1">
-                                    <h5 class="mb-1"></h5>
+                                    <div class="flex-grow-1">
+                                        <h5 class="mb-1"></h5>
 
-                                </div>
-                                <i class="fa fa-plus" data-bs-toggle="modal" data-bs-target="#modal-physician"></i>
-                                <a href="javascript:;" class="text-secondary"><i class="fa fa-redo"></i></a>
-                                <a href="#" data-toggle="card-expand"
-                                    class="text-white text-opacity-20 text-decoration-none"><i
-                                        class="fa fa-fw fa-expand"></i></a>
-
-                            </div>
-                            <div class="card-body">
-                                <div class="table-responsive" id="table-physician">
+                                    </div>
+                                    <i class="fa fa-plus" data-bs-toggle="modal" data-bs-target="#modal-physician"></i>
+                                    <a href="javascript:;" class="text-secondary"><i class="fa fa-redo"></i></a>
+                                    <a href="#" data-toggle="card-expand"
+                                        class="text-white text-opacity-20 text-decoration-none"><i
+                                            class="fa fa-fw fa-expand"></i></a>
 
                                 </div>
+                                <div class="card-body">
+                                    <div class="table-responsive" id="table-physician">
+
+                                    </div>
 
 
+                                </div>
+                                <!-- END card-body -->
                             </div>
-                            <!-- END card-body -->
                         </div>
-                    </div>
                     </div>
                 </div>
             </div>
+
         </div>
 
 
@@ -2512,7 +2565,7 @@
         <div class="toast fade hide mb-3" data-autohide="true" id="toast-1">
             <div class="toast-header">
                 <i class="far fa-bell text-muted me-2"></i>
-                <strong class="me-auto">SUccess</strong>
+                <strong class="me-auto">Success</strong>
 
                 <button type="button" class="btn-close" data-bs-dismiss="toast"></button>
             </div>
