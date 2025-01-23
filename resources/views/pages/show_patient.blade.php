@@ -1064,15 +1064,15 @@
             $('#details-view').on('click', function() {
                 viewtype = 'details'
                 summaryView();
-                $('#summary-view').removeClass('btn-primary');
-                $('#summary-view').addClass('btn-outline-primary');
+                $('#details-view').removeClass('btn-purple');
+                $('#details-view').addClass('btn-outline-purple');
             });
             $('#chart-view').on('click', function() {
-                chartView();
-                $('#summary-view').removeClass('btn-primary');
-                $('#summary-view').addClass('btn-outline-primary');
+                // chartView();
+                $('#chart-view').removeClass('btn-info');
+                $('#chart-view').addClass('btn-outline-info');
             });
-            $('#summary-')
+           
             $('#table-lab').on('click', '.result', function() {
                 let id = $(this).data('id');
 
