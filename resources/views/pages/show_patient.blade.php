@@ -1055,6 +1055,7 @@
 
             summaryView();
             $('#summary-view').on('click', function() {
+                viewtype = 'summary'
                 summaryView();
                 $('#summary-view').removeClass('btn-outline-primary');
                 $('#summary-view').addClass('btn-primary');
