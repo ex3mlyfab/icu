@@ -1058,14 +1058,23 @@
                 viewtype = 'summary'
                 summaryView();
                 $('#summary-view').removeClass('btn-outline-primary');
+                $('#details-view').removeClass('btn-purple');
+                $('#details-view').addClass('btn-outline-purple');
                 $('#summary-view').addClass('btn-primary');
+                $('#chart-view').removeClass('btn-info');
+                $('#chart-view').addClass('btn-outline-info');
 
             });
             $('#details-view').on('click', function() {
                 viewtype = 'details'
                 summaryView();
-                $('#details-view').removeClass('btn-purple');
-                $('#details-view').addClass('btn-outline-purple');
+                $('#details-view').removeClass('btn-outline-purple');
+                $('#details-view').addClass('btn-purple');
+                $('#summary-view').removeClass('btn-primary');
+                $('#summary-view').addClass('btn-outline-primary');
+                $('#chart-view').removeClass('btn-info');
+                $('#chart-view').addClass('btn-outline-info');
+
             });
             $('#chart-view').on('click', function() {
                 // chartView();

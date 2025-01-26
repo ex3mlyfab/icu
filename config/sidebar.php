@@ -43,6 +43,19 @@ return [
         'url' => '/patients-list',
         'icon' => 'fa fa-users',
         'text' => 'Patient List'
+    ],
+    [
+      'icon' => 'fa fa-cogs',
+      'text' => 'Settings',
+      'children' => [[
+        'url' => '/admin/permissions',
+        'text' => 'Permissions'
+      ],
+      [
+        'url' => '/admin/assign-role',
+        'text' => 'Roles'
+      ]
+      ]
       ],
 
 ]];
