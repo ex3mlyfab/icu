@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\Reading2Controller;
 use App\Http\Controllers\ReadingController;
+use App\Http\Controllers\UserController;
 
 /*
 |--------------------------------------------------------------------------
@@ -124,6 +125,12 @@ Route::middleware('auth')->group(function () {
     Route::post('admin/role/update', [PermissionController::class, 'updateRole'])->name('role.update')->can('update-role');
     Route::get('admin/page/create-role', [PermissionController::class, 'createRolePage'])->name('role.createPage')->can('add-role');
     Route::get('get-all-permission', [PermissionController::class, 'getallPermission'])->name('permission.all')->can('view-permission');
+    //User creation and listing
+
+    Route::get('admin/users-create', [UserController::class, 'createUserPage'])->name('user.create')->can('create-user');
+    Route::get('admin/users-list', [UserController::class, 'userIndex'])->name('user.index')->can('view-user');
+    Route::post('admin/users-list', [UserController::class, 'get_user_table'])->name('datatable.user')->can('view.user');
+    Route::post('admin/users-store', [UserController::class, 'createUser'])->name('user.store')->can('create-user');
 });
 
 require __DIR__.'/auth.php';

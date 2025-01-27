@@ -54,6 +54,10 @@ return [
       [
         'url' => '/admin/assign-role',
         'text' => 'Roles'
+      ],
+      [
+        'url' => '/admin/users-list',
+        'text' => 'users'
       ]
       ]
       ],

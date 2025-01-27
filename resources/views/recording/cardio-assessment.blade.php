@@ -1,7 +1,7 @@
 
 {{-- Modal for cardiovascular assessment --}}
 <div class="modal fade" id="modalXl" data-bs-backdrop="static">
-    <div class="modal-dialog modal-xl">
+    <div class="modal-dialog modal-xl ">
         <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title">Add New Cardiovasular assessment</h5>

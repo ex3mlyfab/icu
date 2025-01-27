@@ -1,7 +1,7 @@
 
 {{-- Modal for dischargevascular assessment --}}
 <div class="modal fade" id="modal-discharge" data-bs-backdrop="static">
-    <div class="modal-dialog modal-xl">
+    <div class="modal-dialog modal-xl modal-dialog-centered">
         <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title">Prepare patient for Discharge</h5>

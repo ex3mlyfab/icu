@@ -1,6 +1,6 @@
 
 <div class="modal fade" id="modal-fluid" data-bs-backdrop="static">
-    <div class="modal-dialog modal-xl">
+    <div class="modal-dialog modal-xl modal-dialog-centered">
         <div class="modal-content">
             <div class="modal-header bg-gradient bg-warning">
                 <h5 class="modal-title">Add Fluid Recording</h5>

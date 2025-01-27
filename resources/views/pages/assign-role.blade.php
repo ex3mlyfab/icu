@@ -57,7 +57,7 @@
     <div class="mb-3">
         <input type="text" class="form-control" id="search-input" placeholder="Search by name">
     </div>
-   <div class="row px-md-4" id="role-list" >
+   <div class="row px-md-5" id="role-list" >
         <div class="table-responsive">
             <table class="table table-bordered" id="role-table">
                 <thead class="bg-theme opacity-5">

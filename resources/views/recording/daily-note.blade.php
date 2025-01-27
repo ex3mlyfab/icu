@@ -1,6 +1,6 @@
 {{-- Modal for dailyvascular assessment --}}
 <div class="modal fade" id="modal-daily" data-bs-backdrop="static">
-    <div class="modal-dialog modal-lg">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
         <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title">Add New Handover Note</h5>
