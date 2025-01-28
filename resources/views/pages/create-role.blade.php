@@ -4,7 +4,7 @@
 	'appClass' => 'app-with-top-nav app-without-sidebar'
 ])
 
-@section('title', 'Create Role')
+@section('title', 'Create New Role')
 
 @push('css')
 
@@ -65,7 +65,7 @@
     <div class="col-xl-12">
         <div class="card shadow mb-1">
             <div class="card-body d-flex justify-content-between align-items-center">
-                <h1>Create Roles</h1>
+                <h1>Create New Role</h1>
 
             </div>
 
@@ -90,7 +90,7 @@
                         </div>
                          <div class="row mt-3">
 
-                         <h5>Select Role permission</h5>
+                         <h5>Select Role Permissions</h5>
                         <div id="perm-list" class="row border-1 border-teal-200 p-2">
 
                         </div>

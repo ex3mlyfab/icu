@@ -4,7 +4,7 @@
 	'appClass' => 'app-with-top-nav app-without-sidebar'
 ])
 
-@section('title', 'Create Role')
+@section('title', 'Roles List')
 
 @push('css')
 
@@ -45,8 +45,7 @@
         <div class="card shadow mb-1">
             <div class="card-body d-flex justify-content-between align-items-center">
                 <h1>Roles</h1>
-                <button type="button" class="btn btn-outline-primary" data-bs-toggle="modal"
-                    data-bs-target="#modal-perm">Add New Role</button>
+                <a href="{{route('role.createPage')}}" class="btn btn-outline-primary">Add New Role</a>
             </div>
 
         </div>

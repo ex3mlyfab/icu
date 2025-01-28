@@ -17,6 +17,7 @@
                         $GLOBALS['childparent_level'] = '';
 
                         $subSubMenu = '';
+                        // $canView = !empty($menu['can']) ? $menu['can'] : '';
                         $hasSub = !empty($menu['children']) ? 'has-sub' : '';
                         $menuUrl = !empty($menu['url']) ? $menu['url'] : '';
                         $menuCaret = !empty($hasSub) ? '<span class="menu-caret"><b class="caret"></b></span>' : '';
@@ -63,8 +64,11 @@
                 }
 
                 foreach (config('sidebar.menu') as $key => $menu) {
-                    $GLOBALS['parent_active'] = '';
 
+                    if($menu['can'] && !auth()->user()->can($menu['can'])) {
+                        continue;
+                    }
+                    $GLOBALS['parent_active'] = '';
                     $hasSub = !empty($menu['children']) ? 'has-sub' : '';
                     $menuUrl = !empty($menu['url']) ? $menu['url'] : '';
                     $menuLabel = !empty($menu['label'])

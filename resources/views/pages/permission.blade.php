@@ -4,7 +4,7 @@
     'appClass' => 'app-with-top-nav app-without-sidebar',
 ])
 
-@section('title', 'Users List')
+@section('title', 'Permissions List')
 
 @push('css')
 @endpush
@@ -137,7 +137,7 @@
         <div class="col-xl-12">
             <div class="card shadow mb-1">
                 <div class="card-body d-flex justify-content-between align-items-center">
-                    <h1>Permision</h1>
+                    <h1>Permissions</h1>
                     <button type="button" class="btn btn-outline-primary" data-bs-toggle="modal"
                         data-bs-target="#modal-perm">Add New Permissions</button>
                 </div>

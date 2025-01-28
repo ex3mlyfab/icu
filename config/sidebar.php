@@ -24,6 +24,7 @@ return [
     [
       'icon' => 'fa fa-user-circle',
       'text' => 'Add Patient',
+      'can'  => 'add-patient',
       'children' => [[
         'url' => '/create-patient-from-emr',
         'text' => 'Add Patient From EMR'
@@ -37,27 +38,33 @@ return [
       [
         'url' => '/beds',
         'icon' => 'fa fa-bed',
-        'text' => 'Bed Information'
+        'text' => 'Bed Information',
+        'can'  => 'view-bed',
       ],
       [
         'url' => '/patients-list',
         'icon' => 'fa fa-users',
-        'text' => 'Patient List'
+        'text' => 'Patient List',
+        'can'  => 'view-patient',
     ],
     [
       'icon' => 'fa fa-cogs',
       'text' => 'Settings',
+      'can'  => 'view-settings',
       'children' => [[
         'url' => '/admin/permissions',
-        'text' => 'Permissions'
+        'text' => 'Permissions',
+        'can'  => 'view-permission',
       ],
       [
         'url' => '/admin/assign-role',
-        'text' => 'Roles'
+        'text' => 'Roles',
+        'can'  => 'view-role',
       ],
       [
         'url' => '/admin/users-list',
-        'text' => 'users'
+        'text' => 'Users',
+        'can'  => 'view-user',
       ]
       ]
       ],
