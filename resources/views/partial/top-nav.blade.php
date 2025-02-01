@@ -50,6 +50,11 @@
 
                 foreach (config('sidebar.menu') as $key => $menu) {
                     $GLOBALS['parent_active'] = '';
+                    // check if there is can key and user has permission in the array
+                    if (isset($menu['can']) && !auth()->user()->can($menu['can'])) {
+                        continue;
+                    }
+                   
 
                     $hasSub = (!empty($menu['children'])) ? 'has-sub' : '';
                     $menuUrl = (!empty($menu['url'])) ? $menu['url'] : '';

@@ -4,128 +4,92 @@
     <div class="app-sidebar-content" data-scrollbar="true" data-height="100%">
         <!-- BEGIN menu -->
         <div class="menu">
-            @php
-                $currentUrl = Request::path() != '/' ? '/' . Request::path() : '/';
+            <div class="menu-item">
+                <a href="{{ route('dashboard') }}" class="menu-link {{ Request::routeIs('dashboard') ? 'active' : '' }}">
+                    <span class="menu-icon"><i class="fa fa-home"></i></span>
+                    <span class="menu-text">Home</span>
+                </a>
+            </div>
+            @can('add-patient')
+                <div
+                    class="menu-item has-sub {{ Request::routeIs('create-patient-from-emr') || Request::routeIs('create-patient') ? 'active' : '' }} ">
+                    <a href="#" class="menu-link">
+                        <span class="menu-icon">
+                            <i class="fa fa-user-circle"></i>
 
-                function renderSubMenu($value, $currentUrl)
-                {
-                    $subMenu = '';
-                    $GLOBALS['sub_level'] += 1;
-                    $GLOBALS['active'][$GLOBALS['sub_level']] = '';
-                    $currentLevel = $GLOBALS['sub_level'];
-                    foreach ($value as $key => $menu) {
-                        $GLOBALS['childparent_level'] = '';
+                        </span>
+                        <span class="menu-text">Add Patient</span>
+                        <span class="menu-caret"><b class="caret"></b></span>
+                    </a>
+                    <div class="menu-submenu">
+                        <div class="menu-item">
+                            <a href="{{ route('create-patient-from-emr') }}"
+                                class="menu-link {{ Request::routeIs('create-patient-from-emr') ? 'active' : '' }}">
+                                <span class="menu-text">Add Patient From EMR</span>
+                            </a>
+                        </div>
+                        <div class="menu-item">
+                            <a href="{{ route('create-patient') }}"
+                                class="menu-link {{ Request::routeIs('create-patient') ? 'active' : '' }}">
+                                <span class="menu-text">New Patient Registration</span>
+                            </a>
+                        </div>
+                    </div>
 
-                        $subSubMenu = '';
-                        // $canView = !empty($menu['can']) ? $menu['can'] : '';
-                        $hasSub = !empty($menu['children']) ? 'has-sub' : '';
-                        $menuUrl = !empty($menu['url']) ? $menu['url'] : '';
-                        $menuCaret = !empty($hasSub) ? '<span class="menu-caret"><b class="caret"></b></span>' : '';
-                        $menuText = !empty($menu['text']) ? '<span class="menu-text">' . $menu['text'] . '</span>' : '';
+                </div>
+            @endcan
+            @can('view-bed')
+                <div class="menu-item">
+                    <a href="{{ route('bed.index') }}"
+                        class="menu-link {{ Request::routeIs('bed.index') ? 'active' : '' }}">
+                        <span class="menu-icon"><i class="fa fa-bed"></i></span>
+                        <span class="menu-text">Beds Information</span>
+                    </a>
+                </div>
+            @endcan
+            @can('view-patient')
+                <div class="menu-item">
+                    <a href="{{ route('patient.list') }}"
+                        class="menu-link {{ Request::routeIs('patient.list') ? 'active' : '' }}">
+                        <span class="menu-icon"><i class="fa fa-user"></i></span>
+                        <span class="menu-text">Patient List</span>
+                    </a>
+                </div>
+            @endcan
+            @can('view-role')
+                <div
+                    class="menu-item has-sub {{ Request::routeIs('permission.index') || Request::routeIs('role.assign') || Request::routeIs('user.index') ? 'active' : '' }} ">
+                    <a href="#" class="menu-link">
+                        <span class="menu-icon">
+                            <i class="fa fa-user-circle"></i>
 
-                        if (!empty($menu['children'])) {
-                            $subSubMenu .= '<div class="menu-submenu">';
-                            $subSubMenu .= renderSubMenu($menu['children'], $currentUrl);
-                            $subSubMenu .= '</div>';
-                        }
+                        </span>
+                        <span class="menu-text">Settings</span>
+                        <span class="menu-caret"><b class="caret"></b></span>
+                    </a>
+                    <div class="menu-submenu">
+                        <div class="menu-item">
+                            <a href="{{ route('permission.index') }}"
+                                class="menu-link {{ Request::routeIs('permission.index') ? 'active' : '' }}">
+                                <span class="menu-text">Permissions</span>
+                            </a>
+                        </div>
+                        <div class="menu-item">
+                            <a href="{{ route('role.assign') }}"
+                                class="menu-link {{ Request::routeIs('role.assign') ? 'active' : '' }}">
+                                <span class="menu-text">Roles</span>
+                            </a>
+                        </div>
+                        <div class="menu-item">
+                            <a href="{{ route('user.index') }}"
+                                class="menu-link {{ Request::routeIs('user.index') ? 'active' : '' }}">
+                                <span class="menu-text">Users</span>
+                            </a>
+                        </div>
+                    </div>
 
-                        $active = $currentUrl == $menuUrl ? 'active' : '';
-                        if (!empty(config('sidebar.activeUrl'))) {
-                            $active = config('sidebar.activeUrl') == $menuUrl ? 'active' : '';
-                        }
-                        if ($active) {
-                            $GLOBALS['parent_active'] = true;
-                            $GLOBALS['active'][$GLOBALS['sub_level'] - 1] = true;
-                        }
-                        if (!empty($GLOBALS['active'][$currentLevel])) {
-                            $active = 'active';
-                        }
-
-                        $subMenu .=
-                            '
-							<div class="menu-item ' .
-                            $hasSub .
-                            ' ' .
-                            $active .
-                            '">
-								<a href="' .
-                            $menuUrl .
-                            '" class="menu-link">' .
-                            $menuText .
-                            $menuCaret .
-                            '</a>
-								' .
-                            $subSubMenu .
-                            '
-							</div>
-						';
-                    }
-                    return $subMenu;
-                }
-
-                foreach (config('sidebar.menu') as $key => $menu) {
-
-                    if($menu['can'] && !auth()->user()->can($menu['can'])) {
-                        continue;
-                    }
-                    $GLOBALS['parent_active'] = '';
-                    $hasSub = !empty($menu['children']) ? 'has-sub' : '';
-                    $menuUrl = !empty($menu['url']) ? $menu['url'] : '';
-                    $menuLabel = !empty($menu['label'])
-                        ? '<span class="menu-icon-label">' . $menu['label'] . '</span>'
-                        : '';
-                    $menuIcon = !empty($menu['icon'])
-                        ? '<span class="menu-icon"><i class="' . $menu['icon'] . '"></i>' . $menuLabel . '</span>'
-                        : '';
-                    $menuText = !empty($menu['text']) ? '<span class="menu-text">' . $menu['text'] . '</span>' : '';
-                    $menuCaret = !empty($hasSub) ? '<span class="menu-caret"><b class="caret"></b></span>' : '';
-                    $menuSubMenu = '';
-
-                    if (!empty($menu['children'])) {
-                        $GLOBALS['sub_level'] = 0;
-                        $menuSubMenu .= '<div class="menu-submenu">';
-                        $menuSubMenu .= renderSubMenu($menu['children'], $currentUrl);
-                        $menuSubMenu .= '</div>';
-                    }
-                    $active = !empty($menu['url']) && $currentUrl == $menu['url'] ? 'active' : '';
-                    $active = empty($active) && !empty($GLOBALS['parent_active']) ? 'active' : $active;
-
-                    if (!empty(config('sidebar.activeUrl'))) {
-                        $active = !empty($menu['url']) && config('sidebar.activeUrl') == $menu['url'] ? 'active' : '';
-                        $active = empty($active) && !empty($GLOBALS['parent_active']) ? 'active' : $active;
-                    }
-                    if (!empty($menu['is_header'])) {
-                        echo '<div class="menu-header">' . $menuText . '</div>';
-                    } elseif (!empty($menu['is_divider'])) {
-                        echo '<div class="menu-divider"></div>';
-                    } else {
-                        echo '
-							<div class="menu-item ' .
-                            $hasSub .
-                            ' ' .
-                            $active .
-                            '">
-								<a href="' .
-                            $menuUrl .
-                            '" class="menu-link">
-									' .
-                            $menuIcon .
-                            '
-									' .
-                            $menuText .
-                            '
-									' .
-                            $menuCaret .
-                            '
-								</a>
-								' .
-                            $menuSubMenu .
-                            '
-							</div>
-						';
-                    }
-                }
-            @endphp
+                </div>
+            @endcan
 
         </div>
         <!-- END menu -->

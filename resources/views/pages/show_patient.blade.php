@@ -135,6 +135,9 @@
                     text: 'Loading...'
                 }
             }
+            function toggleVisibility(elementId) {
+                $('#' + elementId).toggle("slow");
+            }
             var fluidCharting = new ApexCharts(document.querySelector("#chartFluid"), fluidOptions);
             // fluidCharting.render();
 
@@ -635,25 +638,24 @@
                             var headerIndicator = $('<thead></thead>');
                             // Create a table header row
                             var headerRow = $('<tr></tr>');
-                            headerRow.append('<th class="bg-danger-300">label</th>');
-                            for (var i = 0; i < neuroData.hour_taken.length; i++) {
+                            headerRow.append(`<th class="bg-danger-300">TimeTaken</th>
+                            <th>Eyes Open</th><th>Sedated</th><th>Intubated</th><th>Best Motor response
+                                (BMR)</th><th>Best Verbal response (BVR)</th>
+                                <th>Sedation Score</th>
+                                <th>Pupil Diameter</th><th>Recorded by</th>`);
 
-                                headerRow.append('<th>' + neuroData.hour_taken[i] + '</th>');
-                            }
+
                             headerIndicator.append(headerRow);
                             table.append(headerIndicator);
-                            for (var key in neuroData) {
-                                if (key !== "hour_taken") {
-                                    var row = $('<tr></tr>');
-                                    row.append('<th class="bg-danger text-white ps-1">' + key +
-                                        '</th>');
-                                    for (var i = 0; i < neuroData[key].length; i++) {
+                            var row = $('<tr></tr>');
+                            $.each(neuroData, function(key, value) {
 
-                                        row.append('<td class="ps-3">' + neuroData[key][i] + '</td>');
-                                    }
-                                    table.append(row);
+                                for (var i = 0; i < value.length; i++) {
+                                    row.append('<td class="border-1 mx-1">' + value[i] +
+                                        '</td>');
                                 }
-                            }
+                                table.append(row);
+                            })
 
                             $("#neuro-chart").html(table);
                         }
@@ -1054,34 +1056,58 @@
             }
 
             summaryView();
-            $('#summary-view').on('click', function() {
+            $('#view-types').on('click','#summary-view', function() {
                 viewtype = 'summary'
                 summaryView();
-                $('#summary-view').removeClass('btn-outline-primary');
-                $('#details-view').removeClass('btn-purple');
-                $('#details-view').addClass('btn-outline-purple');
-                $('#summary-view').addClass('btn-primary');
-                $('#chart-view').removeClass('btn-info');
-                $('#chart-view').addClass('btn-outline-info');
+                if($('#summary-view').hasClass('btn-outline-primary')) {
+                    console.log("its true - from summary view" )
+                    $('#summary-view').removeClass('btn-outline-primary');
+                    $('#summary-view').addClass('btn-primary');
+                }
+                if($('#details-view').hasClass('btn-purple')) {
+                    $('#details-view').removeClass('btn-purple');
+                    $('#details-view').addClass('btn-outline-purple');
+                }
+               if($('#chart-view').hasClass('btn-info')) {
+                   $('#chart-view').removeClass('btn-info');
+                   $('#chart-view').addClass('btn-outline-info');
+               }
 
             });
-            $('#details-view').on('click', function() {
+            $('#view-types').on('click','#details-view', function() {
                 viewtype = 'details'
                 summaryView();
-                $('#details-view').removeClass('btn-outline-purple');
-                $('#details-view').addClass('btn-purple');
-                $('#summary-view').removeClass('btn-primary');
-                $('#summary-view').addClass('btn-outline-primary');
-                $('#chart-view').removeClass('btn-info');
-                $('#chart-view').addClass('btn-outline-info');
+                if($('#details-view').hasClass('btn-outline-purple')) {
+                    $('#details-view').removeClass('btn-outline-purple');
+                    $('#details-view').addClass('btn-purple');
+                }
+                if($('#summary-view').hasClass('btn-primary')) {
+                    $('#summary-view').removeClass('btn-primary');
+                    $('#summary-view').addClass('btn-outline-primary');
+                }
+                if($('#chart-view').hasClass('btn-info')) {
+                    $('#chart-view').removeClass('btn-info');
+                    $('#chart-view').addClass('btn-outline-info');
+                }
+
 
             });
-            $('#chart-view').on('click', function() {
+            $('#view-types').on('click','#chart-view', function() {
                 // chartView();
-                $('#chart-view').removeClass('btn-info');
-                $('#chart-view').addClass('btn-outline-info');
+                if($('#chart-view').hasClass('btn-outline-info')) {
+                    $('#chart-view').removeClass('btn-outline-info');
+                    $('#chart-view').addClass('btn-info');
+                }
+                if($('#summary-view').hasClass('btn-primary')) {
+                    $('#summary-view').removeClass('btn-primary');
+                    $('#summary-view').addClass('btn-outline-primary');
+                }
+                if($('#details-view').hasClass('btn-purple')) {
+                    $('#details-view').removeClass('btn-purple');
+                    $('#details-view').addClass('btn-outline-purple');
+                }
             });
-           
+
             $('#table-lab').on('click', '.result', function() {
                 let id = $(this).data('id');
 
@@ -1996,7 +2022,7 @@
                     </div>
 
                 </div>
-                <div class="row bottom-0 mt-2 rounded border-top border-2 border-primary" id="details-view">
+                <div class="row bottom-0 mt-2 rounded border-top border-2 border-primary" id="view-types">
                     <div class="col-md-6">
                        <h5> View Type: </h5>
                         <div class="d-flex justify-content-center align-items-center">

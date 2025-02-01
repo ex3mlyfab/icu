@@ -19,7 +19,8 @@ return [
     ],[
       'url' => '/dashboard',
       'icon' => 'fa fa-home',
-      'text' => 'Home'
+      'text' => 'Home',
+      'can'  => 'view-dashboard',
     ],
     [
       'icon' => 'fa fa-user-circle',
@@ -27,11 +28,13 @@ return [
       'can'  => 'add-patient',
       'children' => [[
         'url' => '/create-patient-from-emr',
-        'text' => 'Add Patient From EMR'
+        'text' => 'Add Patient From EMR',
+        'can'  => 'add-patient',
       ],
       [
         'url' => '/create-patient',
-        'text' => 'New Patient Registration'
+        'text' => 'New Patient Registration',
+        'can' => 'add-patient',
       ]
       ]
       ],

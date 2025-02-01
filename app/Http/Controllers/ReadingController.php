@@ -530,6 +530,7 @@ class ReadingController extends Controller
         foreach($neuro_reading as $reading)
         {
             // dump($reading->eyes_open);
+            $neuro_chart['hour_taken'][] = $reading->hour_taken->format('H:i a');
             $neuro_chart['Eyes Open'][] = $this->processEyeOpenEnum($reading->eyes_open->value);
             $neuro_chart['Sedated'][] = $reading->sedated ? 'True' : 'False';
             $neuro_chart['Intubated'][] = $reading->intubated ? 'True' : 'False';
@@ -537,7 +538,7 @@ class ReadingController extends Controller
             $neuro_chart['Best Verbal Response'][] = $this->processVerbalCommandEnum($reading->best_verbal_response->value);
             $neuro_chart['sedation_score'][] = $this->processSwdationScoreEnum($reading->sedation_score);
             $neuro_chart['pupil_diameter'][] = $reading->pupil_diameter;
-            $neuro_chart['hour_taken'][] = $reading->hour_taken->format('H:i a');
+
             $neuro_chart['Created by'][] = $reading->createdBy->fullname;
 
         }
