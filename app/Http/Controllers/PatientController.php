@@ -194,7 +194,7 @@ class PatientController extends Controller
             })
             ->addColumn('action', function ($patient) {
                 return '<div class="btn-group">'.
-                '<a href="'.route('patient.show', $patient->id).'" class="btn btn-outline-primary">'.'SHow Patient Info'.'</a>'.
+                '<a href="'.route('patient.show', $patient->id).'" class="btn btn-outline-primary">'.'Show Patient Info'.'</a>'.
 
                 '</div>';
             })

@@ -14,24 +14,14 @@
                     <input type="hidden" name="patient_care_id" value="{{$patient->latestPatientCare->id}}" >
 
                     <div class="row">
-                        <div class="small text-inverse text-opacity-50 mb-2"><b class="fw-bold">Duty</b></div>
-                        <div class="col-md-12 mb-3">
-                            <div class="form-group mb-4 d-flex flex-column justify-content-end">
-                                <div class="form-check">
-                                    <input class="form-check-input" type="radio" id="daily-note-problem" name="type"
-                                        value="problem">
-                                    <label class="form-check-label" for="daily" id="dailyLabelProblems">Problems</label>
-                                </div>
-                                <div class="form-check">
-                                    <input class="form-check-input" type="radio" id="daily-note-intervention" name="type"
-                                        value="intervention" checked>
-                                    <label class="form-check-label" for="daily" id="dailyLabelProblim">Intervetion</label>
-                                </div>
-                            </div>
+
+                        <div class="col-md-12">
+                                <label for="contents">Problems</label>
+                                <textarea name="content" class="form-control summernote" id="contents" title="Contents"></textarea>
                         </div>
                         <div class="col-md-12">
-                                <label for="contents">Note</label>
-                                <textarea name="content" class="form-control summernote" id="contents" title="Contents"></textarea>
+                                <label for="intervention">Intervention</label>
+                                <textarea name="intervention" class="form-control summernote" id="intervention" title="Intervention"></textarea>
                         </div>
 
                     </div>

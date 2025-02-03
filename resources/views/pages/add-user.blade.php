@@ -12,6 +12,11 @@
 
 @push('js')
 <script src="{{asset('assets/plugins/select-picker/dist/picker.min.js')}}"></script>
+<script>
+    $(document).ready(function(){
+        $('#ex-search').picker({ search: true });
+    });
+</script>
 @endpush
 
 @section('content')

@@ -65,4 +65,22 @@ class UserController extends Controller
     {
         return view('pages.users');
     }
+    public function changePassword()
+    {
+        return view('pages.change-password');
+    }
+
+    public function updatePassword(Request $request)
+    {
+        $request->validate([
+            'password' => 'required|string|confirmed|min:4',
+
+        ]);
+
+        auth()->user()->update([
+            'password' => Hash::make($request->password)
+        ]);
+
+        return redirect()->route('dashboard');
+    }
 }

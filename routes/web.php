@@ -38,7 +38,9 @@ Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
-
+    //change password
+    Route::get('/change-password', [UserController::class, 'changePassword'])->name('password-change');
+    Route::post('/update-password', [UserController::class, 'updatePassword'])->name('change-password');
     //patient- related routes
     Route::get('/create-patient-from-emr', [PatientController::class, 'index'])->name('create-patient-from-emr')->can('add-patient');
     Route::get('/create-patient', [PatientController::class, 'create'])->name('create-patient')->can('add-patient');
@@ -104,7 +106,7 @@ Route::middleware('auth')->group(function () {
     Route::post('/store-dailynotes', [Reading2Controller::class, 'storeDailyNote'])->name('dailynotes.store')->can('add-daily-notes');
     //physician order
     Route::get('/show-patient/{patientCare}/physician-order/{active_day}/{viewtype}', [Reading2Controller::class, 'showPhysicianNote'])->name('physician.show');
-    Route::post('/store-physician-order', [Reading2Controller::class, 'storePhysicianNote'])->name('physician.store')->can('add-physician-note');
+    Route::post('/store-physician-order', [Reading2Controller::class, 'storePhysicianNote'])->name('physician.store')->can('add-physician-notes');
     //skin care Route
     Route::get('/show-patient/{patientCare}/skin-care/{active_day}/{viewtype}', [Reading2Controller::class, 'showSkinCare'])->name('skin.show');
     Route::post('/store-skin-care', [Reading2Controller::class, 'storeSkinCare'])->name('skin.store')->can('add-skin-care');

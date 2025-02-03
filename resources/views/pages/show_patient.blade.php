@@ -11,6 +11,16 @@
     <!-- required js / css -->
     <link href="{{ asset('assets/plugins/select-picker/dist/picker.min.css') }}" rel="stylesheet">
     <link href="{{ asset('assets/plugins/summernote/dist/summernote-lite.css') }}" rel="stylesheet">
+    <style>
+        .chart-space {
+            width: 100%;
+            /* Or any desired width */
+            height: 350px;
+            /* Or any desired height */
+            display: none;
+            /* Initially hidden */
+        }
+    </style>
 @endpush
 
 @push('js')
@@ -25,6 +35,7 @@
         $(document).ready(function() {
 
             $('#patient-info-2').hide();
+            let cardio_canvas, resp_canvas, fluid_canvas;
 
             $(window).scroll(function() {
                 if ($(window).scrollTop() > 150) {
@@ -74,73 +85,94 @@
                 showMeridian: false,
                 minuteStep: 1
             });
-            var cardioChart = {};
 
-            var respiratoryChart = {};
-            var respiratoryOptions = {
-                chart: {
-                    type: 'line',
-                    height: 350,
-                    toolbar: {
-                        show: true
+            function createChart(elementId, drawChart) {
+                const options = {
+                    series: [], // Initial empty series
+                    chart: {
+                        height: 350,
+                        type: 'line',
+                        zoom: {
+                            enabled: false
+                        }
+                    },
+                    dataLabels: {
+                        enabled: false
+                    },
+                    stroke: {
+                        curve: 'straight'
+                    },
+                    title: {
+                        text: 'Dynamic Chart from API Data',
+                        align: 'left'
+                    },
+                    grid: {
+                        row: {
+                            colors: ['#f3f3f3',
+                                'transparent'
+                            ], // takes an array which will be repeated on columns
+                            opacity: 0.5
+                        },
+                    },
+                    xaxis: {
+                        categories: [] // Initial empty categories
                     }
-                },
-                stroke: {
-                    curve: 'straight'
-                },
-                grid: {
-                    padding: {
-                        right: 30,
-                        left: 20
-                    }
-                },
-                dataLabels: {
-                    enabled: false,
-                },
-                series: [],
-                title: {
-                    text: 'Respiratory Assessment Chart',
-                },
-                noData: {
-                    text: 'Loading...'
-                }
+                };
+
+                drawChart = new ApexCharts(document.querySelector("#" + elementId), options);
+                drawChart.render();
             }
-            var respiratoryCharting = new ApexCharts(document.querySelector("#chartRespiratory"),
-                respiratoryOptions);
-            // respiratoryCharting.render();
-            //fluid Chart
-            var fluidChart = {};
-            var fluidOptions = {
-                chart: {
-                    type: 'bar',
-                    height: 350,
-                    toolbar: {
-                        show: true
+
+            function fetchDataAndUpdateChart(apiendpoint, drawchart) {
+                const apiUrl = `${apiendpoint}`; // Replace with your API endpoint
+
+                $.ajax({
+                    url: apiUrl,
+                    method: 'GET',
+                    dataType: 'json', // Assuming your API returns JSON
+                    success: function(data) {
+                        // Process the data from the API
+                        const seriesData = [];
+                        const categories = [];
+
+                        // Example: Assuming your API returns data in the format:
+                        // [{ date: '2024-07-26', value: 10 }, { date: '2024-07-27', value: 15 }, ...]
+
+                        data.forEach(item => {
+                            categories.push(item.date); // Or whatever your x-axis value is
+                            seriesData.push(item.value); // Or whatever your y-axis value is
+                        });
+
+
+                        drawchart.updateSeries([{
+                            data: seriesData
+                        }]); // Update the chart series
+                        drawchart.updateOptions({
+                            xaxis: {
+                                categories: categories
+                            }
+                        }); // Update x-axis categories
+
+                    },
+                    error: function(error) {
+                        console.error("Error fetching data:", error);
+                        // Handle error, e.g., display a message to the user
+                        // $("#chart").html("<p>Error fetching data. Please try again later.</p>");
                     }
-                },
-                grid: {
-                    padding: {
-                        right: 30,
-                        left: 20
-                    }
-                },
-                dataLabels: {
-                    enabled: false,
-                },
-                series: [],
-                title: {
-                    text: 'Fluid Assessment Chart',
-                },
-                noData: {
-                    text: 'Loading...'
-                }
+                });
             }
+
+            function drawCardioChart()
+            {
+
+            }
+
+
 
             function toggleVisibility(elementId) {
                 $('#' + elementId).toggle("slow");
             }
-            var fluidCharting = new ApexCharts(document.querySelector("#chartFluid"), fluidOptions);
-            // fluidCharting.render();
+
 
             function getFluidSelect() {
                 $.ajax({
@@ -1005,7 +1037,9 @@
                         if ($.isEmptyObject(physicianData)) {
                             $('#table-physician').html(
                                 `<h1 class="text-center"> No Physician Note </h1>`)
+                            $('#phy-notes-count').html(0)
                         } else {
+                            $('#phy-notes-count').html(physicianData.length)
                             var table = $(
                                 '<table class="table table-bordered" id="form-table-progress"></table>'
                             );
@@ -1014,7 +1048,7 @@
                             var headerRow = $('<tr></tr>');
                             headerRow.append(
                                 `<th>created at</th><th class="bg-dark-300 text-light">Physician Notes</th><th>Recorded By</th>`
-                                );
+                            );
                             headerIndicator.append(headerRow);
                             table.append(headerIndicator);
                             $.each(physicianData, function(key, value) {
@@ -2051,8 +2085,10 @@
                         <h5 class="mb-1"> Cardiovascular Assessment </h5>
                     </div>
                     <div class="d-flex gap-2 align-items-center">
-                        <button class="btn btn-sm btn-outline-dark"><i class="fa fa-plus" data-bs-toggle="modal"
-                                data-bs-target="#modalXl"></i></button>
+                        @can('add-cardio')
+                            <button class="btn btn-sm btn-outline-dark"><i class="fa fa-plus" data-bs-toggle="modal"
+                                    data-bs-target="#modalXl"></i></button>
+                        @endcan
 
                         <a href="javascript:;" class="text-secondary"><i class="fa fa-redo"></i></a>
                         <a href="#" data-toggle="card-expand"
@@ -2064,6 +2100,9 @@
                 <!-- BEGIN card-body -->
                 <div class="card-body">
                     <div class="table-responsive mb-3" id="table-cardio">
+
+                    </div>
+                    <div id="cardio-charting" class="chart-space">
 
                     </div>
 
@@ -2081,9 +2120,11 @@
                         <h5 class="mb-1 text-white"> Respiratory Assessment</h5>
                     </div>
                     <div class="d-flex gap-2 align-items-center">
+                        @can('add-respiratory')
+                            <button class="btn btn-sm btn-outline-light"><i class="fa fa-plus text-white cursor-pointer"
+                                    data-bs-toggle="modal" data-bs-target="#modal-resp"></i></button>
+                        @endcan
 
-                        <button class="btn btn-sm btn-outline-light"><i class="fa fa-plus text-white cursor-pointer"
-                                data-bs-toggle="modal" data-bs-target="#modal-resp"></i></button>
                         <a href="javascript:;" class="text-secondary"><i class="fa fa-redo"></i></a>
                         <a href="#" data-toggle="card-expand"
                             class="text-white text-opacity-20 text-decoration-none"><i class="fa fa-fw fa-expand"></i></a>
@@ -2097,6 +2138,7 @@
                     <div class="table-responsive mb-3" id="table-resp-table">
 
                     </div>
+                    <div id="respiratory-charting" class="chart-space"></div>
 
 
 
@@ -2116,9 +2158,12 @@
                         <h5 class="mb-1">Fluid Balance</h5>
 
                     </div>
-                    <button class="btn btn-sm btn-outline-dark">
-                        <i class="fa fa-plus cursor-pointer" data-bs-toggle="modal" data-bs-target="#modal-fluid"></i>
-                    </button>
+                    @can('add-fluid-balance')
+                        <button class="btn btn-sm btn-outline-dark">
+                            <i class="fa fa-plus cursor-pointer" data-bs-toggle="modal" data-bs-target="#modal-fluid"></i>
+                        </button>
+                    @endcan
+
                     <a href="javascript:;" class="text-secondary"><i class="fa fa-redo"></i></a>
                     <a href="#" data-toggle="card-expand"
                         class="text-white text-opacity-20 text-decoration-none"><i class="fa fa-fw fa-expand"></i></a>
@@ -2128,7 +2173,7 @@
                     <div class="table-responsive mb-3" id="table-fluid">
 
                     </div>
-                    <div id="chartFluid"></div>
+                    <div id="chartFluid" class="chart-space"></div>
 
                 </div>
                 <!-- END card-body -->
@@ -2143,9 +2188,12 @@
                         <h5 class="mb-1">Nutrition</h5>
 
                     </div>
-                    <button class="btn btn-sm btn-outline-dark">
-                        <i class="fa fa-plus" data-bs-toggle="modal" data-bs-target="#modal-nutrition"></i>
-                    </button>
+                    @can('add-nutrition')
+                        <button class="btn btn-sm btn-outline-dark">
+                            <i class="fa fa-plus" data-bs-toggle="modal" data-bs-target="#modal-nutrition"></i>
+                        </button>
+                    @endcan
+
                     <a href="javascript:;" class="text-secondary"><i class="fa fa-redo"></i></a>
                     <a href="#" data-toggle="card-expand"
                         class="text-white text-opacity-20 text-decoration-none"><i class="fa fa-fw fa-expand"></i></a>
@@ -2155,7 +2203,7 @@
                     <div class="table-responsive" id="table-nutrition">
 
                     </div>
-
+                    <div id="nutrition-charting" class="chart-space"></div>
 
                 </div>
                 <!-- END card-body -->
@@ -2171,9 +2219,12 @@
                     <div class="flex-grow-1">
                         <h5 class="mb-1">Neurological Assessment</h5>
                     </div>
-                    <button type="button" class="btn btn-sm btn-outline-light">
-                        <i class="fa fa-plus cursor-pointer" data-bs-toggle="modal" data-bs-target="#modal-neuro"></i>
-                    </button>
+                    @can('add-neuro')
+                        <button type="button" class="btn btn-sm btn-outline-light">
+                            <i class="fa fa-plus cursor-pointer" data-bs-toggle="modal" data-bs-target="#modal-neuro"></i>
+                        </button>
+                    @endcan
+
                     <a href="javascript:;" class="text-secondary"><i class="fa fa-redo"></i></a>
                     <a href="#" data-toggle="card-expand"
                         class="text-white text-opacity-20 text-decoration-none"><i class="fa fa-fw fa-expand"></i></a>
@@ -2198,9 +2249,12 @@
                         <h5 class="mb-1"> Medications</h5>
 
                     </div>
-                    <button class="btn btn-sm btn-outline-dark">
-                        <i class="fa fa-plus" data-bs-toggle="modal" data-bs-target="#modal-medication"></i>
-                    </button>
+                    @can('add-medication')
+                        <button class="btn btn-sm btn-outline-dark">
+                            <i class="fa fa-plus" data-bs-toggle="modal" data-bs-target="#modal-medication"></i>
+                        </button>
+                    @endcan
+
                     <a href="javascript:;" class="text-secondary"><i class="fa fa-redo"></i></a>
                     <a href="#" data-toggle="card-expand"
                         class="text-white text-opacity-20 text-decoration-none"><i class="fa fa-fw fa-expand"></i></a>
@@ -2227,9 +2281,12 @@
                         <h5 class="mb-1">Investigations</h5>
 
                     </div>
-                    <button class="btn btn-sm btn-outline-dark">
-                        <i class="fa fa-plus" data-bs-toggle="modal" data-bs-target="#modal-lab"></i>
-                    </button>
+                    @can('add-lab-test')
+                        <button class="btn btn-sm btn-outline-dark">
+                            <i class="fa fa-plus" data-bs-toggle="modal" data-bs-target="#modal-lab"></i>
+                        </button>
+                    @endcan
+
                     <a href="javascript:;" class="text-secondary"><i class="fa fa-redo"></i></a>
                     <a href="#" data-toggle="card-expand"
                         class="text-white text-opacity-20 text-decoration-none"><i class="fa fa-fw fa-expand"></i></a>
@@ -2257,9 +2314,12 @@
                     <div class="flex-grow-1">
                         <h5 class="mb-1">Skin and Wound Care</h5>
                     </div>
-                    <button class="btn btn-sm btn-outline-dark">
-                        <i class="fa fa-plus" data-bs-toggle="modal" data-bs-target="#modal-skin"></i>
-                    </button>
+                    @can('add-skin-care')
+                        <button class="btn btn-sm btn-outline-dark">
+                            <i class="fa fa-plus" data-bs-toggle="modal" data-bs-target="#modal-skin"></i>
+                        </button>
+                    @endcan
+
                     <a href="javascript:;" class="text-secondary"><i class="fa fa-redo"></i></a>
                     <a href="#" data-toggle="card-expand"
                         class="text-white text-opacity-20 text-decoration-none"><i class="fa fa-fw fa-expand"></i></a>
@@ -2299,15 +2359,18 @@
         <div class="col-lg-12" id="invasive">
             <div class="card h-100 mt-2">
                 <!-- BEGIN card-body -->
-                <div class="card-header bg-gradient bg-dark d-flex gap-2 align-items-center">
+                <div class="card-header bg-gradient bg-dark bg-opacity-30 d-flex gap-2 align-items-center">
 
                     <div class="flex-grow-1">
-                        <h5 class="mb-1 text-white">Invasive Lines</h5>
+                        <h5 class="mb-1">Invasive Lines</h5>
 
                     </div>
-                    <button class="btn btn-sm btn-outline-dark">
-                    <i class="fa fa-plus" data-bs-toggle="modal" data-bs-target="#modal-invasive"></i>
-                    </button>
+                    @can('add-invasive-line')
+                        <button class="btn btn-sm btn-outline-dark">
+                            <i class="fa fa-plus" data-bs-toggle="modal" data-bs-target="#modal-invasive"></i>
+                        </button>
+                    @endcan
+
                     <a href="javascript:;" class="text-secondary"><i class="fa fa-redo"></i></a>
                     <a href="#" data-toggle="card-expand"
                         class="text-white text-opacity-20 text-decoration-none"><i class="fa fa-fw fa-expand"></i></a>
@@ -2334,9 +2397,12 @@
                         <h5 class="mb-1">Daily Problems/Intervention Record</h5>
 
                     </div>
-                     <button class="btn btn-sm btn-outline-dark">
-                    <i class="fa fa-plus" data-bs-toggle="modal" data-bs-target="#modal-progress"></i>
-                     </button>
+                    @can('add-daily-notes')
+                        <button class="btn btn-sm btn-outline-dark">
+                            <i class="fa fa-plus" data-bs-toggle="modal" data-bs-target="#modal-progress"></i>
+                        </button>
+                    @endcan
+
                     <a href="javascript:;" class="text-secondary"><i class="fa fa-redo"></i></a>
                     <a href="#" data-toggle="card-expand"
                         class="text-white text-opacity-20 text-decoration-none"><i class="fa fa-fw fa-expand"></i></a>
@@ -2363,9 +2429,12 @@
                         <h5 class="mb-1">Seizure Chart</h5>
 
                     </div>
-                     <button class="btn btn-sm btn-outline-dark">
-                    <i class="fa fa-plus" data-bs-toggle="modal" data-bs-target="#modal-seizure"></i>
-                     </button>
+                    @can('add-seizure')
+                        <button class="btn btn-sm btn-outline-dark">
+                            <i class="fa fa-plus" data-bs-toggle="modal" data-bs-target="#modal-seizure"></i>
+                        </button>
+                    @endcan
+
                     <a href="javascript:;" class="text-secondary"><i class="fa fa-redo"></i></a>
                     <a href="#" data-toggle="card-expand"
                         class="text-white text-opacity-20 text-decoration-none"><i class="fa fa-fw fa-expand"></i></a>
@@ -2392,9 +2461,12 @@
                         <h5 class="mb-1">Nursing Handover Notes </h5>
 
                     </div>
-                     <button class="btn btn-sm btn-outline-dark">
-                    <i class="fa fa-plus" data-bs-toggle="modal" data-bs-target="#modal-daily"></i>
-                     </button>
+                    @can('add-daily-notes')
+                        <button class="btn btn-sm btn-outline-dark">
+                            <i class="fa fa-plus" data-bs-toggle="modal" data-bs-target="#modal-daily"></i>
+                        </button>
+                    @endcan
+
                     <a href="javascript:;" class="text-secondary"><i class="fa fa-redo"></i></a>
                     <a href="#" data-toggle="card-expand"
                         class="text-white text-opacity-20 text-decoration-none"><i class="fa fa-fw fa-expand"></i></a>
@@ -2418,11 +2490,20 @@
                 <div class="card-header bg-gradient bg-warning-500 d-flex gap-2 align-items-center">
 
                     <div class="flex-grow-1">
-                        <h5 class="mb-1">Notes from Physician </h5>
+                        <h5 class="mb-1">Physician Notes </h5>
 
                     </div>
-                     <button class="btn btn-sm btn-outline-dark">
-                    <i class="fa fa-plus" data-bs-toggle="modal" data-bs-target="#modal-physician"></i></button>
+                    @can('add-physician-notes')
+                        <button class="btn btn-sm btn-outline-dark">
+                            <i class="fa fa-plus" data-bs-toggle="modal" data-bs-target="#modal-physician"></i>
+                        </button>
+                    @endcan
+                    <div class="d-flex align-items-center justify-content-center position-relative bg-body rounded p-2">
+                        <i class="fa fa-sticky-note fa-2x"></i>
+                        <span
+                            class="w-20px h-20px p-0 d-flex align-items-center justify-content-center badge bg-theme text-theme-color position-absolute end-0 top-0 fw-bold fs-12px rounded-pill mt-n1 me-n1"
+                            id="phy-notes-count">0</span>
+                    </div>
                     <a href="javascript:;" class="text-secondary"><i class="fa fa-redo"></i></a>
                     <a href="#" data-toggle="card-expand"
                         class="text-white text-opacity-20 text-decoration-none"><i class="fa fa-fw fa-expand"></i></a>
