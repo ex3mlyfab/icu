@@ -76,6 +76,8 @@ Route::middleware('auth')->group(function () {
     Route::get('/get-patient-fluids/{patientCare}/select', [ReadingController::class, 'getFluid'])->name('fluid.get');
     Route::get('/show-patient/{patientCare}/fluid-assessment/{active_day}/{viewtype}', [ReadingController::class, 'showFluid'])->name('fluid.show');
     Route::post('/store-fluid-assessment', [ReadingController::class, 'storeFluid'])->name('fluid.store')->can('add-fluid-balance');
+    Route::get('/fluid-chart/{patientCare}/{active_day}', [Reading2Controller::class, 'fluidChart'])->name('fluid.chart');
+    
     //medication routes
     Route::get('/show-patient/{patientCare}/medication/{active_day}/{viewtype}', [ReadingController::class, 'showMedication'])->name('medication.show');
     Route::post('/store-medication', [ReadingController::class, 'storeMedication'])->name('medication.store')->can('add-medication');

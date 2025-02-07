@@ -61,7 +61,7 @@
             </a>
             <div class="dropdown-menu dropdown-menu-end me-lg-3">
                 <a class="dropdown-item d-flex align-items-center" href="{{route('password-change')}}">Change Password <i
-                        class="fa fa-user-circle fa-fw ms-auto text-body text-opacity-50"></i></a>
+                        class="fa fa-lock fa-fw ms-auto text-body text-opacity-50"></i></a>
                 {{-- <a class="dropdown-item d-flex align-items-center" href="#">Inbox <i
                         class="fa fa-envelope fa-fw ms-auto text-body text-opacity-50"></i></a>
                 <a class="dropdown-item d-flex align-items-center" href="#">Calendar <i

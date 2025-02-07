@@ -15,6 +15,7 @@ use App\Models\SeizureChart;
 use App\Models\SkinWoundCare;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Auth;
 
 class Reading2Controller extends Controller
@@ -243,5 +244,42 @@ class Reading2Controller extends Controller
 'end_date' => $request->discharge_date]);
 
         return redirect(route('dashboard'));
+    }
+    public function fluidChart(PatientCare $patientCare, $active_day)
+    {
+        $groupedFluid = FluidBalance::where('patient_care_id', $patientCare->id)
+                        ->whereDate('created_at', Carbon::parse($active_day))
+                        ->orderBy('hour_taken')
+                        ->get();
+        $allfluids = FluidBalance::where('patient_care_id', $patientCare->id)
+                        ->get();
+
+        $gFluid = $groupedFluid
+                        ->groupBy(function(FluidBalance $item) {
+                            return $item->hour_taken->format('H:i A');
+                        });
+        $inputFluids = $allfluids->unique('fluid')->pluck('fluid');
+        $results = [];
+        foreach($gFluid as $key => $value)
+        {
+            $results['label'][] = $key;
+            $presentFluids = $value->pluck('fluid')->toArray();
+            $presntVolumes = $value->pluck('volume')->toArray();
+            $inputFluidsVol =[];
+            foreach($inputFluids as $key=>$inputFluid)
+                {
+                    if(in_array($inputFluid, $presentFluids))
+                    {
+                        $inputFluidsVol[] = $presntVolumes[array_search($inputFluid, $presentFluids)];
+                    }else{
+                        $inputFluidsVol[] = 0;
+                    }
+
+
+                }
+            $results['fluids'][] =Arr::flatten($inputFluidsVol);
+
+        }
+        return response($results, 200);
     }
 }

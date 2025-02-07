@@ -1300,7 +1300,7 @@
             $('#view-types').on('click', '#chart-view', function() {
                 // chartView();
                 viewtype = 'details';
-               $('#table-cardio').empty();
+                $('#table-cardio table', '#table-resp-table table', '#table-fluid table').empty();
                 drawCardioChart();
                 drawRespChart();
                 drawFluidChart();

@@ -33,7 +33,9 @@ class UserController extends Controller
        return redirect()->route('user.index');
     }
 
-
+    public function editUser(User $user){
+        return view('pages.edit-user');
+    }
 
     public function get_user_table(Request $request)
     {
@@ -57,7 +59,7 @@ class UserController extends Controller
                 ->setRowId(function($user) {
                     return "row_".$user->id;
                 })
-                ->rawColumns(['action'])
+                ->rawColumns(['role','action'])
                 ->make(true);
 
     }
