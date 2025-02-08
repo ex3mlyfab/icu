@@ -78,7 +78,7 @@ class Reading2Controller extends Controller
         ->get();
         $labs = $labs->map(function($item) {
             $item->time = $item->date->format('H:i');
-            $item->new_date = $item->date->format('Y-m-d');
+            $item->new_date = $item->date->format('d-m-Y');
             $item->recorded_by = $item->createdBy->fullname;
             return $item;
         });
@@ -130,7 +130,7 @@ class Reading2Controller extends Controller
 
         $labs = $labs->map(function($item) {
 
-            $item->new_date = $item->date_of_care->format('Y-m-d h:i a');
+            $item->new_date = $item->date_of_care->format('d-m-Y h:i a');
             $item->recorded_by = $item->createdBy->fullname;
             return $item;
         });
@@ -156,7 +156,7 @@ class Reading2Controller extends Controller
 
         $labs = $labs->map(function($item) {
 
-            $item->new_date = $item->time_of_daily_notes->format('Y-m-d h:i a');
+            $item->new_date = $item->time_of_daily_notes->format('d-m-Y h:i a');
             $item->recorded_by = $item->createdBy->fullname;
             return $item;
         });
@@ -183,7 +183,7 @@ class Reading2Controller extends Controller
 
          $labs = $labs->map(function($item) {
 
-            $item->new_date = $item->created_at->format('Y-m-d h:i a');
+            $item->new_date = $item->created_at->format('d-m-Y h:i a');
             $item->recorded_by = $item->createdBy->fullname;
             return $item;
         });
@@ -226,6 +226,9 @@ class Reading2Controller extends Controller
             $fluid_balance[$fluid] = $labs->where('fluid', $fluid)->sum('volume');
 
         }
+        $fluid_balance['Total Input'] = $labs->where('direction', 'input')->sum('volume');
+        $fluid_balance['Total Output'] = $labs->where('direction', 'output')->sum('volume');
+
 
         return response($fluid_balance, 200);
     }
@@ -280,6 +283,7 @@ class Reading2Controller extends Controller
             $results['fluids'][] =Arr::flatten($inputFluidsVol);
 
         }
-        return response($results, 200);
+        return response(['data' =>$results,
+                        'allFluids' =>$inputFluids ], 200);
     }
 }

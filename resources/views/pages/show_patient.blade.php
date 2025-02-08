@@ -11,7 +11,7 @@
     <!-- required js / css -->
     <link href="{{ asset('assets/plugins/select-picker/dist/picker.min.css') }}" rel="stylesheet">
     <link href="{{ asset('assets/plugins/summernote/dist/summernote-lite.css') }}" rel="stylesheet">
-    <script src="{{ asset('assets/plugins/chart.js/dist/chart.umd.js') }}"></script>
+    <script src="{{ asset('assets/plugins/apexcharts/dist/apexcharts.min.js') }}"></script>
     <style>
         .chart-space {
             height: 350px;
@@ -97,90 +97,105 @@
                     url: `{{ url('/') }}/show-cardio/{{ $patient->latestPatientCare->id }}/${activeDay}/${viewtype}`,
                     dataType: 'json', // Specify the expected data format (e.g., JSON)
                     success: function(data) {
-                        console.log(data, 'cardio chart')
+                        // console.log(data, 'cardio chart')
+                        $("#cardio-charting").show();
                         if ($.isEmptyObject(data.data)) {
                             console.log('i am empty  - cardio chart')
                             $("#cardio-charting").html(
                                 '<h2 class="text-center">No Cardio Data Found</h2>');
                         } else {
-                            $("#cardio-charting").show(); // Show the chart container
+
 
                             if (!cardioCanvas) {
-                                const ctxCardio = document.getElementById('cardio-charting').getContext('2d');
 
-                                cardioCanvas = new Chart(ctxCardio, {
-                                    type: 'line',
-                                    data: {
-                                        labels: [],
-                                        datasets: []
-                                    },
-                                    options: {
-                                        responsive: true,
-                                        maintainAspectRatio: false,
-                                        scales: {
-                                            y: {
-                                                beginAtZero: true
-                                            }
+                                const cardioOptionsI = {
+                                    chart: {
+                                        type: 'line',
+                                        height: 350,
+                                        toolbar: {
+                                            show: true
                                         }
-
+                                    },
+                                stroke: {
+                                    curve: 'straight'
+                                },
+                                grid: {
+                                    padding: {
+                                        right: 30,
+                                        left: 20
                                     }
-                                });
+                                },
+                                dataLabels: {
+                                        enabled: false
+                                    },
+                                series: [],
+                                title: {
+                                    text: 'CardioVascular Assessment Chart',
+                                },
+                                noData: {
+                                    text: 'Loading...'
+                                }
                             }
+                            var cardioCharting = new ApexCharts(document.querySelector("#cardio-charting"), cardioOptionsI);
+                            cardioCharting.render();
+                          }
                             let myData = data.data;
                             const cardioChart = {};
                             cardioChart.label = myData.label;
                             for (var key in myData) {
-                                let newArray = [];
+                                const newArray = [];
                                 if (key !== "label") {
                                     for (var i = 0; i < myData[key].length; i++) {
                                         newArray.push(~~myData[key][i]);
+
                                     }
+
                                     cardioChart[key] = newArray
                                 }
                             }
-                            let cardioOptions = {
-                                labels: cardioChart.label,
-
+                            //  console.log(cardioChart);
+                            const cardioOptions = {
                                 series: [{
-                                        label: 'Heart Rate',
-                                        data: cardioChart['Heart Rate']
+                                        name: 'Heart Rate',
+                                        data: cardioChart['heart_rate']
 
                                     },
                                     {
-                                        label: 'Respiratory Rate',
-                                        data: cardioChart['Respiratory Rate']
+                                        name: 'Respiratory Rate',
+                                        data: cardioChart['RespiratoryRate']
                                     },
                                     {
-                                        label: 'Systolic Blood Pressure',
-                                        data: cardioChart['Bp Systolic']
+                                        name: 'Systolic Blood Pressure',
+                                        data: cardioChart['BpSystolic']
                                     },
                                     {
-                                        label: 'Diastolic Blood Pressure',
-                                        data: cardioChart['Bp Diastolic']
+                                        name: 'Diastolic Blood Pressure',
+                                        data: cardioChart['BpDiastolic']
                                     },
                                     {
-                                        label: 'Oxygen Saturation',
+                                        name: 'Oxygen Saturation',
                                         data: cardioChart['Spo2']
                                     },
                                     {
-                                        label: 'Temperature',
+                                        name: 'Temperature',
                                         data: cardioChart['Temperature']
                                     },
                                     {
-                                        label: 'Peripheral Pulse',
-                                        data: cardioChart['Peripheral pulses']
+                                        name: 'Peripheral Pulse',
+                                        data: cardioChart['Peripheralpulses']
                                     },
                                     {
-                                        label: 'Rhythm',
+                                        name: 'Rhythm',
                                         data: cardioChart['Rhythm']
                                     }
                                 ],
+                                xaxis: {
+                                categories: cardioChart.label
+                            },
 
                             };
-                            cardioCanvas.data.labels = cardioChart.label;
-                            cardioCanvas.data.datasets = cardioOptions.series;
-
-                            cardioCanvas.update();
+                            // console.log(cardioOptions)
+                            cardioCharting.updateOptions(cardioOptions, true);
                         }
                     },
                     error: function(error) {
@@ -200,60 +215,89 @@
                     url: `{{ URL::to('/') }}/fluid-chart/{{ $patient->latestPatientCare->id }}/${activeDay}`,
                     dataType: 'json', // Specify the expected data format (e.g., JSON)
                     success: function(data) {
-
-                        if ($.isEmptyObject(data)) {
+                        $("#chartFluid").show();
+                        if ($.isEmptyObject(data.data)) {
 
                             $("#chartFluid").html('<h2 class="text-center">No Fluid Data Found</h2>');
 
                         } else {
-                            $("#chartFluid").show(); // Show the chart container
+                            // Show the chart container
+                            console.log(data)
                             if(!fluidCanvas){
-                                const ctxCardio = document.getElementById('chartFluid').getContext('2d');
 
-                                cardioCanvas = new Chart(ctxCardio, {
+                            const fluidOptionsI = {
+                                chart: {
                                     type: 'line',
-                                    data: {
-                                        labels: [],
-                                        datasets: []
+                                    height: 350,
+                                    toolbar: {
+                                        show: true
+                                    }
+                                },
+                                grid: {
+                                    padding: {
+                                        right: 30,
+                                        left: 20
+                                    }
+                                },
+                                dataLabels: {
+                                        enabled: true,
                                     },
-                                    options: {
-                                        responsive: true,
-                                        maintainAspectRatio: false,
-                                        scales: {
-                                            y: {
-                                                beginAtZero: true
+                                series: [],
+                                title: {
+                                    text: 'Fluid Assessment Chart',
+                                },                noData: {
+                                    text: 'Loading...'
+                                }
+                            }
+                            var fluidCharting = new ApexCharts(document.querySelector("#chartFluid"), fluidOptionsI);
+                            fluidCharting.render();
+                           }
+
+                            let fluidData = data.data;
+                            const fluidChart = {};
+                            fluidChart.label = fluidData.label
+
+                            const chartRows = {};
+                            let numberOfInputRows = fluidData.label.length;
+                            $.each(fluidData.fluids, function(index, value){
+                                $.each(value, function(key, item) {
+                                    for (let i = 0; i < numberOfInputRows; i++) {
+                                            if (!chartRows[i]) {
+                                                chartRows[i] = [];
+                                            }
+                                            if (i === index) {
+
+                                                    chartRows[i].push(item);
+
                                             }
                                         }
-                                    }
+
+                                })
+                            })
+                            console.log(chartRows, "from fluid charting", data.allFluids)
+                            let fluidSeriesArray = [];
+                            const fluidSeries = {};
+                            $.each(data.allFluids, function(label,value){
+                                fluidSeries[label]= [];
+                            })
+                            $.each(chartRows, function(index, value){
+                                $.each(value, function(key, item){
+                                    fluidSeries[key].push(item);
                                 });
-                            }
+                            });
+                            $.each(data.allFluids, function(label,value){
+                               fluidSeriesArray.push({
+                                name: value,
+                                data:fluidSeries[label]
+                               })
+                            })
 
-                            let fluidData = data;
-                            const fluidChart = {};
-                            // fluidChart.label = outputData.label;
-                            for (var key in fluidData) {
-                                let newArray = [];
-                                if (key !== "label" && key !== "Direction") {
-                                    for (var i = 0; i < fluidData[key].length; i++) {
-                                        newArray.push(~~fluidData[key][i]);
-                                    }
-                                    fluidChart[key] = newArray
-                                }
+                           fluidCharting.updateOptions({
+                            series: fluidSeriesArray,
+                            xaxis:{
+                                categories: fluidChart.label
                             }
-                            let fluiSeriesArray = [];
-                            for (var key in fluidData) {
-                                if (key !== "label" && key !== 'Direction') {
-                                    fluiSeriesArray.push({
-                                        label: key,
-                                        data: fluidData[key]
-                                    })
-                                }
-                            }
-
-                            fluidCanvas.data.labels = fluidChart.label;
-                            fluidCanvas.data.datasets = fluiSeriesArray;
-
-                            fluidCanvas.update();
+                           })
                         }
                     },
                     error: function(error) {
@@ -275,32 +319,49 @@
                     success: function(data) {
                         // let respData = data;
                         let myData = data.data;
+                         $("#respiratory-charting").show();
                         if ($.isEmptyObject(myData)) {
                             $("#respiratory-charting").html(
                                 '<h2 class="text-center">No Respiratory Data Found</h2>');
                         } else {
-                            $("#respiratory-charting").show(); // Show the chart container
+
+
+                            // Show the chart container
                             let respiratoryChart = {};
                             if(!respiratoryCanvas){
-                                const ctxResp = document.getElementById('respiratory-charting').getContext('2d');
 
-                                respiratoryCanvas = new Chart(ctxResp, {
+                            const respiratoryOptionsI = {
+                                chart: {
                                     type: 'line',
-                                    data: {
-                                        labels: [],
-                                        datasets: []
-                                    },
-                                    options: {
-                                        responsive: true,
-                                        maintainAspectRatio: false,
-                                        scales: {
-                                            y: {
-                                                beginAtZero: true
-                                            }
-                                        }
+                                    height: 350,
+                                    toolbar: {
+                                        show: true
                                     }
-                                });
+                                },
+                                stroke: {
+                                    curve: 'straight'
+                                },
+                                grid: {
+                                    padding: {
+                                        right: 30,
+                                        left: 20
+                                    }
+                                },
+                                dataLabels: {
+                                        enabled: false,
+                                    },
+                                series: [],
+                                title: {
+                                    text: 'Respiratory Assessment Chart',
+                                },
+                                noData: {
+                                    text: 'Loading...'
+                                }
                             }
+                            var respiratoryCharting = new ApexCharts(document.querySelector("#respiratory-charting"), respiratoryOptionsI);
+                            respiratoryCharting.render();
+                            }
+                            const respChart = {};
                             respChart.label = myData.label;
                             for (var key in myData) {
                                 let newArray = [];
@@ -314,19 +375,20 @@
 
                             let respOptions = {
                                 series: [{
-                                        label: "FiO2",
+                                        name: "FiO2",
                                         data: respiratoryChart["FiO2"]
                                     },
                                     {
-                                        label: "Respiratory Effort",
-                                        data: respiratoryChart["Respiratory Effort"]
+                                        name: "Respiratory Effort",
+                                        data: respiratoryChart["RespiratoryEffort"]
                                     }
-                                ]
+                                ],
+                                xaxis:{
+                                categories: respiratoryChart.label
                             }
-                            respiratoryCanvas.data.label = myData.label;
-                            respiratoryCanvas.data.datasets = respOptions.series;
-
-                            respiratoryCanvas.update();
+                            }
+                            console.log(respiratoryChart);
+                            respiratoryCharting.updateOptions(respOptions, true);
 
                         }
                     },
@@ -474,7 +536,7 @@
                                     value.splice(1, 0, ...inputData.fluids[key]);
                                     for (var i = 0; i < value.length; i++) {
 
-                                        row.append('<td class="border-1 mx-1">' + value[
+                                        row.append('<td class="border-1 px-1">' + value[
                                             i] + '</td>');
                                     }
                                     inputtable.append(row);
@@ -525,7 +587,7 @@
                                     value.splice(1, 0, ...outputData.fluids[key]);
                                     for (var i = 0; i < value.length; i++) {
 
-                                        row.append('<td class="mx-1 border-1">' + value[
+                                        row.append('<td class="px-1 border-1">' + value[
                                             i] + '</td>');
                                     }
 
@@ -949,12 +1011,12 @@
                             table.append(headerIndicator);
                             $.each(skinData, function(key, value) {
                                 var row = $('<tr class="text-center"></tr>');
-                                row.append('<th class="ps-2">' + value.new_date + '</th><th>' +
+                                row.append('<th class="ps-2 border-1">' + value.new_date + '</th><th class="ps-2 border-1">' +
                                     ((value.wound_dressings) ? value.wound_dressings :
                                         '-') + '</th><th>' + ((value.drain_output) ? value
                                         .drain_output : '-') +
-                                    '</th><th>' + ((value.skin_integrity) ? value
-                                        .skin_integrity : '-') + '</th><th>' + ((value
+                                    '</th><th class="ps-2 border-1">' + ((value.skin_integrity) ? value
+                                        .skin_integrity : '-') + '</th><th class="ps-2 border-1">' + ((value
                                         .recorded_by) ? value.recorded_by : '-') +
                                     '</th>');
                                 table.append(row);
@@ -992,12 +1054,12 @@
                             table.append(headerRow);
                             $.each(seizureData, function(key, value) {
                                 table.append(`<tr>
-                                <td class="text-center px-1">${value.new_date}</td>
-                                <td class="text-center px-1">${value.time}</td>
-                                <td class="text-center px-1">${value.description}</td>
-                                <td class="text-center px-1">${value.durations}</td>
-                                <td class="text-center px-1">${value.intervention}</td>
-                                <td class="text-center px-1">${value.recorded_by}</td>
+                                <td class="text-center border-1 px-1">${value.new_date}</td>
+                                <td class="text-center border-1 px-1">${value.time}</td>
+                                <td class="text-center border-1 px-1">${value.description}</td>
+                                <td class="text-center border-1 px-1">${value.durations}</td>
+                                <td class="text-center border-1 px-1">${value.intervention}</td>
+                                <td class="text-center border-1 px-1">${value.recorded_by}</td>
                                 </tr>`);
                             });
                             $('#table-seizure').html(table)
@@ -1085,9 +1147,9 @@
                             table.append(headerIndicator);
                             $.each(invasiveData, function(key, value) {
                                 var row = $('<tr></tr>');
-                                row.append(`<th class="ps-2">${value.invasive_lines}</th>
-                    <td class="text-center">${value.new_date}</td>
-                    <td class="text-center">${value.recorded_by}</td>
+                                row.append(`<th class="ps-2 border-1">${value.invasive_lines}</th>
+                    <td class="text-center border-1">${value.new_date}</td>
+                    <td class="text-center border-1">${value.recorded_by}</td>
                    `);
                                 table.append(row);
                             });
@@ -1128,8 +1190,8 @@
                             table.append(headerIndicator);
                             $.each(renalData, function(key, value) {
                                 var row = $('<tr></tr>');
-                                row.append(`<td>${key}</td>
-                                <td class="text-center"> ${value}</td>
+                                row.append(`<td class="border-1 px-1">${key}</td>
+                                <td class="text-center border-1 px-1"> ${value}</td>
                                 `);
                                 table.append(row);
                             });
@@ -1170,15 +1232,7 @@
                             table.append(headerIndicator);
                             $.each(progressData, function(key, value) {
                                 var row = $('<tr></tr>');
-                                if (value.type === "problem") {
-                                    row.append(`<td class="text-center"> -- </td>
-                                <td>${value.content}</td><th>${value.recorded_by}</th>
-                                `);
-                                } else {
-                                    row.append(`<td > ${value.content} </td>
-                                <td class="text-center"> -- </td><th>${value.recorded_by}</th>
-                                `);
-                                }
+                                row.append(`<td class="border-1 px-1">${value.content}</td><td>${value.intervention}</td><td class="border-1 px-1">${value.recorded_by}</td>`)
 
                                 table.append(row);
                             });
@@ -1220,10 +1274,10 @@
                             table.append(headerIndicator);
                             $.each(physicianData, function(key, value) {
                                 var row = $(`<tr>
-                                    <td class="text-center">${value.new_date}</td>
-                                    <td>
+                                    <td class="border-1 px-1"">${value.new_date}</td>
+                                    <td class="border-1 px-1">
                                     ${value.content}</td>
-                                    <td class="text-center">
+                                    <td class="border-1 px-1">
                                            <span class="badge bg-gradient bg-info-subtle">  ${value.recorded_by} </span>
                                         </td>
                                     </tr>
@@ -1244,6 +1298,7 @@
             }
 
             function summaryView() {
+                $('.chart-space').hide();
                 getCardioData();
                 getRespData();
                 getFluidData();
@@ -1301,6 +1356,9 @@
                 // chartView();
                 viewtype = 'details';
                $('#table-cardio').empty();
+               $('#table-resp-table').empty();
+               $('#table-fluid').empty();
+
                 drawCardioChart();
                 drawRespChart();
                 drawFluidChart();
@@ -1389,6 +1447,7 @@
                         $('#cardio-form')[0].reset();
                         $('#cardio-save').prop('disabled', false);
                         $('#cardio-save-spinner').hide();
+                        $('#cardio-charting').hide();
 
                     },
                     error: function(error) {
@@ -1444,6 +1503,7 @@
                         $('#resp-form')[0].reset();
                         $('#resp-save').prop('disabled', false);
                         $('#resp-save-spinner').hide();
+                        $('#respiratory-charting').hide();
                         getRespData();
                     },
                     error: function(error) {
@@ -1621,6 +1681,7 @@
                         $('#fluid-save').prop('disabled', false);
                         $('#fluid-save-spinner').hide();
                         $('#new-fluid').hide();
+                        $('#chartFluid').hide();
                         getFluidData();
                         getFluidSelect();
                         getRenalData();
@@ -2259,8 +2320,8 @@
                     </div>
                     <div class="d-flex gap-2 align-items-center">
                         @can('add-cardio')
-                            <button class="btn btn-sm btn-outline-dark"><i class="fa fa-plus" data-bs-toggle="modal"
-                                    data-bs-target="#modalXl"></i></button>
+                            <button class="btn btn-sm btn-outline-dark" data-bs-toggle="modal"
+                                    data-bs-target="#modalXl"><i class="fa fa-plus" ></i></button>
                         @endcan
 
                         <a href="javascript:;" class="text-secondary"><i class="fa fa-redo"></i></a>
@@ -2276,7 +2337,7 @@
 
                     </div>
 
-                        <canvas id="cardio-charting" class="chart-space"></canvas>
+                        <div id="cardio-charting" class="chart-space"></div>
 
 
 
@@ -2294,8 +2355,8 @@
                     </div>
                     <div class="d-flex gap-2 align-items-center">
                         @can('add-respiratory')
-                            <button class="btn btn-sm btn-outline-light"><i class="fa fa-plus text-white cursor-pointer"
-                                    data-bs-toggle="modal" data-bs-target="#modal-resp"></i></button>
+                            <button class="btn btn-sm btn-outline-light"  data-bs-toggle="modal" data-bs-target="#modal-resp"><i class="fa fa-plus text-white cursor-pointer"
+                                   ></i></button>
                         @endcan
 
                         <a href="javascript:;" class="text-secondary"><i class="fa fa-redo"></i></a>
@@ -2312,7 +2373,7 @@
 
                     </div>
 
-                        <canvas id="respiratory-charting" class="chart-space"></canvas>
+                        <div id="respiratory-charting" class="chart-space"></div>
 
 
 
@@ -2333,8 +2394,8 @@
 
                     </div>
                     @can('add-fluid-balance')
-                        <button class="btn btn-sm btn-outline-dark">
-                            <i class="fa fa-plus cursor-pointer" data-bs-toggle="modal" data-bs-target="#modal-fluid"></i>
+                        <button class="btn btn-sm btn-outline-dark"  data-bs-toggle="modal" data-bs-target="#modal-fluid">
+                            <i class="fa fa-plus cursor-pointer"></i>
                         </button>
                     @endcan
 
@@ -2347,9 +2408,9 @@
                     <div class="table-responsive mb-3" id="table-fluid">
 
                     </div>
-                    <div class="h-300px w-300px mx-auto">
-                    <canvas id="chartFluid" class="chart-space"></canvas>
-                    </div>
+
+                    <div id="chartFluid" class="chart-space"></div>
+
 
                 </div>
                 <!-- END card-body -->
@@ -2365,8 +2426,8 @@
 
                     </div>
                     @can('add-nutrition')
-                        <button class="btn btn-sm btn-outline-dark">
-                            <i class="fa fa-plus" data-bs-toggle="modal" data-bs-target="#modal-nutrition"></i>
+                        <button class="btn btn-sm btn-outline-dark" data-bs-toggle="modal" data-bs-target="#modal-nutrition">
+                            <i class="fa fa-plus" ></i>
                         </button>
                     @endcan
 
@@ -2396,8 +2457,8 @@
                         <h5 class="mb-1">Neurological Assessment</h5>
                     </div>
                     @can('add-neuro')
-                        <button type="button" class="btn btn-sm btn-outline-light">
-                            <i class="fa fa-plus cursor-pointer" data-bs-toggle="modal" data-bs-target="#modal-neuro"></i>
+                        <button type="button" class="btn btn-sm btn-outline-light" data-bs-toggle="modal" data-bs-target="#modal-neuro">
+                            <i class="fa fa-plus cursor-pointer" ></i>
                         </button>
                     @endcan
 
@@ -2426,8 +2487,8 @@
 
                     </div>
                     @can('add-medication')
-                        <button class="btn btn-sm btn-outline-dark">
-                            <i class="fa fa-plus" data-bs-toggle="modal" data-bs-target="#modal-medication"></i>
+                        <button class="btn btn-sm btn-outline-dark" data-bs-toggle="modal" data-bs-target="#modal-medication">
+                            <i class="fa fa-plus" ></i>
                         </button>
                     @endcan
 
@@ -2458,8 +2519,8 @@
 
                     </div>
                     @can('add-lab-test')
-                        <button class="btn btn-sm btn-outline-dark">
-                            <i class="fa fa-plus" data-bs-toggle="modal" data-bs-target="#modal-lab"></i>
+                        <button class="btn btn-sm btn-outline-dark" data-bs-toggle="modal" data-bs-target="#modal-lab">
+                            <i class="fa fa-plus" ></i>
                         </button>
                     @endcan
 
@@ -2491,8 +2552,8 @@
                         <h5 class="mb-1">Skin and Wound Care</h5>
                     </div>
                     @can('add-skin-care')
-                        <button class="btn btn-sm btn-outline-dark">
-                            <i class="fa fa-plus" data-bs-toggle="modal" data-bs-target="#modal-skin"></i>
+                        <button class="btn btn-sm btn-outline-dark" data-bs-toggle="modal" data-bs-target="#modal-skin">
+                            <i class="fa fa-plus" ></i>
                         </button>
                     @endcan
 
@@ -2542,8 +2603,8 @@
 
                     </div>
                     @can('add-invasive-line')
-                        <button class="btn btn-sm btn-outline-dark">
-                            <i class="fa fa-plus" data-bs-toggle="modal" data-bs-target="#modal-invasive"></i>
+                        <button class="btn btn-sm btn-outline-dark" data-bs-toggle="modal" data-bs-target="#modal-invasive">
+                            <i class="fa fa-plus" ></i>
                         </button>
                     @endcan
 
@@ -2574,8 +2635,8 @@
 
                     </div>
                     @can('add-daily-notes')
-                        <button class="btn btn-sm btn-outline-dark">
-                            <i class="fa fa-plus" data-bs-toggle="modal" data-bs-target="#modal-progress"></i>
+                        <button class="btn btn-sm btn-outline-dark" data-bs-toggle="modal" data-bs-target="#modal-progress">
+                            <i class="fa fa-plus" ></i>
                         </button>
                     @endcan
 
@@ -2606,8 +2667,8 @@
 
                     </div>
                     @can('add-seizure')
-                        <button class="btn btn-sm btn-outline-dark">
-                            <i class="fa fa-plus" data-bs-toggle="modal" data-bs-target="#modal-seizure"></i>
+                        <button class="btn btn-sm btn-outline-dark" data-bs-toggle="modal" data-bs-target="#modal-seizure">
+                            <i class="fa fa-plus" ></i>
                         </button>
                     @endcan
 
@@ -2638,8 +2699,8 @@
 
                     </div>
                     @can('add-daily-notes')
-                        <button class="btn btn-sm btn-outline-dark">
-                            <i class="fa fa-plus" data-bs-toggle="modal" data-bs-target="#modal-daily"></i>
+                        <button class="btn btn-sm btn-outline-dark" data-bs-toggle="modal" data-bs-target="#modal-daily">
+                            <i class="fa fa-plus" ></i>
                         </button>
                     @endcan
 
@@ -2670,8 +2731,8 @@
 
                     </div>
                     @can('add-physician-notes')
-                        <button class="btn btn-sm btn-outline-dark">
-                            <i class="fa fa-plus" data-bs-toggle="modal" data-bs-target="#modal-physician"></i>
+                        <button class="btn btn-sm btn-outline-dark" data-bs-toggle="modal" data-bs-target="#modal-physician">
+                            <i class="fa fa-plus" ></i>
                         </button>
                     @endcan
                     <div class="d-flex align-items-center justify-content-center position-relative bg-body rounded p-2">
