@@ -221,7 +221,7 @@ class PatientController extends Controller
         return view('pages.discharged', compact('patientCare', 'dates'));
     }
     function generate_dates_between(Carbon $start_date, Carbon $end_date): array
-     {
+    {
     $dates = [];
 
     $current_date = $start_date;
@@ -232,5 +232,11 @@ class PatientController extends Controller
     }
 
     return $dates;
-}
+    }
+    function generate_report(Request $request)
+    {
+        $encounters = PatientCare::with('patient')
+        ->orderBy('created_at', 'desc');
+
+    }
 }

@@ -89,7 +89,34 @@
             let respiratoryCanvas;
             let fluidCanvas;
 
+            function hideSelectedCards(){
+                $('#nutrition-card').hide()
+                $('#med-card').hide()
+                $('#neuro-card').hide()
+                $('#lab-card').hide()
+                $('#skin-card').hide()
+                $('#renal-card').hide()
+                $('#invasive').hide()
+                $('#progress').hide()
+                $('#seizure').hide()
+                $('#nursing').hide()
+                $('#physician').hide()
 
+            }
+            function showSelectedCards(){
+                $('#nutrition-card').show()
+                $('#med-card').show()
+                $('#neuro-card').show()
+                $('#lab-card').show()
+                $('#skin-card').show()
+                $('#renal-card').show()
+                $('#invasive').show()
+                $('#progress').show()
+                $('#seizure').show()
+                $('#nursing').show()
+                $('#physician').show()
+
+            }
 
             function drawCardioChart() {
                 $.ajax({
@@ -1319,6 +1346,7 @@
             $('#view-types').on('click', '#summary-view', function() {
                 viewtype = 'summary'
                 summaryView();
+                showSelectedCards();
                 if ($('#summary-view').hasClass('btn-outline-primary')) {
 
                     $('#summary-view').removeClass('btn-outline-primary');
@@ -1337,6 +1365,7 @@
             $('#view-types').on('click', '#details-view', function() {
                 viewtype = 'details'
                 summaryView();
+                showSelectedCards();
                 if ($('#details-view').hasClass('btn-outline-purple')) {
                     $('#details-view').removeClass('btn-outline-purple');
                     $('#details-view').addClass('btn-purple');
@@ -1362,6 +1391,7 @@
                 drawCardioChart();
                 drawRespChart();
                 drawFluidChart();
+                hideSelectedCards();
 
                 if ($('#chart-view').hasClass('btn-outline-info')) {
                     $('#chart-view').removeClass('btn-outline-info');
@@ -2450,7 +2480,7 @@
         <div class="col-lg-12" id="neuro-card">
             <div class="card h-100 mt-2">
                 <div id="neuroChart"></div>
-                <!-- BEGIN card-body -->
+                <!-- BEGIN card-body major -->
                 <div class="card-header bg-danger d-flex gap-2 align-items-center">
 
                     <div class="flex-grow-1">
@@ -2567,7 +2597,7 @@
 
                     </div>
                 </div>
-                <!-- END card-body -->
+                <!-- END card-body ya -->
             </div>
         </div>
 
@@ -2627,7 +2657,7 @@
 
         <div class="col-lg-12" id="progress">
             <div class="card h-100 mt-2">
-                <!-- BEGIN card-body -->
+                <!-- BEGIN card-body jkjk-->
                 <div class="card-header bg-gradient bg-gray-200 d-flex gap-2 align-items-center">
 
                     <div class="flex-grow-1">
