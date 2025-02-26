@@ -215,6 +215,10 @@ class PatientController extends Controller
         $dates = $this->generate_dates_between($patient->latestPatientCare->admission_date, Carbon::parse(now()));
         return view('pages.show_patient', compact('patient', 'dates'));
     }
+    public function report()
+    {
+        return view('pages.report');
+    }
     public function dischargedView(PatientCare $patientCare)
     {
         $dates = $this->generate_dates_between($patientCare->admission_date, $patientCare->discharge_date);
@@ -235,8 +239,67 @@ class PatientController extends Controller
     }
     function generate_report(Request $request)
     {
-        $encounters = PatientCare::with('patient')
-        ->orderBy('created_at', 'desc');
+        $patients = PatientCare::with('patient')
+                        ->leftJoin('patients', 'patient_cares.patient_id', '=', 'patients.id')
+                        ->select('patient_cares.*', 'patients.*')
+                        ->orderBy('created_at', 'desc');
+
+          return DataTables::eloquent($patients)
+            ->filter(function ($query) use ($request) {
+                if ($request->has('hospital_no')) {
+                    $query->whereHas('patient', function($query) use ($request) {
+                        $query->where('patients.hospital_no', 'like', "%{$request->get('hospital_no')}%");
+                    });
+                }
+
+                if ($request->has('patient_name')) {
+                    $query->where('patients.fullname_virtual', 'like', "%{$request->get('patient_name')}%");
+
+                }
+                if ($request->has('diagnosis')) {
+                    $query->where('patient_cares.diagnosis', 'like', "%{$request->get('diagnosis')}%");
+
+                }
+
+                if ($request->has('daterange')) {
+                    $date_range = explode(" - ", $request->get('daterange'));
+                    $query->whereBetween('patient_cares.created_at', [$date_range[0], $date_range[1]]);
+                }
+
+            })
+            ->editColumn('gendervalue', function ($patient) {
+
+                return $patient->patient->gender->name;
+            })
+            ->editColumn('fullname', function ($patient) {
+                return $patient->patient->fullname;
+            })
+            ->editColumn('diagnosis', function ($patient) {
+                return $patient->diagnosis ?? 'N/A';
+            })
+            ->editColumn('hospital_no', function ($patient) {
+                return $patient->patient->hospital_no;
+            })
+            ->editColumn('age', function ($patient) {
+                return (int)$patient->patient->date_of_birth->diffInYears(). ' years, '.$patient->patient->date_of_birth->diffInMonths() % 12 . ' months';
+            })
+            ->editColumn('date_admitted', function ($patient) {
+                return $patient->admission_date->format('d/m/Y') ?? 'N/A';
+            })
+            ->editColumn('date_discharged', function ($patient) {
+                return $patient->discharge_date ? $patient->discharge_date->format('d/m/Y') : 'N/A';
+            })
+            ->addColumn('action', function ($patient) {
+                $route_select = $patient->discharge_date != null ?  route('patient_view.discharged',$patient): route('patient.treatment',$patient->patient);
+                return '<div class="btn-group">'.
+                '<a href="'.$route_select.'" class="btn btn-outline-primary">'.'View Record'.'</a>'.
+                '</div>';
+            })
+            ->setRowId(function ($patient) {
+                return "row_".$patient->id;
+            })
+            ->rawColumns(['fullname','gendervalue','hospital_no','diagnosis', 'age', 'date_admitted', 'date_discharged','action'])
+            ->make(true);
 
     }
 }

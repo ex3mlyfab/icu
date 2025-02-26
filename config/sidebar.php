@@ -71,5 +71,11 @@ return [
       ]
       ]
       ],
+      [
+        'url' => 'admin/report',
+        'icon' => 'fa fa-file',
+        'text' => 'Generate Reports',
+        'can'  => 'view-report',
+      ]
 
 ]];

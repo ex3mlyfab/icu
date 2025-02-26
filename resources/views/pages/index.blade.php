@@ -91,6 +91,7 @@ $(document).ready(function() {
     <h1 class="page-header">
         Welcome to ICU Monitor
     </h1>
+
     <!--Begin Row -->
     <div class="row">
         <div class="col-sm-6 mb-3 d-flex flex-column">

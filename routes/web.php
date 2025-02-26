@@ -77,7 +77,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/show-patient/{patientCare}/fluid-assessment/{active_day}/{viewtype}', [ReadingController::class, 'showFluid'])->name('fluid.show');
     Route::post('/store-fluid-assessment', [ReadingController::class, 'storeFluid'])->name('fluid.store')->can('add-fluid-balance');
     Route::get('/fluid-chart/{patientCare}/{active_day}', [Reading2Controller::class, 'fluidChart'])->name('fluid.chart');
-    
+
     //medication routes
     Route::get('/show-patient/{patientCare}/medication/{active_day}/{viewtype}', [ReadingController::class, 'showMedication'])->name('medication.show');
     Route::post('/store-medication', [ReadingController::class, 'storeMedication'])->name('medication.store')->can('add-medication');
@@ -129,6 +129,10 @@ Route::middleware('auth')->group(function () {
     Route::post('admin/role/update', [PermissionController::class, 'updateRole'])->name('role.update')->can('update-role');
     Route::get('admin/page/create-role', [PermissionController::class, 'createRolePage'])->name('role.createPage')->can('add-role');
     Route::get('get-all-permission', [PermissionController::class, 'getallPermission'])->name('permission.all')->can('view-permission');
+
+    //generate report
+    Route::get('admin/report', [PatientController::class, 'report'])->name('report.index')->can('generate-report');
+    Route::post('admin/report/table', [PatientController::class, 'generate_report'])->name('report.datatable')->can('generate-report');
     //User creation and listing
 
     Route::get('admin/users-create', [UserController::class, 'createUserPage'])->name('user.create')->can('create-user');
