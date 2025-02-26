@@ -165,7 +165,7 @@
             </div>
         </div>
     </div>
-
+</div>
     <div class="card border-theme p-2">
         <div class="responsive-table">
             <table class="table text-nowrap w-100" id="server-side-datatable">
@@ -188,5 +188,5 @@
 
     </div>
 
-</div>
+
 @endsection
