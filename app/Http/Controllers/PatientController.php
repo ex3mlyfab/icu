@@ -155,7 +155,7 @@ class PatientController extends Controller
             })
             ->addColumn('action', function ($patient) {
                 return '<div class="btn-group">'.
-                '<a href="'.route('patient.treatment', $patient->patient->id).'" class="btn btn-outline-primary">'.'Record'.'</a>'.
+                '<a href="'.route('patient.treatment', $patient->patient->id).'" class="btn btn-outline-primary">'.'View Recordings'.'</a>'.
                 '<a type="button" class="btn btn-outline-primary process-discharge" data-bs-toggle="modal" data-bs-target="#modal-discharge" data-patient-id="'.$patient->id.'"> '.'Process Discharge'.'</a>'.
                 '</div>';
             })

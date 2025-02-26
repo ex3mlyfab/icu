@@ -1342,9 +1342,11 @@
                 getSkinData();
             }
 
+            let chartIndicator = false;
             summaryView();
             $('#view-types').on('click', '#summary-view', function() {
-                viewtype = 'summary'
+                viewtype = 'summary';
+                chartIndicator = false;
                 summaryView();
                 showSelectedCards();
                 if ($('#summary-view').hasClass('btn-outline-primary')) {
@@ -1364,6 +1366,7 @@
             });
             $('#view-types').on('click', '#details-view', function() {
                 viewtype = 'details'
+                chartIndicator = false;
                 summaryView();
                 showSelectedCards();
                 if ($('#details-view').hasClass('btn-outline-purple')) {
@@ -1384,6 +1387,7 @@
             $('#view-types').on('click', '#chart-view', function() {
                 // chartView();
                 viewtype = 'details';
+                chartIndicator = true;
                $('#table-cardio').empty();
                $('#table-resp-table').empty();
                $('#table-fluid').empty();
@@ -2220,19 +2224,21 @@
             })
             $('#active-day').on('change', function() {
                 activeDay = $('#active-day').val();
-                getCardioData();
-                getRespData();
-                getFluidData();
-                getMedicationData();
-                getNutritionData();
-                getNeuroData();
-                getLabData();
-                getInvasiveData();
-                getDailyData();
-                getRenalData();
-                getPhysicianData();
-                getProgressData();
-                getSkinData();
+                if(chartIndicator){
+                     $('#table-cardio').empty();
+               $('#table-resp-table').empty();
+               $('#table-fluid').empty();
+
+                drawCardioChart();
+                drawRespChart();
+                drawFluidChart();
+                hideSelectedCards();
+                }else{
+
+                    showSelectedCards();
+                    summaryView();
+                }
+
 
             });
 
