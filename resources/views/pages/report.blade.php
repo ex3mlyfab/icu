@@ -85,14 +85,22 @@
                         { data: 'gendervalue', name: 'Sex' },
                         { data: 'date_admitted', name: 'admission_date' },
                         { data: 'date_discharged', name: 'discharge_date' },
-                        { data: 'action', name: 'actions' }
+                        { data: 'days_spent', name: 'days_spent', className: 'text-left' },
+                        { data: 'action', name: 'actions', className: 'text-center noExport', orderable: false }
                 ],
                 dom: "<'row mb-3'<'col-md-4 mb-3 mb-md-0'l><'col-md-8 text-right'<'d-flex justify-content-end'f<'ms-2'B>>>>t<'row align-items-center mt-3'<'mr-auto col-md-6'i><'mb-0 col-md-6'p>>",
 		lengthMenu: [ 10, 20, 30, 40, 50 ],
 		responsive: true,
+
 		buttons: [
-			{ extend: 'print', className: 'btn btn-default btn-sm' },
-			{ extend: 'csv', className: 'btn btn-default btn-sm' }
+			{ extend: 'print', className: 'btn btn-default btn-sm', exportOptions: {
+            columns: ":visible:not(.noExport)"
+        } },
+			{ extend: 'csv', className: 'btn btn-default btn-sm', exportOptions: {
+            columns: ":visible:not(.noExport)"
+        } },
+
+            { extend: 'colvis', className: 'btn btn-default btn-sm' }
 		]
 	});
       $('#patient-name').on('keyup', function(e) {
@@ -158,7 +166,7 @@
                 <div class="col-sm-12 col-lg-4">
                     <label class="form-label" >Date Admitted Range</label>
                     <div class="input-group" id="daterange">
-                        <input type="text" name="daterange" id="daterange-input" class="form-control" value="" placeholder="click to select the date range">
+                        <input type="text" name="daterange" id="date_range" class="form-control" value="" placeholder="click to select the date range">
                         <span class="input-group-text"><i class="fa fa-calendar"></i></span>
                     </div>
                 </div>
@@ -178,6 +186,7 @@
                         <th>Sex</th>
                         <th>Date Admitted</th>
                         <th>Date Discharged</th>
+                        <th>Days Spent</th>
                         <th>Actions</th>
                     </tr>
                 </thead>

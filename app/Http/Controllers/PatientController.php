@@ -155,7 +155,7 @@ class PatientController extends Controller
             })
             ->addColumn('action', function ($patient) {
                 return '<div class="btn-group">'.
-                '<a href="'.route('patient.treatment', $patient->patient->id).'" class="btn btn-outline-primary">'.'View Recordings'.'</a>'.
+                '<a href="'.route('patient.treatment', $patient->patient->id).'" class="btn btn-outline-primary">'.'View/Record'.'</a>'.
                 '<a type="button" class="btn btn-outline-primary process-discharge" data-bs-toggle="modal" data-bs-target="#modal-discharge" data-patient-id="'.$patient->id.'"> '.'Process Discharge'.'</a>'.
                 '</div>';
             })
@@ -286,8 +286,12 @@ class PatientController extends Controller
             ->editColumn('date_admitted', function ($patient) {
                 return $patient->admission_date->format('d/m/Y') ?? 'N/A';
             })
+            ->editColumn('days_spent', function ($patient) {
+                $days_spent = $patient->discharge_date ? $patient->admission_date->diffInDays($patient->discharge_date) : (int)$patient->admission_date->diffInDays(now());
+                return $days_spent;
+            })
             ->editColumn('date_discharged', function ($patient) {
-                return $patient->discharge_date ? $patient->discharge_date->format('d/m/Y') : 'N/A';
+                return $patient->discharge_date ? $patient->discharge_date->format('d/m/Y') : 'On Admission';
             })
             ->addColumn('action', function ($patient) {
                 $route_select = $patient->discharge_date != null ?  route('patient_view.discharged',$patient): route('patient.treatment',$patient->patient);
@@ -298,7 +302,7 @@ class PatientController extends Controller
             ->setRowId(function ($patient) {
                 return "row_".$patient->id;
             })
-            ->rawColumns(['fullname','gendervalue','hospital_no','diagnosis', 'age', 'date_admitted', 'date_discharged','action'])
+            ->rawColumns(['fullname','gendervalue','hospital_no','diagnosis', 'age', 'date_admitted','days_spent', 'date_discharged','action'])
             ->make(true);
 
     }
