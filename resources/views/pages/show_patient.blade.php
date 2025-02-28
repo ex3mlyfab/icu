@@ -1473,8 +1473,9 @@
                     data: formData,
                     success: function(response) {
 
-                        console.log(response);
-                        getCardioData()
+
+
+
                         $('#toast-1 .toast-body').html(response.message);
                         $('#toast-1').toast('show');
                         $('#modalXl').modal('hide');
@@ -1482,6 +1483,11 @@
                         $('#cardio-save').prop('disabled', false);
                         $('#cardio-save-spinner').hide();
                         $('#cardio-charting').hide();
+                          if(chartIndicator){
+                            drawCardioChart();
+                        } else{
+                            getCardioData();
+                        }
 
                     },
                     error: function(error) {
@@ -1538,7 +1544,12 @@
                         $('#resp-save').prop('disabled', false);
                         $('#resp-save-spinner').hide();
                         $('#respiratory-charting').hide();
-                        getRespData();
+                        if(chartIndicator){
+                            drawRespChart();
+                        } else{
+                            getRespData();
+                        }
+
                     },
                     error: function(error) {
                         // Handle errors$
@@ -1716,7 +1727,12 @@
                         $('#fluid-save-spinner').hide();
                         $('#new-fluid').hide();
                         $('#chartFluid').hide();
-                        getFluidData();
+                        if(chartIndicator){
+                            drawFluidChart();
+                        } else{
+                            getFluidData();
+                        }
+
                         getFluidSelect();
                         getRenalData();
                     },
