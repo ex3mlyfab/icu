@@ -1,7 +1,7 @@
 
 {{-- Modal for invasivevascular assessment --}}
 <div class="modal fade" id="modal-invasive" data-bs-backdrop="static">
-    <div class="modal-dialog modal-lg">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
         <div class="modal-content" >
             <div class="modal-header">
                 <h5 class="modal-title">Record Invasive Line</h5>
@@ -31,15 +31,7 @@
                                 @enderror
 
                             </div>
-                        <div class="col-md-12 mb-3">
-                            <div class="input-group bootstrap-timepicker timepicker">
-                                <span class="input-group-text" id="addon-wrapping">Hour Recorded</span>
-                                <input id="timepicker-default-invasive" type="text" class="form-control timepickerAcross" name="hour_taken">
-                                <span class="input-group-addon input-group-text">
-                                    <i class="fa fa-clock"></i>
-                                </span>
-                            </div>
-                        </div>
+                       
 
                     </div>
                 </div>

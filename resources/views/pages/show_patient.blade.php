@@ -153,7 +153,7 @@
                                     }
                                 },
                                 dataLabels: {
-                                        enabled: false
+                                        enabled: true,
                                     },
                                 series: [],
                                 title: {
@@ -375,7 +375,7 @@
                                     }
                                 },
                                 dataLabels: {
-                                        enabled: false,
+                                        enabled: true,
                                     },
                                 series: [],
                                 title: {
@@ -563,7 +563,7 @@
                                     value.splice(1, 0, ...inputData.fluids[key]);
                                     for (var i = 0; i < value.length; i++) {
 
-                                        row.append('<td class="border-1 px-1">' + value[
+                                        row.append('<td class="border-1 px-2">' + value[
                                             i] + '</td>');
                                     }
                                     inputtable.append(row);
@@ -614,7 +614,7 @@
                                     value.splice(1, 0, ...outputData.fluids[key]);
                                     for (var i = 0; i < value.length; i++) {
 
-                                        row.append('<td class="px-1 border-1">' + value[
+                                        row.append('<td class="px-2 border-1">' + value[
                                             i] + '</td>');
                                     }
 
@@ -687,7 +687,7 @@
 
                                 for (var i = 0; i < value.length; i++) {
 
-                                    row.append('<td class="m-1 border-1">' + value[i] +
+                                    row.append('<td class="px-1 border-1">' + value[i] +
                                         '</td>');
                                 }
                                 table.append(row);
@@ -761,7 +761,7 @@
 
                                 for (var i = 0; i < value.length; i++) {
 
-                                    row.append('<td class="m-1 border-1">' + value[i] +
+                                    row.append('<td class="px-1 border-1">' + value[i] +
                                         '</td>');
                                 }
                                 table.append(row);
@@ -828,7 +828,7 @@
                                 var row = $('<tr></tr>');
                                 value.splice(1, 0, ...medicationData.medications[key]);
                                 for (var i = 0; i < value.length; i++) {
-                                    row.append('<td class="mx-1 border-1">' + value[i] +
+                                    row.append('<td class="px-2 border-1">' + value[i] +
                                         '</td>');
                                 }
                                 table.append(row);
@@ -892,7 +892,7 @@
                                 var row = $('<tr></tr>');
                                 value.splice(1, 0, ...nutritionData.nutrition[key]);
                                 for (var i = 0; i < value.length; i++) {
-                                    row.append('<td class="border-1 mx-1">' + value[i] +
+                                    row.append('<td class="border-1 px-2">' + value[i] +
                                         '</td>');
                                 }
                                 table.append(row);
@@ -940,7 +940,7 @@
                             $.each(neuroData, function(key, value) {
 
                                 for (var i = 0; i < value.length; i++) {
-                                    row.append('<td class="border-1 mx-1">' + value[i] +
+                                    row.append('<td class="border-1 px-2">' + value[i] +
                                         '</td>');
                                 }
                                 table.append(row);
@@ -1037,7 +1037,7 @@
                             headerIndicator.append(headerRow);
                             table.append(headerIndicator);
                             $.each(skinData, function(key, value) {
-                                var row = $('<tr class="text-center"></tr>');
+                                var row = $('<tr></tr>');
                                 row.append('<th class="ps-2 border-1">' + value.new_date + '</th><th class="ps-2 border-1">' +
                                     ((value.wound_dressings) ? value.wound_dressings :
                                         '-') + '</th><th>' + ((value.drain_output) ? value
@@ -1081,12 +1081,12 @@
                             table.append(headerRow);
                             $.each(seizureData, function(key, value) {
                                 table.append(`<tr>
-                                <td class="text-center border-1 px-1">${value.new_date}</td>
-                                <td class="text-center border-1 px-1">${value.time}</td>
-                                <td class="text-center border-1 px-1">${value.description}</td>
-                                <td class="text-center border-1 px-1">${value.durations}</td>
-                                <td class="text-center border-1 px-1">${value.intervention}</td>
-                                <td class="text-center border-1 px-1">${value.recorded_by}</td>
+                                <td class="px-2 border-1 px-1">${value.new_date}</td>
+                                <td class="px-2 border-1 px-1">${value.time}</td>
+                                <td class="px-2 border-1 px-1">${value.description}</td>
+                                <td class="px-2 border-1 px-1">${value.durations}</td>
+                                <td class="px-2 border-1 px-1">${value.intervention}</td>
+                                <td class="px-2 border-1 px-1">${value.recorded_by}</td>
                                 </tr>`);
                             });
                             $('#table-seizure').html(table)
@@ -1128,10 +1128,10 @@
                             $.each(dailyData, function(key, value) {
                                 var row = $(`
                                     <tr>
-                                        <td class="text-center border-1">${value.new_date}</td>
-                                        <td class="text-center border-1">${value.duty_period}</td>
+                                        <td class="ps-2 border-1">${value.new_date}</td>
+                                        <td class="ps-2 border-1">${value.duty_period}</td>
                                       <td class="ps-2 border-1">${value.daily_notes}</td>
-                                        <td class="text-center border-1">${value.recorded_by}</td>
+                                        <td class="ps-2 border-1">${value.recorded_by}</td>
                                     </tr>
                                    `);
 
@@ -1175,8 +1175,8 @@
                             $.each(invasiveData, function(key, value) {
                                 var row = $('<tr></tr>');
                                 row.append(`<th class="ps-2 border-1">${value.invasive_lines}</th>
-                    <td class="text-center border-1">${value.new_date}</td>
-                    <td class="text-center border-1">${value.recorded_by}</td>
+                    <td class="ps-2 border-1">${value.new_date}</td>
+                    <td class="ps-2 border-1">${value.recorded_by}</td>
                    `);
                                 table.append(row);
                             });
@@ -1218,7 +1218,7 @@
                             $.each(renalData, function(key, value) {
                                 var row = $('<tr></tr>');
                                 row.append(`<td class="border-1 px-1">${key}</td>
-                                <td class="text-center border-1 px-1"> ${value}</td>
+                                <td class="border-1 px-2"> ${value}</td>
                                 `);
                                 table.append(row);
                             });
@@ -1259,7 +1259,7 @@
                             table.append(headerIndicator);
                             $.each(progressData, function(key, value) {
                                 var row = $('<tr></tr>');
-                                row.append(`<td class="border-1 px-1">${value.content}</td><td>${value.intervention}</td><td class="border-1 px-1">${value.recorded_by}</td>`)
+                                row.append(`<td class="border-1 px-1">${value.content}</td><td clas>${value.intervention}</td><td class="border-1 px-1">${value.recorded_by}</td>`)
 
                                 table.append(row);
                             });

@@ -1,6 +1,6 @@
 {{-- Modal for lab test --}}
 <div class="modal fade" id="modal-result" data-bs-backdrop="static">
-    <div class="modal-dialog modal-md">
+    <div class="modal-dialog modal-md modal-dialog-centered">
         <div class="modal-content">
             <div class="modal-header bg-teal-600">
                 <h5 class="modal-title">Mark Result As Recieved</h5>

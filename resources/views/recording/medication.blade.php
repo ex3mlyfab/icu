@@ -1,6 +1,6 @@
 {{-- Modal for medicationvascular assessment --}}
 <div class="modal fade" id="modal-medication" data-bs-backdrop="static">
-    <div class="modal-dialog modal-xl">
+    <div class="modal-dialog modal-xl modal-dialog-centered">
         <div class="modal-content">
             <div class="modal-header bg-gradient bg-warning-400">
                 <h5 class="modal-title">Add New Medication Record</h5>

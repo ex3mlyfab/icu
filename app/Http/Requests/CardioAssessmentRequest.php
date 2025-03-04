@@ -34,7 +34,7 @@ class CardioAssessmentRequest extends FormRequest
             'rhythm' => 'nullable|numeric',
             'peripheral_pulses' => 'nullable|numeric',
             'capillary_refill_time' => 'nullable|numeric',
-            'hour_taken' => 'required',
+    
 
         ];
     }

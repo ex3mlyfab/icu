@@ -1,7 +1,7 @@
 
 {{-- Modal for lab test --}}
 <div class="modal fade" id="modal-lab" data-bs-backdrop="static">
-    <div class="modal-dialog modal-md">
+    <div class="modal-dialog modal-md modal-dialog-centered">
         <div class="modal-content">
             <div class="modal-header bg-teal-600">
                 <h5 class="modal-title">Add New Lab Test Request</h5>

@@ -1,5 +1,5 @@
  <div class="modal fade" id="modal-resp" data-bs-backdrop="static">
-     <div class="modal-dialog modal-xl">
+     <div class="modal-dialog modal-xl modal-dialog-centered">
          <div class="modal-content">
              <div class="modal-header">
                  <h5 class="modal-title">Add New Respiratory Assessment</h5>
@@ -89,15 +89,7 @@
                              </div>
                          </div>
 
-                         <div class="col-md-12 col-lg-4 mb-3">
-                             <div class="input-group bootstrap-timepicker timepicker">
-                                 <input id="timepicker-respiratoy-respiratory" type="text" name="hour_taken"
-                                     class="form-control timepickerAcross">
-                                 <span class="input-group-addon input-group-text">
-                                     <i class="fa fa-clock"></i>
-                                 </span>
-                             </div>
-                         </div>
+
 
                      </div>
                  </div>

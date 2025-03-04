@@ -1,7 +1,7 @@
 
 {{-- Modal for neurovascular assessment --}}
 <div class="modal fade" id="modal-neuro" data-bs-backdrop="static">
-    <div class="modal-dialog modal-xl">
+    <div class="modal-dialog modal-xl modal-dialog-centered">
         <div class="modal-content">
             <div class="modal-header bg-gradient bg-danger">
                 <h5 class="modal-title">Add New Neurological assessment</h5>
@@ -99,15 +99,6 @@
                                                         min="1" max="6" name="pupil_diameter" required/>
 													</div>
                                                     <span class="range-indicator" id="value-pupil-diameter"></span>
-                            </div>
-                        </div>
-                         <div class="col-md-12 col-lg-4 mb-3">
-                            <div class="input-group bootstrap-timepicker timepicker">
-                                <span class="input-group-text" id="addon-wrapping">Hour Recorded</span>
-                                <input id="timepicker-default23" type="text" class="form-control timepickerAcross" name="hour_taken">
-                                <span class="input-group-addon input-group-text">
-                                    <i class="fa fa-clock"></i>
-                                </span>
                             </div>
                         </div>
 

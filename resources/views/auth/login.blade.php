@@ -5,11 +5,11 @@
 @section('content')
     <!-- BEGIN login -->
 
-            <div class="login">
+            <div class="login" style="background: url({{ asset('images/gate.jpg') }}) center; height: 100vh; background-size: cover;">
 
                 <!-- BEGIN login-content -->
                 <div class="login-content">
-                    <div class="card border-theme shadow-sm mb-3">
+                    <div class="card border-theme shadow-sm mb-3 p-2">
                         <div class="card-body">
                         <img src="{{asset('images/fmc_logo.jpeg')}}" alt="" class="card-img-top" height="180"/>
                         </div>
@@ -17,7 +17,7 @@
                             <h1 class="card-title text-center text-primary fw-bolder">ICU </h1>
                             <h4 class="card-text text-center text-primary">Monitoring Application</h4>
                         </div>
-                    </div>
+
                     <form action="{{route('login')}}" method="POST" name="login_form">
                         @csrf
                         <h1 class="text-center">Sign In</h1>
@@ -65,6 +65,7 @@
                         <button type="submit" class="btn btn-theme btn-lg d-block w-100 fw-500 mb-3">Sign In</button>
 
                     </form>
+                    </div>
                 </div>
                 <!-- END login-content -->
 

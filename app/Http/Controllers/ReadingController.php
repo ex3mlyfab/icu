@@ -58,6 +58,7 @@ class ReadingController extends Controller
     public function storeCardio(CardioAssessmentRequest $request)
     {
         $data = $request->all();
+        $data['hour_taken'] = now();
 
         $data['created_by'] = Auth::user()->id;
         $data['time_of_cardio_assessment'] = now();
@@ -164,6 +165,8 @@ class ReadingController extends Controller
     public function storeRespiratory(RespiRatoryAssessmentRequest $request)
     {
          $data = $request->all();
+          $data['hour_taken'] = now();
+
 
         $data['created_by'] = Auth::user()->id;
         $data['time_of_respiratory_assessment'] = now();
@@ -515,7 +518,7 @@ class ReadingController extends Controller
             'best_motor_response' => $data['best_motor_response'],
             'sedation_score' => $data['sedation_score'],
             'pupil_diameter' => $data['pupil_diameter'],
-            'hour_taken' => $data['hour_taken'],
+            'hour_taken' => now(),
             'time_of_neuro_assessment' => now(),
             'created_by' => Auth::user()->id,
          ]);

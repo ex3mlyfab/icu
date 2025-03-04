@@ -32,7 +32,7 @@ class RespiRatoryAssessmentRequest extends FormRequest
             'respiratory_effort' => 'nullable',
             'endothracheal_intubation' => 'nullable',
             'presuure_support' => 'nullable',
-            'hour_taken' => 'required'
+            
         ];
     }
 }

@@ -1,7 +1,7 @@
 
 {{-- Modal for cardiovascular assessment --}}
 <div class="modal fade" id="modal-seizure" data-bs-backdrop="static">
-    <div class="modal-dialog modal-xl">
+    <div class="modal-dialog modal-xl modal-dialog-centered">
         <div class="modal-content">
             <div class="modal-header bg-warning-subtle">
                 <h5 class="modal-title">Record New Seizure Event</h5>

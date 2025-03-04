@@ -1,7 +1,7 @@
 
 {{-- Modal for cardiovascular assessment --}}
 <div class="modal fade" id="modalXl" data-bs-backdrop="static">
-    <div class="modal-dialog modal-xl ">
+    <div class="modal-dialog modal-xl modal-dialog-centered">
         <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title">Add New Cardiovasular assessment</h5>
@@ -97,15 +97,7 @@
 
                             </div>
                         </div>
-                        <div class="col-md-12 col-lg-4 mb-3">
-                            <div class="input-group bootstrap-timepicker timepicker">
-                                <span class="input-group-text" id="addon-wrapping">Hour Recorded</span>
-                                <input id="timepicker-default-cardio" type="text" class="form-control timepickerAcross" name="hour_taken" required>
-                                <span class="input-group-addon input-group-text">
-                                    <i class="fa fa-clock"></i>
-                                </span>
-                            </div>
-                        </div>
+
 
                     </div>
                 </div>

@@ -31,7 +31,6 @@ class NeuroAssessmentRequest extends FormRequest
             'muscle_relaxant' => 'nullable',
             'sedation_score' => 'required',
             'pupil_diameter' => 'nullable',
-            'hour_taken' => 'required'
         ];
     }
 }
