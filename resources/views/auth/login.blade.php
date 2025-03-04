@@ -8,14 +8,16 @@
             <div class="login" style="background: url({{ asset('images/gate.jpg') }}) center; height: 100vh; background-size: cover;">
 
                 <!-- BEGIN login-content -->
-                <div class="login-content">
+                <div class="login-content mt-2">
                     <div class="card border-theme shadow-sm mb-3 p-2">
                         <div class="card-body">
-                        <img src="{{asset('images/fmc_logo.jpeg')}}" alt="" class="card-img-top" height="180"/>
+                        <img src="{{asset('images/fmc_logo.jpeg')}}" alt="" class="card-img-top" />
                         </div>
                         <div class="card-body">
-                            <h1 class="card-title text-center text-primary fw-bolder mb-0" style="font-family: bunny">ICU </h1>
-                            <h4 class="card-text text-center text-primary">Monitoring Application</h4>
+                            <div class="d-flex justify-content-center align-items-center gap-1">
+
+                            <h1 class="card-title text-primary fw-bolder" style="font-family: bunny">ICU </h1>
+                            <h4 class="card-text text-primary" style="font-family: bunny">Monitor</h4></div>
                         </div>
 
                     <form action="{{route('login')}}" method="POST" name="login_form">
