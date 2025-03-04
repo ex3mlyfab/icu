@@ -14,13 +14,16 @@
                         <img src="{{asset('images/fmc_logo.jpeg')}}" alt="" class="card-img-top" height="180"/>
                         </div>
                         <div class="card-body">
-                            <h1 class="card-title text-center text-primary fw-bolder">ICU </h1>
+                            <h1 class="card-title text-center text-primary fw-bolder mb-0" style="font-family: bunny">ICU </h1>
                             <h4 class="card-text text-center text-primary">Monitoring Application</h4>
                         </div>
 
                     <form action="{{route('login')}}" method="POST" name="login_form">
                         @csrf
-                        <h1 class="text-center">Sign In</h1>
+                        <div class="bg-gradient-custom-blue rounded py-1 mb-4 mx-5">
+                            <h5 class="text-center text-white">Sign
+                                in to your account</h5>
+                        </div>
 
                         @session('status')
                             <div class="alert alert-danger" role="alert">
@@ -28,7 +31,7 @@
                             </div>
                         @endsession
                         <div class="mb-3">
-                            <label class="form-label">Email Address</label>
+                            <label class="form-label fw-bold mb-0">Email Address</label>
                             <input type="text" class="form-control form-control-lg fs-15px" name="email"
                                 value="{{ old('email') }}"
                                 @error('email')
@@ -43,7 +46,7 @@
                         </div>
                         <div class="mb-3">
                             <div class="d-flex">
-                                <label class="form-label">Password</label>
+                                <label class="form-label fw-bold mb-0">Password</label>
                                 {{-- <a href="route('password.request')" class="ms-auto text-muted">Forgot password?</a> --}}
                             </div>
                             <input type="password" class="form-control form-control-lg fs-15px" name="password"
@@ -62,7 +65,7 @@
                             </div>
                         </div>
 
-                        <button type="submit" class="btn btn-theme btn-lg d-block w-100 fw-500 mb-3">Sign In</button>
+                        <button type="submit" class="btn btn-outline-theme btn-lg d-block w-100 fw-500 mb-3">Sign In</button>
 
                     </form>
                     </div>

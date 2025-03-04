@@ -5,6 +5,8 @@
     @include('partial.head')
     <meta http-equiv="refresh" content="{{ config('session.lifetime')*60 }}" >
     <meta name="csrf-token" content="{{ csrf_token() }}">
+    <link rel="preconnect" href="https://fonts.bunny.net">
+    <link href="https://fonts.bunny.net/css?family=figtree:400,600&display=swap" rel="stylesheet" />
 </head>
 
 <body class="{{ !empty($bodyClass) ? $bodyClass : '' }}">
