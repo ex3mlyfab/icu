@@ -23,7 +23,7 @@
                     <form action="{{route('login')}}" method="POST" name="login_form">
                         @csrf
                         <div class="bg-gradient-custom-blue rounded py-1 mb-4 mx-5">
-                            <h5 class="text-center text-white">Sign
+                            <h5 class="text-center text-white fw-bold mb-0" style="font-family: bunny">Sign
                                 in to your account</h5>
                         </div>
 

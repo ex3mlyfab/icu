@@ -1031,8 +1031,8 @@
                             // Create a table header row
                             var headerRow = $('<tr></tr>');
                             headerRow.append(
-                                `<th class="bg-dark-300 text-light">date</th>
-                    <th class="text-center">Wound Dressings</th><th class="text-center">Drain Output</th><th>Skin Integrity</th><th>Recorded by</th>`
+                                `<th class="bg-dark-300 text-light">Date</th>
+                    <th >Wound Dressings</th><th >Drain Output</th><th>Skin Integrity</th><th>Recorded by</th>`
                             );
                             headerIndicator.append(headerRow);
                             table.append(headerIndicator);
@@ -2468,6 +2468,26 @@
                 <!-- END card-body -->
             </div>
         </div>
+        <div class="col-lg-12" id="renal-card">
+            <div class="card h-100 mt-2">
+                <div class="card-header bg-gradient bg-purple bg-opacity-30 d-flex gap-2 align-items-center">
+                    <div class="d-flex mb-3 gap-1">
+                        <div class="flex-grow-1">
+                            <h5 class="mb-1"> Renal Assessment </h5>
+
+                        </div>
+
+                        <a href="javascript:;" class="text-secondary"><i class="fa fa-redo"></i></a>
+                    </div>
+                </div>
+                <!-- BEGIN card-body -->
+                <div class="card-body">
+
+                    <div id="table-renal" class="table-responsive"></div>
+                </div>
+                <!-- END card-body -->
+            </div>
+        </div>
         <div class="col-lg-12" id="nutrition-card">
             <div class="card h-100 mt-2">
                 <!-- BEGIN card-body -->
@@ -2620,28 +2640,6 @@
                     </div>
                 </div>
                 <!-- END card-body ya -->
-            </div>
-        </div>
-
-
-        <div class="col-lg-12" id="renal-card">
-            <div class="card h-100 mt-2">
-                <div class="card-header bg-gradient bg-purple bg-opacity-30 d-flex gap-2 align-items-center">
-                    <div class="d-flex mb-3 gap-1">
-                        <div class="flex-grow-1">
-                            <h5 class="mb-1"> Renal Assessment </h5>
-
-                        </div>
-
-                        <a href="javascript:;" class="text-secondary"><i class="fa fa-redo"></i></a>
-                    </div>
-                </div>
-                <!-- BEGIN card-body -->
-                <div class="card-body">
-
-                    <div id="table-renal" class="table-responsive"></div>
-                </div>
-                <!-- END card-body -->
             </div>
         </div>
 
