@@ -491,6 +491,66 @@
             getMedicationSelect();
             getNutritionSelect();
 
+            const CardioValue = 
+                [
+                    {heart_rate:{
+                        high: 100,
+                        low: 60
+                    }},{
+                    BpSystolic:{
+                        high: 120,
+                        low: 80
+                    }},
+                    {BpDiastolic:{
+                        high: 80,
+                        low: 60
+                    }},{
+                    Spo2:{
+                        high: 100,
+                        low: 95
+                    }},{
+                    Temperature:{
+                        high: 37.5,
+                        low: 36.5
+                    }},{
+                    Peripheralpulses:{
+                        high: 100,
+                        low: 60
+                    }},{
+                    Rhythm:{
+                        high: 100,
+                        low: 60
+                    }},
+                    {RespiratoryRate:{
+                        high: 20,
+                        low: 12
+                    }},{
+                    CapillaryRefillTime:{
+                        high: 2,
+                        low: 1
+                    }},{
+                    CVP:{
+                        high: 8,
+                        low: 4
+                    }},
+                    {
+                    MAP:{
+                        high: 100,
+                        low: 60
+                    }},
+                    {
+                        label:{
+                        hight: 0,
+                        low: 0}
+                    },
+                    {
+                        Recordedby:{
+                            high: 0,
+                            low: 0
+                        }
+                    }
+                   
+                ];
 
             function getFluidData() {
                 $.ajax({
@@ -668,13 +728,30 @@
                             let numberOfRows = myData.label.length;
                             // console.log(numberOfRows, 'from cardioData');
                             $.each(myData, function(key, value) {
+                                console.log(key, "from eagle");
+                                
+                               const comparativeValue = CardioValue.find(item => Object.keys(item)[0] === key)[key];
+
+                              
+                                // console.log(comparativeValue, 'from comparative value');
+                               console.log(comparativeValue, 'from comparative value');
                                 $.each(value, function(index, item) {
+                                    
                                     for (let i = 0; i < numberOfRows; i++) {
                                         if (!tableRows[i]) {
                                             tableRows[i] = [];
                                         }
                                         if (i === index) {
-                                            tableRows[i].push(item);
+                                            let displayDynamics;
+                                          if(item > comparativeValue.high ){
+                                            displayDynamics = `<span class="text-danger">${item}</span>`
+                                          }else if(item < comparativeValue.low ){
+                                            displayDynamics = `<span class="text-primary">${item}</span>`
+                                          }else{
+                                            displayDynamics = item;
+                                          }
+                                            tableRows[i].push(displayDynamics);
+                                            // tableRows[i].push(item);
                                         }
                                     }
                                 })
