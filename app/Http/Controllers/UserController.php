@@ -33,10 +33,6 @@ class UserController extends Controller
        return redirect()->route('user.index');
     }
 
-    public function editUser(User $user){
-        return view('pages.edit-user');
-    }
-
     public function get_user_table(Request $request)
     {
         $users = User::with('roles')
@@ -54,7 +50,8 @@ class UserController extends Controller
                     return $user->roles->first()->name;
                 })
                 ->addColumn('action', function($user){
-                    return  '';
+                    $deactivate = $user->status ? '<a href="'.route('user.deactivate', $user->id).'" class="btn btn-danger btn-sm">Deactivate</a>' : '<a href="'.route('user.activate', $user->id).'" class="btn btn-warning btn-sm">Activate</a>';
+                    return  '<a href="'.route('user.edit', $user->id).'" class="btn btn-primary btn-sm">Edit</a><a href="'.route('user.reset', $user->id).'" class="btn btn-purple btn-sm">Reset Password</a>'.$deactivate;
                 })
                 ->setRowId(function($user) {
                     return "row_".$user->id;
@@ -84,5 +81,49 @@ class UserController extends Controller
         ]);
 
         return redirect()->route('dashboard');
+    }
+    public function editUser(User $user)
+    {
+        return view('pages.edit-user', [
+            'user' => $user,
+            'roles' => Role::all()
+        ]);
+    }
+    public function updateUser(Request $request, User $user){
+        $data = $request->validate([
+            'first_name' => 'required',
+            'last_name' => 'required',
+            'telephone' => 'nullable',
+            'email' => 'required|email|unique:users,email,'.$user->id
+        ]);
+
+        $user->update($data);
+        $user->syncRoles($request->role);
+
+        return redirect()->route('user.index');
+    }
+    public function resetPassword(User $user)
+    {
+        $user->update([
+            'password' => Hash::make('@1234')
+        ]);
+
+        return redirect()->route('user.index');
+    }
+    public function deactivateUser(User $user)
+    {
+        $user->update([
+            'status' => 0
+        ]);
+
+        return redirect()->route('user.index');
+    }
+    public function activateUser(User $user)
+    {
+        $user->update([
+            'status' => 1
+        ]);
+
+        return redirect()->route('user.index');
     }
 }

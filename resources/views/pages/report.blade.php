@@ -39,7 +39,7 @@
                 opens: 'right',
                 format: 'MM/DD/YYYY',
                 separator: ' to ',
-                startDate: moment().subtract('days', 29),
+                startDate: moment().subtract(29,'days'),
                 endDate: moment(),
                 minDate: '01/01/2012',
                 maxDate: '12/31/2025',
@@ -111,7 +111,7 @@
          });
 
 
-     $('#date_range').daterangepicker({
+            $('#date_range').daterangepicker({
                     autoUpdateInput: false,
                     locale: {
                         format: 'YYYY-MM-DD',
@@ -122,7 +122,7 @@
                 $('#date_range').on('apply.daterangepicker', function(ev, picker) {
                     $(this).val(picker.startDate.format('YYYY-MM-DD') + ' - ' + picker.endDate.format(
                         'YYYY-MM-DD'));
-
+                    console.log($(this).val())
                     invoice_table.draw();
                 });
 

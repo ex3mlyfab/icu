@@ -263,7 +263,9 @@ class PatientController extends Controller
 
                 if ($request->has('daterange')) {
                     $date_range = explode(" - ", $request->get('daterange'));
-                    $query->whereBetween('patient_cares.created_at', [$date_range[0], $date_range[1]]);
+                    $query->whereBetween('patient_cares.created_at', [
+                        Carbon::parse($date_range[0]), Carbon::parse($date_range[1])]);
+
                 }
 
             })
@@ -288,7 +290,7 @@ class PatientController extends Controller
             })
             ->editColumn('days_spent', function ($patient) {
                 $days_spent = $patient->discharge_date ? $patient->admission_date->diffInDays($patient->discharge_date) : (int)$patient->admission_date->diffInDays(now());
-                return $days_spent;
+                return $days_spent + 1;
             })
             ->editColumn('date_discharged', function ($patient) {
                 return $patient->discharge_date ? $patient->discharge_date->format('d/m/Y') : 'On Admission';

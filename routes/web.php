@@ -139,6 +139,11 @@ Route::middleware('auth')->group(function () {
     Route::get('admin/users-list', [UserController::class, 'userIndex'])->name('user.index')->can('view-user');
     Route::post('admin/users-list', [UserController::class, 'get_user_table'])->name('datatable.user')->can('view.user');
     Route::post('admin/users-store', [UserController::class, 'createUser'])->name('user.store')->can('create-user');
+    Route::get('admin/users/{user}/edit', [UserController::class, 'editUser'])->name('user.edit')->can('edit-user');
+    Route::patch('admin/{user}/update', [UserController::class, 'updateUser'])->name('user.update')->can('update-user');
+    Route::get('admin/{user}/resetPassword', [UserController::class, 'resetPassword'])->name('user.reset')->can('reset-password');
+    Route::get('admin/{user}/deactivate', [UserController::class, 'deactivateUser'])->name('user.deactivate')->can('deactivate-user');
+    Route::get('admin/{user}/activate', [UserController::class, 'activateUser'])->name('user.activate')->can('deactivate-user');
 });
 
 require __DIR__.'/auth.php';
