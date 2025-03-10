@@ -50,8 +50,11 @@ class UserController extends Controller
                     return $user->roles->first()->name;
                 })
                 ->addColumn('action', function($user){
-                    $deactivate = $user->status ? '<a href="'.route('user.deactivate', $user->id).'" class="btn btn-danger btn-sm">Deactivate</a>' : '<a href="'.route('user.activate', $user->id).'" class="btn btn-warning btn-sm">Activate</a>';
-                    return  '<a href="'.route('user.edit', $user->id).'" class="btn btn-primary btn-sm">Edit</a><a href="'.route('user.reset', $user->id).'" class="btn btn-purple btn-sm">Reset Password</a>'.$deactivate;
+                    $deactivate = $user->status ? '<a href="'.route('user.deactivate', $user->id).'" class="btn btn-danger btn-sm d-block">Deactivate</a>' : '<a href="'.route('user.activate', $user->id).'" class="btn btn-warning btn-sm d-block">Activate</a>';
+                    return '<div class="dropdown text-center ">'
+                    . '<button class="btn btn-primary btn-sm dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">' . __('Action')
+                    . '&nbsp;</button>'
+                    . '<div class="dropdown-menu"><a href="'.route('user.edit', $user->id).'" class="btn btn-primary btn-sm d-block">Edit</a><a href="'.route('user.reset', $user->id).'" class="btn btn-purple d-block btn-sm">Reset Password</a>'.$deactivate . '</div></div> ';
                 })
                 ->setRowId(function($user) {
                     return "row_".$user->id;
@@ -112,6 +115,7 @@ class UserController extends Controller
     }
     public function deactivateUser(User $user)
     {
+        // dd($user);
         $user->update([
             'status' => 0
         ]);
@@ -120,6 +124,7 @@ class UserController extends Controller
     }
     public function activateUser(User $user)
     {
+
         $user->update([
             'status' => 1
         ]);

@@ -19,7 +19,16 @@
                             <h1 class="card-title text-primary fw-bolder" style="font-family: bunny">ICU </h1>
                             <h4 class="card-text text-primary" style="font-family: bunny">Monitor</h4></div>
                         </div>
+                        @if ($errors->any())
+                            <div class="alert alert-danger">
+                                <ul>
+                                    @foreach ($errors->all() as $error)
+                                        <li>{{ $error }}</li>
+                                    @endforeach
+                                </ul>
+                            </div>
 
+                        @endif
                     <form action="{{route('login')}}" method="POST" name="login_form">
                         @csrf
                         <div class="bg-gradient-custom-blue rounded py-1 mb-4 mx-5">

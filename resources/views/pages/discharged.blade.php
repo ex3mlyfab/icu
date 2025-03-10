@@ -121,7 +121,7 @@
             function drawCardioChart() {
                 $.ajax({
                     type: 'GET', // or 'POST' if required
-                    url: `{{ url('/') }}/show-cardio/{{ $patient->latestPatientCare->id }}/${activeDay}/${viewtype}`,
+                    url: `{{ url('/') }}/show-cardio/{{ $patientCare->id }}/${activeDay}/${viewtype}`,
                     dataType: 'json', // Specify the expected data format (e.g., JSON)
                     success: function(data) {
                         // console.log(data, 'cardio chart')
@@ -239,7 +239,7 @@
             function drawFluidChart() {
                 $.ajax({
                     type: 'GET',
-                    url: `{{ URL::to('/') }}/fluid-chart/{{ $patient->latestPatientCare->id }}/${activeDay}`,
+                    url: `{{ URL::to('/') }}/fluid-chart/{{ $patientCare->id }}/${activeDay}`,
                     dataType: 'json', // Specify the expected data format (e.g., JSON)
                     success: function(data) {
                         $("#chartFluid").show();
@@ -340,7 +340,7 @@
             function drawRespChart() {
                 $.ajax({
                     type: 'GET', // or 'POST' if required
-                    url: `{{ URL::to('/') }}/show/{{ $patient->latestPatientCare->id }}/${activeDay}/${
+                    url: `{{ URL::to('/') }}/show/{{ $patientCare->id }}/${activeDay}/${
                         viewtype}`,
                     dataType: 'json', // Specify the expected data format (e.g., JSON)
                     success: function(data) {
@@ -433,69 +433,73 @@
             }
 
 
-            function getFluidSelect() {
-                $.ajax({
-                    type: 'GET',
-                    url: '{{ route('fluid.get', $patient->latestPatientCare->id) }}',
-                    dataType: 'json', // Specify the expected data format (e.g., JSON)
-                    success: function(data) {
-                        $("#select-fluid").empty().append(
-                            '<option value="others">Add New Fluid</option><option value="" selected>Select an option</option>'
-                        );
-                        // Populate with new options
-                        $.each(data.data, function(index, option) {
-                            $("#select-fluid").prepend(
-                                `<option value="${option.fluid},${option.direction}">${option.fluid}</option>`
-                            );
-                        });
+
+
+            const CardioValue =
+                [
+                    {heart_rate:{
+                        high: 100,
+                        low: 60
+                    }},{
+                    BpSystolic:{
+                        high: 120,
+                        low: 80
+                    }},
+                    {BpDiastolic:{
+                        high: 80,
+                        low: 60
+                    }},{
+                    Spo2:{
+                        high: 100,
+                        low: 95
+                    }},{
+                    Temperature:{
+                        high: 37.5,
+                        low: 36.5
+                    }},{
+                    Peripheralpulses:{
+                        high: 100,
+                        low: 60
+                    }},{
+                    Rhythm:{
+                        high: 100,
+                        low: 60
+                    }},
+                    {RespiratoryRate:{
+                        high: 20,
+                        low: 12
+                    }},{
+                    CapillaryRefillTime:{
+                        high: 2,
+                        low: 1
+                    }},{
+                    CVP:{
+                        high: 8,
+                        low: 4
+                    }},
+                    {
+                    MAP:{
+                        high: 100,
+                        low: 60
+                    }},
+                    {
+                        label:{
+                        hight: 0,
+                        low: 0}
+                    },
+                    {
+                        Recordedby:{
+                            high: 0,
+                            low: 0
+                        }
                     }
-                });
-            }
 
-            function getMedicationSelect() {
-                $.ajax({
-                    type: 'GET',
-                    url: "{{ route('medication.get', $patient->latestPatientCare->id) }}",
-                    dataType: 'json', // Specify the expected data format (e.g., JSON)
-                    success: function(data) {
-                        $("#select-medication").empty().append(
-                            '<option value="others">Add New Medication</option><option value="" selected>Select an option</option>'
-                        );
-                        $.each(data, function(index, option) {
-                            $("#select-medication").prepend('<option value="' + option
-                                .medication + '">' + option.medication + '</option>');
-                        });
-
-                    }
-                });
-            }
-
-            function getNutritionSelect() {
-                $.ajax({
-                    type: 'GET',
-                    url: "{{ route('nutrition.get', $patient->latestPatientCare->id) }}",
-                    dataType: 'json', // Specify the expected data format (e.g., JSON)
-                    success: function(data) {
-                        $("#select-nutrition").empty().append(
-                            '<option value="others">Add New Nutrition</option><option value="" selected>Select an option</option>'
-                        );
-                        $.each(data, function(index, option) {
-                            $("#select-nutrition").prepend('<option value="' + option
-                                .feeding_route + '">' + option.feeding_route + '</option>');
-                        });
-                    }
-                });
-            }
-
-            getFluidSelect();
-            getMedicationSelect();
-            getNutritionSelect();
-
+                ];
 
             function getFluidData() {
                 $.ajax({
                     type: 'GET',
-                    url: `{{ URL::to('/') }}/show-patient/{{ $patient->latestPatientCare->id }}/fluid-assessment/${activeDay}/${viewtype}`,
+                    url: `{{ URL::to('/') }}/show-patient/{{ $patientCare->id }}/fluid-assessment/${activeDay}/${viewtype}`,
                     dataType: 'json', // Specify the expected data format (e.g., JSON)
                     success: function(data) {
                         let inputData = data.data;
@@ -638,7 +642,7 @@
             function getCardioData() {
                 $.ajax({
                     type: 'GET', // or 'POST' if required
-                    url: `{{ url('/') }}/show-cardio/{{ $patient->latestPatientCare->id }}/${activeDay}/${viewtype}`,
+                    url: `{{ url('/') }}/show-cardio/{{ $patientCare->id }}/${activeDay}/${viewtype}`,
                     dataType: 'json', // Specify the expected data format (e.g., JSON)
                     success: function(data) {
 
@@ -668,13 +672,30 @@
                             let numberOfRows = myData.label.length;
                             // console.log(numberOfRows, 'from cardioData');
                             $.each(myData, function(key, value) {
+                                console.log(key, "from eagle");
+
+                               const comparativeValue = CardioValue.find(item => Object.keys(item)[0] === key)[key];
+
+
+                                // console.log(comparativeValue, 'from comparative value');
+                               console.log(comparativeValue, 'from comparative value');
                                 $.each(value, function(index, item) {
+
                                     for (let i = 0; i < numberOfRows; i++) {
                                         if (!tableRows[i]) {
                                             tableRows[i] = [];
                                         }
                                         if (i === index) {
-                                            tableRows[i].push(item);
+                                            let displayDynamics;
+                                          if(item > comparativeValue.high ){
+                                            displayDynamics = `<span class="text-danger">${item}</span>`
+                                          }else if(item < comparativeValue.low ){
+                                            displayDynamics = `<span class="text-primary">${item}</span>`
+                                          }else{
+                                            displayDynamics = item;
+                                          }
+                                            tableRows[i].push(displayDynamics);
+                                            // tableRows[i].push(item);
                                         }
                                     }
                                 })
@@ -710,7 +731,7 @@
             function getRespData() {
                 $.ajax({
                     type: 'GET', // or 'POST' if required
-                    url: `{{ URL::to('/') }}/show/{{ $patient->latestPatientCare->id }}/${activeDay}/${
+                    url: `{{ URL::to('/') }}/show/{{ $patientCare->id }}/${activeDay}/${
                         viewtype}`,
                     dataType: 'json', // Specify the expected data format (e.g., JSON)
                     success: function(data) {
@@ -785,7 +806,7 @@
             function getMedicationData() {
                 $.ajax({
                     type: 'GET', // or 'POST' if required
-                    url: `{{ URL::to('/') }}/show-patient/{{ $patient->latestPatientCare->id }}/medication/${activeDay}/${viewtype}`,
+                    url: `{{ URL::to('/') }}/show-patient/{{ $patientCare->id }}/medication/${activeDay}/${viewtype}`,
                     dataType: 'json', // Specify the expected data format (e.g., JSON)
                     success: function(data) {
                         // $('#chart-3').html(data.data);5
@@ -849,7 +870,7 @@
             function getNutritionData() {
                 $.ajax({
                     type: 'GET', // or 'POST' if required
-                    url: `{{ URL::to('/') }}/show-patient/{{ $patient->latestPatientCare->id }}/nutritions/${activeDay}/${viewtype}`,
+                    url: `{{ URL::to('/') }}/show-patient/{{ $patientCare->id }}/nutritions/${activeDay}/${viewtype}`,
                     dataType: 'json', // Specify the expected data format (e.g., JSON)
                     success: function(data) {
                         // $('#chart-3').html(data.data);
@@ -913,7 +934,7 @@
             function getNeuroData() {
                 $.ajax({
                     type: 'GET', // or 'POST' if required
-                    url: `{{ URL::to('/') }}/show-patient/{{ $patient->latestPatientCare->id }}/neuro-assessment/${activeDay}/${viewtype}`,
+                    url: `{{ URL::to('/') }}/show-patient/{{ $patientCare->id }}/neuro-assessment/${activeDay}/${viewtype}`,
                     dataType: 'json', // Specify the expected data format (e.g., JSON)
                     success: function(data) {
 
@@ -959,7 +980,7 @@
             function getLabData() {
                 $.ajax({
                     type: 'GET', // or 'POST' if required
-                    url: `{{ URL::to('/') }}/show-patient/{{ $patient->latestPatientCare->id }}/lab-test/${activeDay}`,
+                    url: `{{ URL::to('/') }}/show-patient/{{ $patientCare->id }}/lab-test/${activeDay}`,
                     dataType: 'json', // Specify the expected data format (e.g., JSON)
                     success: function(data) {
                         // $('#chart-3').html(data.data);
@@ -1017,7 +1038,7 @@
             function getSkinData() {
                 $.ajax({
                     type: 'GET', // or 'POST' if required
-                    url: `{{ URL::to('/') }}/show-patient/{{ $patient->latestPatientCare->id }}/skin-care/${activeDay}/${viewtype}`,
+                    url: `{{ URL::to('/') }}/show-patient/{{ $patientCare->id }}/skin-care/${activeDay}/${viewtype}`,
                     dataType: 'json', // Specify the expected data format (e.g., JSON)
                     success: function(data) {
                         // $('#chart-3').html(data.data);
@@ -1031,8 +1052,8 @@
                             // Create a table header row
                             var headerRow = $('<tr></tr>');
                             headerRow.append(
-                                `<th class="bg-dark-300 text-light">date</th>
-                    <th class="text-center">Wound Dressings</th><th class="text-center">Drain Output</th><th>Skin Integrity</th><th>Recorded by</th>`
+                                `<th class="bg-dark-300 text-light">Date</th>
+                    <th >Wound Dressings</th><th >Drain Output</th><th>Skin Integrity</th><th>Recorded by</th>`
                             );
                             headerIndicator.append(headerRow);
                             table.append(headerIndicator);
@@ -1062,7 +1083,7 @@
             function getSeizureData() {
                 $.ajax({
                     type: 'GET', // or 'POST' if required
-                    url: '{{ route('seizure.show', $patient->latestPatientCare->id) }}',
+                    url: '{{ route('seizure.show', $patientCare->id) }}',
                     dataType: 'json', // Specify the expected data format (e.g., JSON)
                     success: function(data) {
 
@@ -1103,7 +1124,7 @@
             function getDailyData() {
                 $.ajax({
                     type: 'GET', // or 'POST' if required
-                    url: `{{ url('/') }}/show-patient/{{ $patient->latestPatientCare->id }}/dailynotes/${activeDay}/${viewtype}`,
+                    url: `{{ url('/') }}/show-patient/{{ $patientCare->id }}/dailynotes/${activeDay}/${viewtype}`,
                     dataType: 'json', // Specify the expected data format (e.g., JSON)
                     success: function(data) {
                         // $('#chart-3').html(data.data);
@@ -1151,7 +1172,7 @@
             function getInvasiveData() {
                 $.ajax({
                     type: 'GET', // or 'POST' if required
-                    url: `{{ route('invasive.show', $patient->latestPatientCare->id) }}`,
+                    url: `{{ route('invasive.show', $patientCare->id) }}`,
                     dataType: 'json', // Specify the expected data format (e.g., JSON)
                     success: function(data) {
                         // $('#chart-3').html(data.data);
@@ -1194,7 +1215,7 @@
             function getRenalData() {
                 $.ajax({
                     type: 'GET', // or 'POST' if required
-                    url: `{{ url('/') }}/show-patient/{{ $patient->latestPatientCare->id }}/renal-fluids/${activeDay}`,
+                    url: `{{ url('/') }}/show-patient/{{ $patientCare->id }}/renal-fluids/${activeDay}`,
                     dataType: 'json', // Specify the expected data format (e.g., JSON)
                     success: function(data) {
                         // $('#chart-3').html(data.data);
@@ -1236,7 +1257,7 @@
             function getProgressData() {
                 $.ajax({
                     type: 'GET', // or 'POST' if required
-                    url: `{{ url('/') }}/show-patient/{{ $patient->latestPatientCare->id }}/daily-treatment/${activeDay}`,
+                    url: `{{ url('/') }}/show-patient/{{ $patientCare->id }}/daily-treatment/${activeDay}`,
                     dataType: 'json', // Specify the expected data format (e.g., JSON)
                     success: function(data) {
                         // $('#chart-3').html(data.data);
@@ -1277,7 +1298,7 @@
             function getPhysicianData() {
                 $.ajax({
                     type: 'GET', // or 'POST' if required
-                    url: `{{ url('/') }}/show-patient/{{ $patient->latestPatientCare->id }}/physician-order/${activeDay}/${viewtype}`,
+                    url: `{{ url('/') }}/show-patient/{{ $patientCare->id }}/physician-order/${activeDay}/${viewtype}`,
                     dataType: 'json', // Specify the expected data format (e.g., JSON)
                     success: function(data) {
                         let physicianData = data;
@@ -1411,471 +1432,8 @@
                 }
             });
 
-            $('#table-lab').on('click', '.result', function() {
-                let id = $(this).data('id');
 
-                $('#collectResult').val(id);
-
-                $('#collectResultLabel').append('Mark <span class="text-danger fw-bolder">' + $(this).data(
-                    'name') + '</span> as received');
-                $('#modal-result').modal('show');
-            })
-            $('#collect-result-save-spinner').hide();
-            $('#collect-result-form').submit(function(event) {
-                event.preventDefault(); // Prevent default form submission
-
-                var formData = $(this).serialize(); // Serialize form data
-                $('#collect-result-save').prop('disabled', true);
-                $('#collect-result-save-spinner').show();
-
-                $.ajax({
-                    type: 'POST',
-                    url: '{{ route('collect-result.store') }}', // Replace with your server-side script URL
-                    data: formData,
-                    success: function(response) {
-
-                        console.log(response);
-                        $('#toast-1 .toast-body').html(response.message);
-                        $('#toast-1').toast('show');
-                        $('#modal-result').modal('hide');
-
-                        $('#collect-result-form')[0].reset();
-                        $('#collect-result-save').prop('disabled', false);
-                        $('#collect-result-save-spinner').hide();
-                        getLabData();
-                    },
-                    error: function(error) {
-                        // Handle errors$
-                        console.error(error);
-                        // You can display an error message to the user here
-                        var errorMessage = error.responseJSON.message;
-                        $.each(errorMessage, function(key, value) {
-                            $('#collect-result-form .alert-danger').append('<p>' +
-                                value + '</p>');
-                        })
-
-                        $('#collect-result-save').prop('disabled', false);
-                        $('#collect-result-save-spinner').hide();
-                    }
-                });
-            });
-            $('#cardio-save-spinner').hide();
-            $('#cardio-form').submit(function(event) {
-                event.preventDefault(); // Prevent default form submission
-
-                var formData = $(this).serialize(); // Serialize form data
-                $('#cardio-save').prop('disabled', true);
-                $('#cardio-save-spinner').show();
-
-                $.ajax({
-                    type: 'POST',
-                    url: '{{ route('cardio.store') }}', // Replace with your server-side script URL
-                    data: formData,
-                    success: function(response) {
-
-
-
-
-                        $('#toast-1 .toast-body').html(response.message);
-                        $('#toast-1').toast('show');
-                        $('#modalXl').modal('hide');
-                        $('#cardio-form')[0].reset();
-                        $('#cardio-save').prop('disabled', false);
-                        $('#cardio-save-spinner').hide();
-                        $('#cardio-charting').hide();
-                          if(chartIndicator){
-                            drawCardioChart();
-                        } else{
-                            getCardioData();
-                        }
-
-                    },
-                    error: function(error) {
-                        // Handle errors$
-                        console.error(error);
-                        // You can display an error message to the user here
-                        var errorMessage = error.responseJSON.message;
-                        $('#toast-1 .toast-body').html(errorMessage);
-                        $('#toast-1').toast('show');
-                        $('#cardio-save').prop('disabled', false);
-                        $('#cardio-save-spinner').hide();
-
-                    }
-                });
-            });
-
-
-
-
-            $('#new-lab').hide();
-            $('#defaultothers').on('change', function() {
-                var selectVal = $(this).val();
-                if ($(this).is(':checked')) {
-                    // Checkbox is checked
-                    $('#new-lab').show();
-
-                } else {
-
-                    $('#new-lab').hide();
-                }
-            });
-
-            $('#resp-save-spinner').hide();
-            $('#resp-form').submit(function(event) {
-                event.preventDefault(); // Prevent default form submission
-
-                var respData = $(this).serialize(); // Serialize form data
-
-                $('#resp-save').prop('disabled', true);
-                $('#resp-save-spinner').show();
-
-                $.ajax({
-                    type: 'POST',
-                    url: '{{ route('resp.store') }}', // Replace with your server-side script URL
-                    data: respData,
-                    success: function(response) {
-
-                        console.log(response);
-                        $('#toast-1 .toast-body').html(response.message);
-                        $('#toast-1').toast('show');
-                        $('#modal-resp').modal('hide');
-
-                        $('#resp-form')[0].reset();
-                        $('#resp-save').prop('disabled', false);
-                        $('#resp-save-spinner').hide();
-                        $('#respiratory-charting').hide();
-                        if(chartIndicator){
-                            drawRespChart();
-                        } else{
-                            getRespData();
-                        }
-
-                    },
-                    error: function(error) {
-                        // Handle errors$
-                        console.error(error);
-                        // You can display an error message to the user here
-                        var errorMessage = error.responseJSON.message;
-                        $('#toast-1 .toast-body').html(errorMessage);
-                        $('#toast-1').toast('show');
-                        $('#resp-save').prop('disabled', false);
-                        $('#resp-save-spinner').hide();
-
-                    }
-                });
-            });
-            //invasive line form
-            $('#invasive-save-spinner').hide();
-            $('#invasive-form').submit(function(event) {
-                event.preventDefault(); // Prevent default form submission
-
-                var invasiveData = $(this).serialize(); // Serialize form data
-
-                $('#invasive-save').prop('disabled', true);
-                $('#invasive-save-spinner').show();
-
-                $.ajax({
-                    type: 'POST',
-                    url: '{{ route('invasive.store') }}', // Replace with your server-side script URL
-                    data: invasiveData,
-                    success: function(response) {
-
-                        console.log(response);
-                        $('#toast-1 .toast-body').html(response.message);
-                        $('#toast-1').toast('show');
-                        $('#modal-invasive').modal('hide');
-
-                        $('#invasive-form')[0].reset();
-                        $('#invasive-save').prop('disabled', false);
-                        $('#invasive-save-spinner').hide();
-                        getInvasiveData();
-                    },
-                    error: function(error) {
-                        // Handle errors$
-                        console.error(error);
-                        // You can display an error message to the user here
-                        var errorMessage = error.responseJSON.message;
-                        $.each(error.responseJSON.errors, function(key, value) {
-                            $('#invasive-form').append(
-                                '<div class="alert alert-danger">' +
-                                value + '</div>');
-                        });
-
-                        $('#invasive-save').prop('disabled', false);
-                        $('#invasive-save-spinner').hide();
-                    }
-                });
-
-            });
-            //fluid-balance form
-            //Adding fluid balance
-            $('#new-fluid').hide();
-            var rowIdx = 0;
-            let fluid_name, fluid_volume, fluid_direction;
-            const fluid_names = [];
-            const fluid_directions = [];
-            const fluid_volumes = [];
-
-            $('#select-fluid').on('change', function() {
-                if ($(this).val() == 'others') {
-                    $('#new-fluid').show();
-                } else {
-                    $('#new-fluid').hide();
-                    let fluid_array = $(this).val().split(',');
-                    fluid_name = fluid_array[0];
-                    fluid_direction = fluid_array[1];
-                }
-
-            });
-            $('#fluid-error').hide();
-            $('#fluid-volume').on('blur', function() {
-                fluid_volume = $(this).val();
-            });
-            $('#fluid-type-name').on('blur', function() {
-                fluid_name = $(this).val();
-            });
-            $('#fluid-type-direction').on('change', function() {
-                fluid_direction = $(this).val();
-                console.log(fluid_direction);
-            });
-            $('#fluid-record-add').on('click', function() {
-                console.log(fluid_names)
-
-                if (fluid_name && fluid_direction && fluid_volume) {
-                    rowIdx++;
-                    let occurence = fluidNameCount(fluid_names, fluid_name);
-                    if (occurence > 0) {
-                        fluid_name = '';
-                        fluid_direction = '';
-                        fluid_volume = '';
-
-                        $('#fluid-error').text('Fluid already added');
-                        $('#fluid-error').show();
-                        setTimeout(() => {
-                            $('#fluid-error').hide();
-                        }, 3000);
-                        return;
-
-                    }
-                    fluid_names.push(fluid_name);
-                    const row = `<tr id="row-${rowIdx}">
-                    <td>${fluid_name}</td>
-                    <td>${fluid_volume}</td>
-                    <td>${fluid_direction}
-                        <input type="hidden" name="fluid_name[]" value="${fluid_name}">
-                        <input type="hidden" name="fluid_volume[]" value="${fluid_volume}">
-                        <input type="hidden" name="fluid_direction[]" value="${fluid_direction}">
-                    </td>
-
-                    <td>
-                        <button type="button" class="btn btn-danger removeFluid">Remove</button>
-                    </td>
-                </tr>`;
-                    $('#fluid-record-table tbody').append(row);
-                } else {
-                    $('#fluid-error').text('select all fields').show();
-                    setTimeout(() => {
-                        $('#fluid-error').hide();
-                    }, 3000);
-                }
-                $('#fluid-type-name').val('');
-                $('#fluid-volume').val('');
-
-
-            });
-
-            $('#fluid-record-table tbody').on('click', '.removeFluid', function() {
-                let rowId = $(this).closest('tr').attr('id');
-                $(this).closest('tr').remove();;
-                fluid_names.splice($(`#row-${rowId}>td`).html(), 1);
-            })
-
-            function fluidNameCount(arr, element) {
-                return arr.filter(item => item === element).length;
-            }
-            //fluid balance form
-            $('#fluid-save-spinner').hide();
-            $('#fluid-form').submit(function(event) {
-                event.preventDefault(); // Prevent default form submission
-                if (fluid_names.length < 1) {
-                    $('#fluid-error').text('No fluid and volume added').show();
-                    setTimeout(() => {
-                        $('#fluid-error').hide();
-                    }, 3000);
-                    return;
-                }
-
-                var fluidData = $(this).serialize(); // Serialize form data
-
-                $('#fluid-save').prop('disabled', true);
-                $('#fluid-save-spinner').show();
-
-                $.ajax({
-                    type: 'POST',
-                    url: '{{ route('fluid.store') }}', // Replace with your server-side script URL
-                    data: fluidData,
-                    success: function(response) {
-
-                        console.log(response);
-                        $('#fluid-record-table tbody').html('');
-                        $('#toast-1 .toast-body').html(response.message);
-                        $('#toast-1').toast('show');
-                        $('#modal-fluid').modal('hide');
-
-                        $('#fluid-form')[0].reset();
-                        $('#fluid-save').prop('disabled', false);
-                        $('#fluid-save-spinner').hide();
-                        $('#new-fluid').hide();
-                        $('#chartFluid').hide();
-                        if(chartIndicator){
-                            drawFluidChart();
-                        } else{
-                            getFluidData();
-                        }
-
-                        getFluidSelect();
-                        getRenalData();
-                    },
-                    error: function(error) {
-                        // Handle errors$
-                        console.error(error);
-                        // You can display an error message to the user here
-                        var errorMessage = error.responseJSON.message;
-                        $('#toast-1 .toast-body').html(errorMessage);
-                        $('#toast-1').toast('show');
-                        $('#fluid-save').prop('disabled', false);
-                        $('#fluid-save-spinner').hide();
-
-                    }
-                });
-            });
-            let medRowIdx = 0;
-            let medication_name, medication_dose;
-            const medication_names = [];
-            //medication form
-
-            $('#new-medication').hide();
-            $('#select-medication').on('change', function() {
-                var selectVal = $(this).val();
-                console.log(selectVal);
-                if ($(this).val() == 'others') {
-                    $('#new-medication').show();
-                } else {
-                    $('#new-medication').hide();
-                    medication_name = $(this).val();
-                }
-            });
-            $('#medication-error').hide();
-            $('#medication_name').on('blur', function() {
-                medication_name = $(this).val();
-            });
-            $('#medication_dosage').on('blur', function() {
-                medication_dose = $(this).val();
-
-            });
-
-            function medicationNameCount(arr, element) {
-                return arr.filter(item => item === element).length;
-            }
-            $('#medication-record-add').on('click', function() {
-                console.log(medication_name, medication_dose);
-                if (medication_name && medication_dose) {
-                    medRowIdx++;
-                    let occurence = medicationNameCount(medication_names, medication_name);
-                    if (occurence > 0) {
-                        medication_name = '';
-                        medication_dose = '';
-                        $('#medication-error').text('Medication already added').show();
-                        setTimeout(() => {
-                            $('#medication-error').hide();
-                        }, 3000);
-                        return;
-                    }
-                    medication_names.push(medication_name);
-                    const row = `<tr id="row-${medRowIdx}">
-                    <td>${medication_name}</td>
-                    <td>${medication_dose}
-                        <input type="hidden" name="medication_name[]" value="${medication_name}">
-                        <input type="hidden" name="medication_dose[]" value="${medication_dose}">
-                    </td>
-
-                    <td>
-                        <button type="button" class="btn btn-danger removeMedication">Remove</button>
-                    </td>
-                </tr>`;
-
-                    $('#medication-record-table tbody').append(row);
-                } else {
-                    $('#medication-error').text('select all fields').show();
-                    setTimeout(() => {
-                        $('#medication-error').hide();
-                    }, 3000);
-                }
-                $('#medication_name').val('');
-                $('#medication_dosage').val('');
-                medication_name = '';
-                medication_dose = '';
-            });
-            $('#medication-record-table tbody').on('click', '.removeMedication', function() {
-                let rowId = $(this).closest('tr').attr('id');
-                $(this).closest('tr').remove();
-                medication_names.splice($(`#row-${rowId}>td`).html(), 1);
-            })
-
-
-            $('#medication-save-spinner').hide();
-            $('#medication-form').submit(function(event) {
-                event.preventDefault(); // Prevent default form submission
-                if (medication_names.length < 1) {
-                    $('#medication-error').text('kindly fill all fields').show();
-                    setTimeout(() => {
-                        $('#medication-error').hide();
-                    }, 3000);
-                    return;
-                }
-                var medicationData = $(this).serialize(); // Serialize form data
-                $('#medication-save').prop('disabled', true);
-                $('#medication-save-spinner').show();
-
-                $.ajax({
-                    type: 'POST',
-                    url: '{{ route('medication.store') }}', // Replace with your server-side script URL
-                    data: medicationData,
-                    success: function(response) {
-
-                        console.log(response);
-                        $('#medication-record-table tbody').html('');
-                        $('#toast-1 .toast-body').html(response.message);
-                        $('#toast-1').toast('show');
-                        $('#modal-medication').modal('hide');
-
-                        $('#medication-form')[0].reset();
-                        $('#medication-save').prop('disabled', false);
-                        $('#medication-save-spinner').hide();
-                        getMedicationData();
-                        getMedicationSelect();
-
-                    },
-                    error: function(error) {
-                        // Handle errors$
-                        console.error(error);
-                        // You can display an error message to the user here
-                        var errorMessage = error.responseJSON.message;
-                        $('#toast-1 .toast-body').html(errorMessage);
-                        $('#toast-1').toast('show');
-                        $('#medication-save').prop('disabled', false);
-                        $('#medication-save-spinner').hide();
-
-                    }
-                });
-
-            });
-            //nutrition form
-           
-
-
-
-
+            //skin form
 
             $('#active-day').on('change', function() {
                 activeDay = $('#active-day').val();
@@ -1913,36 +1471,36 @@
                         <div class="d-flex flex-column">
                             <h4 class="mb-0"> Name: <span
                                     class=
-                                    "fw-bold text-gray-emphasis">{{ $patient->fullname }}</span>
+                                    "fw-bold text-gray-emphasis">{{ $patientCare->patient->fullname }}</span>
                             </h4>
                             <h5 class="text-muted my-0 text-teal-emphasis">Age: &nbsp;
-                                {{ (int) $patient->date_of_birth->diffInYears() }} Years
-                                {{ $patient->date_of_birth->diffInMonths() % 12 }} Months</h5>
-                            <h5 class="text-muted my-0 text-gray-emphasis">Sex: &nbsp;{{ $patient->gender->name }}</h5>
-                            <h5 class="text-muted my-0">Marital Status: &nbsp;{{ $patient->marital_status->name }}</h5>
+                                {{ (int) $patientCare->patient->date_of_birth->diffInYears() }} Years
+                                {{ $patientCare->patient->date_of_birth->diffInMonths() % 12 }} Months</h5>
+                            <h5 class="text-muted my-0 text-gray-emphasis">Sex: &nbsp;{{ $patientCare->patient->gender->name }}</h5>
+                            <h5 class="text-muted my-0">Marital Status: &nbsp;{{ $patientCare->patient->marital_status->name }}</h5>
                         </div>
                     </div>
                     <div class="col-md-3 border-start border-2 border-primary bg-gray-200 rounded">
                         <h5 class="text-muted my-0 text-gray-emphasis">Bed-No: &nbsp;<span
-                                class="fw-bold">{{ $patient->latestPatientCare->bedModel->name }} </span></h5>
+                                class="fw-bold">{{ $patientCare->bedModel->name }} </span></h5>
                         <h5 class="text-muted my-0 text-gray-emphasis">Admission-Date: &nbsp;<span
-                                class="fw-bold">{{ $patient->latestPatientCare->admission_date->format('d/M/Y') }}</span>
+                                class="fw-bold">{{ $patientCare->admission_date->format('d/M/Y') }}</span>
                         </h5>
                         <h5 class="text-muted my-0 text-gray-emphasis">Diagnosis: &nbsp;<span
-                                class="fw-bold">{{ $patient->latestPatientCare->diagnosis }}</span></h5>
+                                class="fw-bold">{{ $patientCare->diagnosis }}</span></h5>
                         <h5 class="text-muted my-0 text-gray-emphasis"><span class="fw-bold">Admitted-From:
-                                &nbsp;</span>{{ $patient->latestPatientCare->admitted_from }}</h5>
+                                &nbsp;</span>{{ $patientCare->admitted_from }}</h5>
                     </div>
                     <div class="col-md-3 border-start border-2 border-primary">
                         <h5 class="text-muted my-0 text-gray-emphasis"><span class="fw-bold">Condition: &nbsp;</span>
-                            {{ $patient->latestPatientCare->condition }}</h5>
+                            {{ $patientCare->condition }}</h5>
                         <h5 class="text-muted my-0 text-gray-emphasis"><span class="fw-bold">Consultant: &nbsp;</span>
-                            {{ $patient->latestPatientCare->icu_consultant }}
+                            {{ $patientCare->icu_consultant }}
                         </h5>
                         <h5 class="text-muted my-0 text-gray-emphasis"><span class="fw-bold">Nurse Incharge:
-                                &nbsp;</span>{{ $patient->latestPatientCare->nurse_incharge }}</h5>
+                                &nbsp;</span>{{ $patientCare->nurse_incharge }}</h5>
                         <h5 class="text-muted my-0 text-gray-emphasis"><span class="fw-bold">Next of Kin:
-                                &nbsp;</span>{{ $patient->next_of_kin }}</h5>
+                                &nbsp;</span>{{ $patientCare->patient->next_of_kin }}</h5>
                     </div>
                     <div class="col-md-3 border-start border-2 border-primary">
                         <a href="{{ route('dashboard') }}" class="btn btn-outline-primary">DashBoard</a>
@@ -1970,16 +1528,16 @@
                     <div class="col-sm-6 col-md-6">
                         <h4 class="mb-0"> Name: <span
                                 class=
-                                    "fw-bold text-gray-emphasis">{{ $patient->fullname }}</span>
+                                    "fw-bold text-gray-emphasis">{{ $patientCare->patient->fullname }}</span>
                         </h4>
                     </div>
                     <div class="col-sm-6 col-md-3">
                         <h5 class="text-muted my-0 text-gray-emphasis">Diagnosis: &nbsp;<span
-                                class="fw-bold">{{ $patient->latestPatientCare->diagnosis }}</span></h5>
+                                class="fw-bold">{{ $patientCare->diagnosis }}</span></h5>
                     </div>
                     <div class="col-sm-6 col-md-3">
                         <h5 class="text-muted my-0 text-gray-emphasis"><span class="fw-bold">Next of Kin:
-                                &nbsp;</span>{{ $patient->next_of_kin }}</h5>
+                                &nbsp;</span>{{ $patientCare->patient->next_of_kin }}</h5>
                         <div class="bottom-0 mt-2">
                             <button class="btn btn-sm btn-teal" id="patient-info-full">view full patient
                                 information</button>
@@ -2097,6 +1655,26 @@
                 <!-- END card-body -->
             </div>
         </div>
+        <div class="col-lg-12" id="renal-card">
+            <div class="card h-100 mt-2">
+                <div class="card-header bg-gradient bg-purple bg-opacity-30 d-flex gap-2 align-items-center">
+                    <div class="d-flex mb-3 gap-1">
+                        <div class="flex-grow-1">
+                            <h5 class="mb-1"> Renal Assessment </h5>
+
+                        </div>
+
+                        <a href="javascript:;" class="text-secondary"><i class="fa fa-redo"></i></a>
+                    </div>
+                </div>
+                <!-- BEGIN card-body -->
+                <div class="card-body">
+
+                    <div id="table-renal" class="table-responsive"></div>
+                </div>
+                <!-- END card-body -->
+            </div>
+        </div>
         <div class="col-lg-12" id="nutrition-card">
             <div class="card h-100 mt-2">
                 <!-- BEGIN card-body -->
@@ -2133,6 +1711,7 @@
                     <div class="flex-grow-1">
                         <h5 class="mb-1">Neurological Assessment</h5>
                     </div>
+
 
                     <a href="javascript:;" class="text-secondary"><i class="fa fa-redo"></i></a>
                     <a href="#" data-toggle="card-expand"
@@ -2187,7 +1766,6 @@
 
                     </div>
 
-
                     <a href="javascript:;" class="text-secondary"><i class="fa fa-redo"></i></a>
                     <a href="#" data-toggle="card-expand"
                         class="text-white text-opacity-20 text-decoration-none"><i class="fa fa-fw fa-expand"></i></a>
@@ -2216,7 +1794,6 @@
                         <h5 class="mb-1">Skin and Wound Care</h5>
                     </div>
 
-
                     <a href="javascript:;" class="text-secondary"><i class="fa fa-redo"></i></a>
                     <a href="#" data-toggle="card-expand"
                         class="text-white text-opacity-20 text-decoration-none"><i class="fa fa-fw fa-expand"></i></a>
@@ -2231,28 +1808,6 @@
             </div>
         </div>
 
-
-        <div class="col-lg-12" id="renal-card">
-            <div class="card h-100 mt-2">
-                <div class="card-header bg-gradient bg-purple bg-opacity-30 d-flex gap-2 align-items-center">
-                    <div class="d-flex mb-3 gap-1">
-                        <div class="flex-grow-1">
-                            <h5 class="mb-1"> Renal Assessment </h5>
-
-                        </div>
-
-                        <a href="javascript:;" class="text-secondary"><i class="fa fa-redo"></i></a>
-                    </div>
-                </div>
-                <!-- BEGIN card-body -->
-                <div class="card-body">
-
-                    <div id="table-renal" class="table-responsive"></div>
-                </div>
-                <!-- END card-body -->
-            </div>
-        </div>
-
         <div class="col-lg-12" id="invasive">
             <div class="card h-100 mt-2">
                 <!-- BEGIN card-body -->
@@ -2262,7 +1817,6 @@
                         <h5 class="mb-1">Invasive Lines</h5>
 
                     </div>
-
 
                     <a href="javascript:;" class="text-secondary"><i class="fa fa-redo"></i></a>
                     <a href="#" data-toggle="card-expand"
@@ -2318,7 +1872,6 @@
                         <h5 class="mb-1">Seizure Chart</h5>
 
                     </div>
-
 
                     <a href="javascript:;" class="text-secondary"><i class="fa fa-redo"></i></a>
                     <a href="#" data-toggle="card-expand"
@@ -2401,4 +1954,3 @@
 
 
 @endsection
-
