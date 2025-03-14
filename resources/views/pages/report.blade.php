@@ -42,7 +42,7 @@
                 startDate: moment().subtract(29,'days'),
                 endDate: moment(),
                 minDate: '01/01/2012',
-                maxDate: '12/31/2025',
+                maxDate: '12/31/2030',
             }, function (start, end) {
                 $('#daterange input').val(start.format('MMMM D, YYYY') + ' - ' + end.format('MMMM D, YYYY'));
             });
